@@ -8,6 +8,14 @@ To set up, simply run:
 
 This will install all necessary dependencies into a `node_modules` directory.
 
+Then, generate a $64$-byte secret key for the JSON Web Token with:
+
+```js
+require('crypto').randomBytes(64).toString('hex')
+```
+
+And save that in a `.env` file in this directory as `JWT_TOKEN_SECRET`.
+
 ## Available Scripts
 
 In the project directory, you can run:

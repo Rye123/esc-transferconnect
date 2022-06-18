@@ -1,0 +1,30 @@
+{
+  "_comment": [
+    "this is just a test database, you can run it with `json-server --watch test-db.json --port 3001 :). PLEASE INSTALL AS GLOBAL, i.e. npm install -g json-server"
+  ],
+  "users": [
+        {
+            "id": 1,
+            "username": "johndoe1",
+            "password": "password",
+            "points": 42
+        },
+        {
+            "id": 2,
+            "username": "michaelmyers123",
+            "password": "halloween",
+            "points": 69
+        },
+        {
+            "id": 3,
+            "username": "mrpotatohead",
+            "password": "onetwothree",
+            "points": 123
+        },
+        {
+            "username": "asdf",
+            "password": "fdsa",
+            "id": 4
+        }
+    ]
+}
