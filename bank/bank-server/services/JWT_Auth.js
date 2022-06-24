@@ -3,6 +3,7 @@
  */
 
 const jwt = require('jsonwebtoken');
+const UserAuthenticationError = require('../errors/UserAuthenticationError');
 
 const JWT_Auth = {
     token_expiry_time: '1800s',
@@ -26,12 +27,11 @@ const JWT_Auth = {
     requireAuth (request, response, next) {
         const token = request.cookies[JWT_Auth.cookie_name]; // attempt to find the token
         if (token == null) // token doesn't exist!
-            return response.status(401).send({ error: 'authentication required' });
-        
+            throw new UserAuthenticationError();
         // token exists -- verify with JWT
         jwt.verify(token, process.env.JWT_TOKEN_SECRET, (error, payload) => {
             if (error)
-                return response.status(401).send({ error: 'authentication required' });
+                throw new UserAuthenticationError();
     
             // here, the payload is verified. we save it as a new attribute in the request.
             request.payload = payload; 

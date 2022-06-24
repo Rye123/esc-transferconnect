@@ -12,6 +12,11 @@ const cookieParser = require('cookie-parser'); // middleware for cookies
 /* Service Imports */
 const JWT_Auth = require('./services/JWT_Auth');
 
+/* Error Imports */
+const ApplicationError = require('./errors/ApplicationError');
+const UserAuthorisationError = require('./errors/UserAuthorisationError');
+const UserAuthenticationError = require('./errors/UserAuthenticationError');
+
 /* Express Setup */
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -70,14 +75,13 @@ app.get('/api/users', JWT_Auth.requireAuth, (request, response) => {
 
 app.get('/api/users/:id', JWT_Auth.requireAuth, (request, response) => {
     // check request.payload (from requireAuth) if user is authorised to view this
-    if (!request.payload || request.params.id !== request.payload.id) {
-        return response.status(403).json({ error: 'unauthorised' });
-    }
+    if (request.params.id !== request.payload.id) // user is not AUTHORISED
+        throw new UserAuthorisationError();
 
     // otherwise, we return the user's information other than the password
     const foundUser = users.find(user => user.id === request.params.id);
-    if (!foundUser)
-        return response.status(500).json({ error: 'internal service error' }); // somehow this user doesn't exist anymore?
+    if (!foundUser) // no such user
+        throw new UserAuthenticationError();
     const userInfo = {
         id: foundUser.id,
         username: foundUser.username,
@@ -87,13 +91,10 @@ app.get('/api/users/:id', JWT_Auth.requireAuth, (request, response) => {
 });
 
 app.get('/api/token-resolve', JWT_Auth.requireAuth, (request, response) => {
-    if (!request.payload) {
-        return response.status(403).json({ error: 'unauthorised' });
-    }
     let user_id = request.payload.id;
     const foundUser = users.find(user => user.id === user_id);
-    if (!foundUser)
-        return response.status(500).json({ error: 'internal service error' }); // somehow this user doesn't exist anymore?
+    if (!foundUser) // the token works, but the user doesn't exist.
+        throw new UserAuthenticationError();
     const userInfo = {
         id: foundUser.id,
         username: foundUser.username,
@@ -104,9 +105,6 @@ app.get('/api/token-resolve', JWT_Auth.requireAuth, (request, response) => {
 
 // TODO: Refactor to move cookie handling to auth
 app.post('/api/token-terminate', JWT_Auth.requireAuth, (request, response) => {
-    if (!request.payload) {
-        return response.status(403).json({ error: 'unauthorised' });
-    }
     response.clearCookie(
         JWT_Auth.cookie_name,
         { httpOnly: true, secure: true }
@@ -115,9 +113,8 @@ app.post('/api/token-terminate', JWT_Auth.requireAuth, (request, response) => {
 
 // TODO: Refactor to move cookie handling to auth
 app.post('/api/token-auth', (request, response) => {
-    if (!request.body.username || !request.body.password) {
-        return response.status(400).json({ error: 'missing information' });
-    }
+    if (!request.body.username || !request.body.password)
+        throw new UserAuthenticationError();
 
     const testUser = {
         username: request.body.username,
@@ -125,21 +122,20 @@ app.post('/api/token-auth', (request, response) => {
     };
 
     const foundUser = users.find(user => user.username === testUser.username && user.password === testUser.password);
-    if (foundUser) {
-        // Set a cookie on the client-side with the given cookie_name and the given token.
-        const userInfo = {
-            id: foundUser.id,
-            username: foundUser.username,
-            points: foundUser.points
-        };
-        response.cookie(
-            JWT_Auth.cookie_name,
-            JWT_Auth.generateToken({id: foundUser.id, username: foundUser.username}), 
-            { httpOnly: true, secure: true }
-        ).status(201).json(userInfo);
-    } else {
-        return response.status(401).json({ error: 'authentication failed' })
-    }
+    
+    if (!foundUser) // the token works, but the user doesn't exist.
+        throw new UserAuthenticationError();
+    // Set a cookie on the client-side with the given cookie_name and the given token.
+    const userInfo = {
+        id: foundUser.id,
+        username: foundUser.username,
+        points: foundUser.points
+    };
+    response.cookie(
+        JWT_Auth.cookie_name,
+        JWT_Auth.generateToken({id: foundUser.id, username: foundUser.username}), 
+        { httpOnly: true, secure: true }
+    ).status(201).json(userInfo);
 });
 
 
@@ -151,9 +147,18 @@ app.use((request, response) => {
 
 /* Request Error Handling */
 app.use((error, request, response, next) => {
-    console.error(error.message);
-
-    return response.status(400).end();
+    
+    switch (error.name) {
+        case "UserAuthenticationError":
+            //TODO: ideally we'll call a logout function to delete any cookies -- wait for auth refactor
+            return response.status(error.status).json({ error: "authentication failed" })
+        case "UserAuthorisationError":
+            return response.status(error.status).json({ error: "forbidden" })
+    
+        default:
+            console.error(error);
+            return response.status(500).json({ error: "internal server error" })
+    }
 });
 
 /* Server Listen */
