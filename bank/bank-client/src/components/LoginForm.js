@@ -9,9 +9,9 @@ import Utils from '../utils/utils';
 
 /**
  * Login Form Component
- * @param {*} props Arguments given to this component
- * @param {*} props.user The user that is signed in.
- * @param {*} props.setUser Function that changes the signed-in user
+ * @param {{user: string, setUser: Function}} props Arguments given to this component
+ * - `user`: The user that is signed in.
+ * - `setUser`: Function that changes the signed-in user
  * @returns 
  */
 const LoginForm = ({user, setUser}) => {

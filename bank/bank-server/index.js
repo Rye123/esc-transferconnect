@@ -68,11 +68,7 @@ users = [
     }
 ]
 
-// DEBUG: get request for users -- should be deleted
-// app.get('/api/users', (request, response) => {
-//     response.json(users);
-// });
-
+/* REST Endpoints for User Authentication */
 app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, response) => {
     // check request.payload (from requireAuth) if user is authorised to view this
     if (request.params.id !== request.payload.id) // user is not AUTHORISED
@@ -90,6 +86,10 @@ app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, res
     return response.status(200).json(userInfo);
 });
 
+/**
+ * Route serving user token resolution.
+ * If token is valid, returns the authenticated user's information.
+ */
 app.get('/api/token-resolve', auth_user_service.requireAuthentication, (request, response) => {
     let user_id = request.payload.id;
     const foundUser = users.find(user => user.id === user_id);

@@ -12,7 +12,7 @@ import LoginForm from './components/LoginForm';
 import UserPanel from './components/UserPanel';
 
 /**
- * 
+ * Main single-page application
  * @returns 
  */
 function App() {
