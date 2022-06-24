@@ -38,19 +38,17 @@ const user_login = async(user) => {
     
     return axios
     .post(AUTH_URI, user, { withCredentials: true })
-    .then(response => {
-        return response.data;
+    .then(() => {
+        return user_getinfo();
     });
 };
 
-//TODO: Store current user as cookie client-side, so we don't need to pass the ID
 /**
  * Logs the current user out
- * @param {number} id The user's id
  * @returns 
  */
-const user_logout = async(id) => {
-    return axios.post(TERMINATE_URI, id, { withCredentials: true });
+const user_logout = async() => {
+    return axios.post(TERMINATE_URI, { withCredentials: true });
 }
 
 const exports = { user_getinfo, user_login, user_logout };
