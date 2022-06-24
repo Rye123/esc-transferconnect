@@ -2,31 +2,35 @@ import './App.css';
 import { useState, useEffect } from 'react';
 
 /* Services */
-import users_handler from './services/users_handler';
+import auth_service from './services/auth_service';
 
 /* Utils */
 import Utils from './utils/utils';
 
+/**
+ * Login Form Component
+ * @param {*} props Arguments given to this component
+ * @param {*} props.user The user that is signed in.
+ * @param {*} props.setUser Function that changes the signed-in user
+ * @returns 
+ */
 const LoginForm = ({user, setUser}) => {
-  // State Variables
-  const [usernameValue, setUsernameValue] = useState("");
-  const [passwordValue, setPasswordValue] = useState("");
+  /* State Variables */
+  const [usernameValue, setUsernameValue] = useState(""); // username text input for form
+  const [passwordValue, setPasswordValue] = useState(""); // password text input for form
 
-  // if user (i.e. logged in)
-  if (!Utils.isEmptyObject(user)) {
-    return (
-      <>
-      </>
-    )
-  }
+  // If user is logged in, don't show the LoginForm
+  if (!Utils.isEmptyObject(user))
+    return;
 
-  // otherwise, show form
-
-
-  // Listeners
+  
+  // Otherwise, we show the LoginForm
+  /* Event Handlers */
   const handleFormSubmission = (event) => {
     event.preventDefault(); // by default, refreshes the page. We don't want that here.
-    const testUser = {
+
+    // Credentials from the form
+    const credentials = {
       username: usernameValue,
       password: passwordValue
     };
@@ -36,15 +40,14 @@ const LoginForm = ({user, setUser}) => {
     setPasswordValue("");
 
     // Send POST request
-    users_handler.authenticate(testUser)
-      .then(response => {
-        setUser(response.data);
+    auth_service.user_login(credentials)
+      .then(loggedInUser => {
+        setUser(loggedInUser);
       })
       .catch(error => {
-        console.log("Authentication failed.");
-        alert("Please reenter details!");
-      })
-  }
+        alert("Authentication failed. Please reenter credentials.");
+      });
+  };
 
   return (
     <form onSubmit={handleFormSubmission}>
@@ -56,23 +59,26 @@ const LoginForm = ({user, setUser}) => {
   )
 }
 
+/**
+ * User Panel Component: Displays user information
+ * @param {*} props Arguments given to this component
+ * @param {*} props.user The user that is signed in.
+ * @param {*} props.setUser Function that changes the signed-in user
+ * @returns 
+ */
 const UserPanel = ({user, setUser}) => {
   /* Displays user information */
 
-  // if no user (i.e. not logged in)
-  if (Utils.isEmptyObject(user)) {
-    return (
-      <>
-      </>
-    )
-  }
+  //If user is not logged in, don't show the UserPanel
+  if (Utils.isEmptyObject(user))
+    return;
+  
 
-  // otherwise, give info
-
+  //Otherwise, we show the UserPanel
   /* Event Handlers */
   const onClickLogout = (event) => {
     event.preventDefault();
-    users_handler.logout(user.id)
+    auth_service.user_logout(user.id)
     .then(() => {
       console.log("Successful logout.");
     })
@@ -83,6 +89,7 @@ const UserPanel = ({user, setUser}) => {
       setUser({});
     });
   }
+
   return (
     <div>
       <h1>Welcome, {user.username}</h1>
@@ -95,15 +102,19 @@ const UserPanel = ({user, setUser}) => {
   )
 }
 
+/**
+ * 
+ * @returns 
+ */
 function App() {
   // State Variables
   const [user, setUser] = useState({});
 
   // Get initial state if it exists
   useEffect(() => {
-    users_handler.get_user_with_token()
-    .then(response => {
-      setUser(response.data);
+    auth_service.user_getinfo()
+    .then(currentUser => {
+      setUser(currentUser);
     })
     .catch(error => {
       console.log("User isn't signed in, redirecting to Login page.")
