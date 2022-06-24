@@ -10,7 +10,7 @@ const morgan = require('morgan'); // Logging middleware: https://expressjs.com/e
 const cookieParser = require('cookie-parser'); // middleware for cookies
 
 /* Service Imports */
-const JWT_Auth = require('./services/JWT_Auth');
+const auth_user_service = require('./services/auth_user_service');
 
 /* Error Imports */
 const ApplicationError = require('./errors/ApplicationError');
@@ -69,11 +69,11 @@ users = [
 ]
 
 // DEBUG: get request for users -- should be deleted
-app.get('/api/users', JWT_Auth.requireAuth, (request, response) => {
-    response.json(users);
-});
+// app.get('/api/users', (request, response) => {
+//     response.json(users);
+// });
 
-app.get('/api/users/:id', JWT_Auth.requireAuth, (request, response) => {
+app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, response) => {
     // check request.payload (from requireAuth) if user is authorised to view this
     if (request.params.id !== request.payload.id) // user is not AUTHORISED
         throw new UserAuthorisationError();
@@ -90,7 +90,7 @@ app.get('/api/users/:id', JWT_Auth.requireAuth, (request, response) => {
     return response.status(200).json(userInfo);
 });
 
-app.get('/api/token-resolve', JWT_Auth.requireAuth, (request, response) => {
+app.get('/api/token-resolve', auth_user_service.requireAuthentication, (request, response) => {
     let user_id = request.payload.id;
     const foundUser = users.find(user => user.id === user_id);
     if (!foundUser) // the token works, but the user doesn't exist.
@@ -103,39 +103,12 @@ app.get('/api/token-resolve', JWT_Auth.requireAuth, (request, response) => {
     return response.status(200).json(userInfo);
 });
 
-// TODO: Refactor to move cookie handling to auth
-app.post('/api/token-terminate', (request, response) => {
-    response.clearCookie(
-        JWT_Auth.cookie_name,
-        { httpOnly: true, secure: true }
-    ).status(204).send();
+app.post('/api/token-terminate', auth_user_service.deauthenticateUser, (request, response) => {
+    response.status(204).end();
 });
 
-// TODO: Refactor to move cookie handling to auth
-app.post('/api/token-auth', (request, response) => {
-    if (!request.body.username || !request.body.password)
-        throw new UserAuthenticationError();
-
-    const testUser = {
-        username: request.body.username,
-        password: request.body.password
-    };
-
-    const foundUser = users.find(user => user.username === testUser.username && user.password === testUser.password);
-    
-    if (!foundUser) // the token works, but the user doesn't exist.
-        throw new UserAuthenticationError();
-    // Set a cookie on the client-side with the given cookie_name and the given token.
-    const userInfo = {
-        id: foundUser.id,
-        username: foundUser.username,
-        points: foundUser.points
-    };
-    response.cookie(
-        JWT_Auth.cookie_name,
-        JWT_Auth.generateToken({id: foundUser.id, username: foundUser.username}), 
-        { httpOnly: true, secure: true }
-    ).status(201).json(userInfo);
+app.post('/api/token-auth', auth_user_service.authenticateUser, (request, response) => {
+    response.status(201).end();
 });
 
 
@@ -147,13 +120,15 @@ app.use((request, response) => {
 
 /* Request Error Handling */
 app.use((error, request, response, next) => {
-    
     switch (error.name) {
         case "UserAuthenticationError":
-            //TODO: ideally we'll call a logout function to delete any cookies -- wait for auth refactor
-            return response.status(error.status).json({ error: "authentication failed" })
+            auth_user_service.deauthenticateUser(request, response, error => {
+                return response.status(error.status).json({ error: "forbidden" })
+            });
         case "UserAuthorisationError":
-            return response.status(error.status).json({ error: "forbidden" })
+            auth_user_service.deauthenticateUser(request, response, error => {
+                return response.status(error.status).json({ error: "forbidden" })
+            });
     
         default:
             console.error(error);
