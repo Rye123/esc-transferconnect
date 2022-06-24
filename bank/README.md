@@ -11,4 +11,4 @@ Follow the installation instructions in [`bank-server`](bank-server/README.md) a
 
 ## Usage
 
-In two separate terminals, run `npm start` in `bank-server` and in `bank-client`. Your browser should automatically to [http://localhost:3000](http://localhost:3000), otherwise click the link.
+In two separate terminals, run `npm start` in `bank-server` and in `bank-client`. Your browser should automatically go to [http://localhost:3000](http://localhost:3000), otherwise click the link.
