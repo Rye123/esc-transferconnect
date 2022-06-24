@@ -122,11 +122,11 @@ app.use((request, response) => {
 app.use((error, request, response, next) => {
     switch (error.name) {
         case "UserAuthenticationError":
-            auth_user_service.deauthenticateUser(request, response, error => {
+            return auth_user_service.deauthenticateUser(request, response, () => {
                 return response.status(error.status).json({ error: "forbidden" })
             });
         case "UserAuthorisationError":
-            auth_user_service.deauthenticateUser(request, response, error => {
+            return auth_user_service.deauthenticateUser(request, response, () => {
                 return response.status(error.status).json({ error: "forbidden" })
             });
     
