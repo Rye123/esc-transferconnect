@@ -104,7 +104,7 @@ app.get('/api/token-resolve', JWT_Auth.requireAuth, (request, response) => {
 });
 
 // TODO: Refactor to move cookie handling to auth
-app.post('/api/token-terminate', JWT_Auth.requireAuth, (request, response) => {
+app.post('/api/token-terminate', (request, response) => {
     response.clearCookie(
         JWT_Auth.cookie_name,
         { httpOnly: true, secure: true }
