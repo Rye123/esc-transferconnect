@@ -31,8 +31,8 @@ const LoginForm = ({user, setUser}) => {
 
         // Credentials from the form
         const credentials = {
-        username: usernameValue,
-        password: passwordValue
+            username: usernameValue,
+            password: passwordValue
         };
 
         // Clear input elements
@@ -51,10 +51,10 @@ const LoginForm = ({user, setUser}) => {
 
     return (
         <form onSubmit={handleFormSubmission}>
-        <h1>Log in: </h1>
-        Username: <input type="text"     value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
-        Password: <input type="password" value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
-        <button type="submit">Submit</button>
+            <h1>Log in: </h1>
+            Username: <input type="text"     value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
+            Password: <input type="password" value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
+            <button type="submit">Submit</button>
         </form>
     )
 };

@@ -24,24 +24,24 @@ const UserPanel = ({user, setUser}) => {
         event.preventDefault();
         auth_service.user_logout(user.id)
         .then(() => {
-        console.log("Successful logout.");
+            console.log("Successful logout.");
         })
         .catch(err => {
-        console.error("Logout error", err);
+            console.error("Logout error", err);
         })
         .finally(() => {
-        setUser({});
+            setUser({});
         });
     }
 
     return (
         <div>
-        <h1>Welcome, {user.username}</h1>
-        <div>
-            <b>ID: </b> {user.id} <br />
-            <b>Points: </b> {user.points || 0}
-        </div>
-        <button onClick={onClickLogout}>Log Out</button>
+            <h1>Welcome, {user.username}</h1>
+            <div>
+                <b>ID: </b> {user.id} <br />
+                <b>Points: </b> {user.points || 0}
+            </div>
+            <button onClick={onClickLogout}>Log Out</button>
         </div>
     )
 };
