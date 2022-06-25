@@ -7,33 +7,31 @@ require('dotenv').config();
 /* Module Imports */
 const express = require('express');
 const morgan = require('morgan'); // Logging middleware: https://expressjs.com/en/resources/middleware/morgan.html
+const bodyParser = require('body-parser');
+
+/* Local Module Imports */
+const bankRoutes = require('./routes/bank-routes');
+const HttpError = require('./models/http-error');
 
 /* Express Setup */
 const app = express();
 const PORT = process.env.PORT || 3002;
 const APP_NAME = "Bank Server";
 
-/* Webpage Routing */
-app.use('/', express.static(__dirname + '/build')); // /build will contain the static front-end.
+app.use(bodyParser.json());
 
-/* Routing for REST API */
-app.use(express.json()); // any further requests will be stored in JSON in request.body
-app.use(morgan('dev'));  // logs requests
+app.use('/api/bank', bankRoutes);
 
-/* Unknown Endpoint Handling */
-app.use((request, response) => {
-    //TODO: Add 404 Not Found page
-    response.status(404).send({ error: 'unknown endpoint' });
-});
+app.use((req, res, next) => {  //this catches the case when non existent routes are called
+    throw new HttpError("Could not find this route.", 404);
+})
 
-/* Request Error Handling */
-app.use((error, request, response, next) => {
-    console.error(error.message);
+app.use((error, req, res, next) => {  //special error checking function, when routes return error
+    if (res.headerSent) {   //check if response has been sent, because can only send 1 response
+        return next(error)
+    }
+    res.status(error.code || 500);
+    res.json({message: error.message || 'An unkown error occured'});
+})
 
-    return response.status(400).end();
-});
-
-/* Server Listen */
-app.listen(PORT, () => {
-    console.log(`${APP_NAME} running on port ${PORT}.`)
-});
+app.listen(PORT);
