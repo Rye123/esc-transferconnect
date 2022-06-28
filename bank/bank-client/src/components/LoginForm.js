@@ -51,10 +51,44 @@ const LoginForm = ({user, setUser}) => {
 
     return (
         <form onSubmit={handleFormSubmission}>
-            <h1>Log in: </h1>
-            Username: <input type="text"     value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
-            Password: <input type="password" value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
-            <button type="submit">Submit</button>
+            <head>
+                <title>LoginForm</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+                <link rel="stylesheet" href='/styles/login.css'></link>
+                <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet"></link>
+                <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></link>
+            </head>
+            <body>
+                <img class ="wave" src='/images/wave.png' alt = "Green wave"></img>
+                <div class = "container">
+                    <div class = "img">
+                        <img src='/images/vault.svg' alt="Banking app"></img>
+                    </div>
+                    <div class = "login-container">
+                        <form>
+                            <img class="avatar" src='/images/profile.svg' alt="Profile"></img>
+                            <h2>Digibank</h2>
+                            <div class="input-div one">
+                                <div class= "i">
+                                    <i class="material-icons">person</i>
+                                </div>
+                                <div>
+                                    <input class = "input" type="text" placeholder='Username' value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
+                                </div>
+                            </div>
+                            <div class="input-div two">
+                                <div class= "i">
+                                <i class="material-icons">lock</i>
+                                </div>
+                                <div>
+                                    <input class = "input" type="password" placeholder='Password' value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
+                                </div>
+                            </div>
+                            <button class = "btn" type="submit">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </body>
         </form>
     )
 };
