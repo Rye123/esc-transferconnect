@@ -46,7 +46,7 @@ const user_login = async(credentials) => {
  * @returns Promise. Session is ended upon promise resolution.
  */
 const user_logout = async() => {
-    return axios.post(TERMINATE_URI, { withCredentials: true });
+    return axios.post(TERMINATE_URI, {}, { withCredentials: true });
 }
 
 const exports = { user_getinfo, user_login, user_logout };
