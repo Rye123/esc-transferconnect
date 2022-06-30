@@ -40,44 +40,14 @@ app.use('/', express.static(__dirname + '/build')); // /build will contain the s
 app.use(express.json()); // any further requests will be stored in JSON in request.body
 app.use(morgan('dev'));  // logs requests
 
-// Temporary database
-users = [
-    {
-        "id": "1",
-        "username": "johndoe1",
-        "password": "password",
-        "points": 42
-    },
-    {
-        "id": "2",
-        "username": "michaelmyers123",
-        "password": "halloween",
-        "points": 69
-    },
-    {
-        "id": "3",
-        "username": "mrpotatohead",
-        "password": "onetwothree",
-        "points": 123
-    },
-    {
-        "id": "4",
-        "username": "asdf",
-        "password": "fdsa",
-        "points": 52
-    }
-]
-
 /* REST Endpoints for User Authentication */
 app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, response) => {
-    // check request.payload (from requireAuth) if user is authorised to view this
-    if (request.params.id !== request.payload.id) // user is not AUTHORISED
+    const foundUser = request.user; // attached from requireAuthentication: Any error there should be resolved already
+    
+    // ensure user is AUTHORISED to view this
+    if (request.params.id !== foundUser.id)
         throw new UserAuthorisationError();
 
-    // otherwise, we return the user's information other than the password
-    const foundUser = users.find(user => user.id === request.params.id);
-    if (!foundUser) // no such user
-        throw new UserAuthenticationError();
     const userInfo = {
         id: foundUser.id,
         username: foundUser.username,
@@ -91,10 +61,7 @@ app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, res
  * If token is valid, returns the authenticated user's information.
  */
 app.get('/api/token-resolve', auth_user_service.requireAuthentication, (request, response) => {
-    let user_id = request.payload.id;
-    const foundUser = users.find(user => user.id === user_id);
-    if (!foundUser) // the token works, but the user doesn't exist.
-        throw new UserAuthenticationError();
+    const foundUser = request.user; // attached from requireAuthentication: Any error there should be resolved already
     const userInfo = {
         id: foundUser.id,
         username: foundUser.username,

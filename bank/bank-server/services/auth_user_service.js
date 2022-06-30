@@ -2,12 +2,14 @@
  * auth_user_service: Handler for authentication
  */
 /* Module Imports */
-const express = require('express');
 const jwt = require('jsonwebtoken');
 
 /* Error Logging */
 const ApplicationError = require('../errors/ApplicationError');
 const UserAuthenticationError = require('../errors/UserAuthenticationError');
+
+/* Models */
+const UserModel = require('../models/User');
 
 /* Constants */
 const AUTHENTICATION_MAX_AGE = 60 * 60 * 1000; // 1 hour, in milliseconds
@@ -46,36 +48,44 @@ const auth_user_service = {
             password: request.body.password
         };
 
-        const foundUser = users.find(user => user.username === credentials.username && user.password === credentials.password);
-        if (!foundUser)
-            throw new UserAuthenticationError();
+        /* Find the user in the database */
+        UserModel.findOne({ username: credentials.username, password: credentials.password })
+        .then(foundUser => {
+            if (!foundUser)
+                throw new UserAuthenticationError(this.name, ": valid user not found.");
         
-        /* Set cookies */
-        // set token cookie
-        const jwt_payload = {
-            id: foundUser.id,
-            username: foundUser.username
-        };
-        const jwt_token = jwt.sign(jwt_payload, JWT_SECRET, { expiresIn: AUTHENTICATION_MAX_AGE });
-        response.cookie(
-            auth_user_service.cookie_token_name,
-            jwt_token,
-            auth_user_service.cookie_token_options
-        );
-        // set user ID cookie
-        response.cookie(
-            auth_user_service.cookie_userID_name,
-            foundUser.id,
-            auth_user_service.cookie_userID_options
-        );
+            /* Set cookies */
+            // set token cookie
+            const jwt_payload = {
+                id: foundUser.id,
+                username: foundUser.username
+            };
+            const jwt_token = jwt.sign(jwt_payload, JWT_SECRET, { expiresIn: AUTHENTICATION_MAX_AGE });
+            response.cookie(
+                auth_user_service.cookie_token_name,
+                jwt_token,
+                auth_user_service.cookie_token_options
+            );
+            // set user ID cookie
+            response.cookie(
+                auth_user_service.cookie_userID_name,
+                foundUser.id,
+                auth_user_service.cookie_userID_options
+            );
+    
+            /* Call the next function */
+            next();
 
-        /* Call the next function */
-        next();
+        })
+        .catch(error => {
+            next(new UserAuthenticationError(error));
+        });
     },
 
     /**
      * Middleware that requires authentication to proceed.
      * If user is not authenticated (i.e. doesn't have a token or has an invalid one), throws an appropriate error.
+     * Otherwise, saves the relevant user in the request body as request.user
      * @param {*} request 
      * @param {*} response 
      * @param {*} next 
@@ -83,9 +93,6 @@ const auth_user_service = {
     requireAuthentication (request, response, next) {
         const token  = request.cookies[auth_user_service.cookie_token_name];
         const userID = request.cookies[auth_user_service.cookie_userID_name];
-
-        if (token == null || userID == null) // token cookie or the userID cookie don't exist
-            throw new UserAuthenticationError(this.name, ": token or userID doesn't exist.");
         
         /* Verify that the token is a valid token */
         jwt.verify(token, process.env.JWT_TOKEN_SECRET, (error, payload) => {
@@ -96,9 +103,22 @@ const auth_user_service = {
             if (userID !== payload.id)
                 throw new UserAuthenticationError(this.name, ": token doesn't match userID");
             
-            // here, token is verified. save it in the request params.
-            request.payload = payload;
-            next(); // call the next function
+            /* Find the user in the database */
+            UserModel.findById(userID)
+            .then(foundUser => {
+                if (!foundUser)
+                    throw new UserAuthenticationError();
+
+                // Save user details in request body
+                request.user = foundUser;
+        
+                /* Call the next function */
+                next();
+
+            })
+            .catch(error => {
+                next(new UserAuthenticationError(error));
+            });
         });
     },
 
