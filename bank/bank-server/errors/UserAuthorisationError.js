@@ -5,7 +5,7 @@ const ApplicationError = require('./ApplicationError');
  * Status: 403 Forbidden
  */
 class UserAuthorisationError extends ApplicationError {
-    constructor (message) {
+    constructor(message) {
         super(message || "User unauthorised.", 403);
     }
 }

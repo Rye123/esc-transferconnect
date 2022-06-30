@@ -2,7 +2,7 @@
     Defined in a `.env` file in the same directory of this file, like this: VARIABLE_NAME=...
     These variables are accessible in Node with process.env.VARIABLE_NAME.
 */
-require('dotenv').config(); 
+require('dotenv').config();
 
 /* Module Imports */
 const express = require('express');
@@ -43,7 +43,7 @@ app.use(morgan('dev'));  // logs requests
 /* REST Endpoints for User Authentication */
 app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, response) => {
     const foundUser = request.user; // attached from requireAuthentication: Any error there should be resolved already
-    
+
     // ensure user is AUTHORISED to view this
     if (request.params.id !== foundUser.id)
         throw new UserAuthorisationError();
@@ -96,7 +96,7 @@ app.use((error, request, response, next) => {
             return auth_user_service.deauthenticateUser(request, response, () => {
                 return response.status(error.status).json({ error: "forbidden" })
             });
-    
+
         default:
             console.error(error);
             return response.status(500).json({ error: "internal server error" })

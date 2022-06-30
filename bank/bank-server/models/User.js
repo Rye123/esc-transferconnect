@@ -6,12 +6,12 @@ mongoose.connect(mongoDBurl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(result => {
-    console.log("Established connection to MongoDB.");
-})
-.catch(error => {
-    console.error("Database Error: ", error);
-});
+    .then(result => {
+        console.log("Established connection to MongoDB.");
+    })
+    .catch(error => {
+        console.error("Database Error: ", error);
+    });
 
 // Mongoose Users setup
 const UserSchema = new mongoose.Schema({

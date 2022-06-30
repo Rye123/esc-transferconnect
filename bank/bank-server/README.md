@@ -10,13 +10,19 @@ npm install
 
 This will install all necessary dependencies into a `node_modules` directory.
 
-Next, run `node`, and in the given shell, generate a $64$-byte secret key for the JSON Web Tokenh:
+```bash
+npm install --only=dev
+```
+
+This will install the development dependencies like `nodemon`.
+
+Next, run `node`, and in the given shell, generate a $64$-byte secret key for the JSON Web Token:
 
 ```js
 > require('crypto').randomBytes(64).toString('hex')
 ```
 
-Save that token in a `.env` file in this directory as `JWT_TOKEN_SECRET`.
+Save that token in a `.env` file in this directory as `JWT_TOKEN_SECRET`. Also, a user database should be set up in a MongoDB server, and saved as `MONGODB_URI`. PM me for the URI :L.
 
 ```
 JWT_TOKEN_SECRET=<your generated token>

@@ -5,7 +5,7 @@ const ApplicationError = require('./ApplicationError');
  * Status: 401 Unauthorised
  */
 class UserAuthenticationError extends ApplicationError {
-    constructor (message) {
+    constructor(message) {
         super(message || "Authentication failed.", 401);
     }
 }
