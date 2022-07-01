@@ -15,7 +15,7 @@ mongoose.connect(mongoDBurl, {
 
 // Mongoose Users setup
 const UserSchema = new mongoose.Schema({
-    name: String,
+    username: String,
     password: String,
     points: {
         type: Number,
