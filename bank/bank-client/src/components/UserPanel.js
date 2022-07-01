@@ -1,5 +1,8 @@
 import React from 'react';
 
+/* Styling */
+import './UserPanel.css';
+
 /* Services */
 import auth_service from '../services/auth_service';
 
@@ -36,12 +39,22 @@ const UserPanel = ({user, setUser}) => {
 
     return (
         <div>
-            <h1>Welcome, {user.username}</h1>
-            <div>
-                <b>ID: </b> {user.id} <br />
-                <b>Points: </b> {user.points || 0}
+            <img class ="wave" src='/images/wave.png'></img>
+            <div class = "container">
+                <div class = "img">
+                    <img src= "/images/UserPanel.svg" alt="Profile Page"></img>
+                </div>
+                <div class = "display-container">
+                    <div>
+                        <div>
+                            <h2>Welcome, {user.username} </h2><br></br>
+                            <b>Your User ID is: </b> {user.id} <br></br><br></br>
+                            <b>The number of points you have: </b> {user.points || 0} <br></br><br></br>
+                        </div>
+                        <button class = "btn" onClick={onClickLogout}>Log Out</button>
+                    </div>
+                </div>
             </div>
-            <button onClick={onClickLogout}>Log Out</button>
         </div>
     )
 };
