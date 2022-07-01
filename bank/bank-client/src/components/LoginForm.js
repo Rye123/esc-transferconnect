@@ -54,32 +54,32 @@ const LoginForm = ({user, setUser}) => {
 
     return (
         <>
-            <img class ="wave" src='/images/wave.png'></img>
-            <div class = "container">
-                <div class = "img">
+            <img className ="wave" src='/images/wave.png'></img>
+            <div className = "container">
+                <div className = "img">
                     <img src='/images/vault.svg' alt="Banking app"></img>
                 </div>
-                <div class = "login-container">
+                <div className = "login-container">
                     <form onSubmit={handleFormSubmission}>
-                        <img class="avatar" src='/images/profile.svg' alt="Profile"></img>
+                        <img className="avatar" src='/images/profile.svg' alt="Profile"></img>
                         <h2>Digibank</h2>
-                        <div class="input-div one">
-                            <div class= "i">
-                                <i class="material-icons">person</i>
+                        <div className="input-div one">
+                            <div className= "i">
+                                <i className="material-icons">person</i>
                             </div>
                             <div>
-                                <input class = "input" type="text" placeholder='Username' value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
+                                <input className = "input" type="text" placeholder='Username' value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
                             </div>
                         </div>
-                        <div class="input-div two">
-                            <div class= "i">
-                            <i class="material-icons">lock</i>
+                        <div className="input-div two">
+                            <div className= "i">
+                            <i className="material-icons">lock</i>
                             </div>
                             <div>
-                                <input class = "input" type="password" placeholder='Password' value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
+                                <input className = "input" type="password" placeholder='Password' value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
                             </div>
                         </div>
-                        <button class = "btn" type="submit">Login</button>
+                        <button className = "btn" type="submit">Login</button>
                     </form>
                 </div>
             </div>

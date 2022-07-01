@@ -39,19 +39,19 @@ const UserPanel = ({user, setUser}) => {
 
     return (
         <div>
-            <img class ="wave" src='/images/wave.png'></img>
-            <div class = "container">
-                <div class = "img">
+            <img className ="wave" src='/images/wave.png'></img>
+            <div className = "container">
+                <div className = "img">
                     <img src= "/images/UserPanel.svg" alt="Profile Page"></img>
                 </div>
-                <div class = "display-container">
+                <div className = "display-container">
                     <div>
                         <div>
                             <h2>Welcome, {user.username} </h2><br></br>
                             <b>Your User ID is: </b> {user.id} <br></br><br></br>
                             <b>The number of points you have: </b> {user.points || 0} <br></br><br></br>
                         </div>
-                        <button class = "btn" onClick={onClickLogout}>Log Out</button>
+                        <button className = "btn" onClick={onClickLogout}>Log Out</button>
                     </div>
                 </div>
             </div>
