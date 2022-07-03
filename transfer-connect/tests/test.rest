@@ -1,17 +1,15 @@
-### Get all users
-
-### Should return details of Dummy Transfer's first entry (exampleid)
-GET http://localhost:3002/api/bank/exampleid
-
 ### Authentication Success
-POST http://localhost:3002/api/bank
+POST http://localhost:3002/api/bank/send-transfer
 Content-Type: application/json
 
 {
-    "username": "michaelmyers123",
-    "membership": "1005265",
-    "transfer": "200"
+    "memberId": "345679890L",
+    "memberFirstName": "John",
+    "memberLastName": "Doe",
+    "amount": 200,
+    "referenceNumber": 2020080101,
+    "partnerCode": "DBSSG"
 }
 
 ### enter id of previous data into the url after the slash, see if it returns the above data
-GET http://localhost:3002/api/bank/347c1edf-6ff5-4b71-9803-49486e8fe626
+GET http://localhost:3002/api/bank/get-transfer/62c161abadca7dfc56d5c76b

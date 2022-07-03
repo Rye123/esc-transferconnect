@@ -8,6 +8,7 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan'); // Logging middleware: https://expressjs.com/en/resources/middleware/morgan.html
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 /* Local Module Imports */
 const bankRoutes = require('./routes/bank-routes');
@@ -34,4 +35,12 @@ app.use((error, req, res, next) => {  //special error checking function, when ro
     res.json({message: error.message || 'An unkown error occured'});
 })
 
-app.listen(PORT);
+const mongoDBurl = process.env.MONGODB_URI;
+mongoose
+    .connect(mongoDBurl)
+    .then(() => {
+        app.listen(PORT);
+    })
+    .catch(err => {
+        console.log(err);
+    });

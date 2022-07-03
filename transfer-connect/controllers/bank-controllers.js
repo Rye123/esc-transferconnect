@@ -1,5 +1,11 @@
-const HttpError = require("../models/http-error.js");
+
+const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
 const uuid = require("uuid");
+
+/* User Defined functions*/
+const HttpError = require('../models/http-error');
+const Transfer = require("../models/transfer");
 
 let DUMMY_TRANSFERS = [
     {
@@ -10,30 +16,54 @@ let DUMMY_TRANSFERS = [
     }
 ]
 
-const getTransferById = (req, res, next) => {
+const getTransferById = async (req, res, next) => {
     const transferId = req.params.tid;
-    const transfer = DUMMY_TRANSFERS.find(t => {
-        return t.tid === transferId;
-    });
+
+    let transfer;
+    try {
+        transfer = await Transfer.findById(transferId);
+    } catch (err) {
+        return next( new HttpError('Something went wrong, could not find requested transfer.', 500) );
+    }
+    // const transfer = DUMMY_TRANSFERS.find(t => {
+    //     return t.tid === transferId;
+    // });
 
     if (!transfer) {
-        //throw error
-        throw new HttpError('Could not find a transfer for the provided id', 404);
+        //return error
+        return next( new HttpError('Could not find a transfer for the provided id', 404) );
     }
 
-    res.json({transfer});
+    res.json({ transfer: transfer.toObject({ getters: true }) });
 }
 
-const createTransfer = (req, res, next) => {
-    const {username, membership, transfer} = req.body;
-    const createdTransfer = {
-        tid: uuid.v4(),
-        username,
-        membership,
-        transfer
+const createTransfer = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return next(
+        new HttpError('Invalid inputs passed, please check your data.', 422)
+        );
+    }
+    
+    const {memberId, memberFirstName, memberLastName, amount, referenceNumber, partnerCode} = req.body;
+    
+    const createdTransfer = new Transfer({
+        memberId,
+        memberFirstName,
+        memberLastName,
+        amount,
+        referenceNumber,
+        partnerCode
+    })
+
+    //in places controllers code, why need to have let user = await user.findbyid(creator) as per the breakpoint
+    try {
+        await createdTransfer.save();
+    } catch (err) {
+        return next( new HttpError('Creating place failed, please try again.', 500) );
     }
 
-    DUMMY_TRANSFERS.push(createdTransfer);
+    // DUMMY_TRANSFERS.push(createdTransfer);
 
     res.status(201).json({transfer: createdTransfer});
 }

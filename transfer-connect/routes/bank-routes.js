@@ -3,8 +3,10 @@ const router = express.Router();
 
 const bankControllers = require("../controllers/bank-controllers");
 
-router.get("/:tid",bankControllers.getTransferById);
+router.get("/get-transfer/:tid",bankControllers.getTransferById);
 
-router.post("/",bankControllers.createTransfer);
+router.get("/get-loyalty-data/:lid",);
+
+router.post("/send-transfer",bankControllers.createTransfer);
 
 module.exports = router;
