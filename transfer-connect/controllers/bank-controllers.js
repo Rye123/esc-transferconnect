@@ -1,7 +1,6 @@
-
+const moment = require('moment');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
-const uuid = require("uuid");
 
 /* User Defined functions*/
 const HttpError = require('../models/http-error');
@@ -51,6 +50,7 @@ const createTransfer = async (req, res, next) => {
         memberId,
         memberFirstName,
         memberLastName,
+        transferDate: moment().toISOString(),
         amount,
         referenceNumber,
         partnerCode

@@ -12,4 +12,4 @@ Content-Type: application/json
 }
 
 ### enter id of previous data into the url after the slash, see if it returns the above data
-GET http://localhost:3002/api/bank/get-transfer/62c161abadca7dfc56d5c76b
+GET http://localhost:3002/api/bank/get-transfer/62c16bd657cd7abc0d1712a7
