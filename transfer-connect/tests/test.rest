@@ -1,4 +1,6 @@
-### Authentication Success
+### Testing: route for bank server to send transfer information to TC
+### Input: JSON file with transfer information
+### Expected Output: JSON message of successful outcome
 POST http://localhost:3002/api/bank/send-transfer
 Content-Type: application/json
 
@@ -11,5 +13,13 @@ Content-Type: application/json
     "partnerCode": "DBSSG"
 }
 
-### enter id of previous data into the url after the slash, see if it returns the above data
+### Testing: route for bank server to get information about previously sent transfer from TC
+### Input: transfer id (id of collection in MongoDB) in the url
+### Output: JSON file with transfer information
 GET http://localhost:3002/api/bank/get-transfer/62c16bd657cd7abc0d1712a7
+
+
+### Testing: route for bank server to get information about loyalty program
+### Input: loyalty program id in the url
+### Output: JSON file with loyalty program information
+GET http://localhost:3002/api/bank/get-loyalty-data/GOPOINTS

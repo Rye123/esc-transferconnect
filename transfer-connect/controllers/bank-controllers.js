@@ -56,7 +56,6 @@ const createTransfer = async (req, res, next) => {
         partnerCode
     })
 
-    //in places controllers code, why need to have let user = await user.findbyid(creator) as per the breakpoint
     try {
         await createdTransfer.save();
     } catch (err) {
