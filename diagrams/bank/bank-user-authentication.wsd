@@ -1,0 +1,62 @@
+@startuml Bank User Authentication Sequence Diagram
+skinparam ParticipantPadding 10
+skinparam BoxPadding 5
+
+hide footbox
+
+title **Bank: User Authentication**
+
+participant BankClient as "Bank Client"
+box "Bank Server Service" #LightYellow
+    participant BankServer as "Bank Server"
+    participant JWT as "JSON Web Token Service"
+    participant PasswordEncryptionService as "Password Encryption Service"
+end box
+participant BankUsersDB as "Bank Database: Users"
+
+group User Sign-in
+    hnote over BankClient: User submits credentials through\nthe login form.
+    BankClient -> BankServer: ""POST /api/user-token-auth""\n""{username: {uname}, password: {pword}}""
+    BankServer ->> PasswordEncryptionService: ""ENCRYPT({pword}, {salt})""
+    PasswordEncryptionService -> PasswordEncryptionService: Hashing of ""{pword}""
+    BankServer <-- PasswordEncryptionService: ""{hashedpword}""
+
+    BankServer ->> BankUsersDB: ""QUERY {username: {uname}, password: {hashedpword}}""
+    BankUsersDB -> BankUsersDB: Search for match
+    alt match found (credentials correct)
+        BankServer <-- BankUsersDB: ""User"" instance corresponding to the credentials
+        BankServer ->> JWT: ""JWT_sign(""payload based on ""User)""
+        JWT -> JWT: Generation of token
+        BankServer <-- JWT: Generated token, ""jwt_token""
+        BankClient <<-- BankServer: HTTP 201 Created. ""Cookie: jwt_token, user_id""\nJWT token and the user ID are set as cookies.
+    else no match found
+        BankServer <-- BankUsersDB: ""None"" representing wrong credentials
+        BankClient <<-- BankServer: HTTP 401 Unauthorised.
+    end
+end
+
+group User attempts to access restricted information
+    BankClient -> BankServer: ""GET/POST"" arbitrary restricted endpoint\nCookies sent along with request: ""{jwt_token, user_id}"".
+    note left of BankClient: This includes the \n""user-token-resolve"" endpoint\nwhere the user's personal information\n is returned.
+    BankServer ->> JWT: ""JWT_verify(jwt_token)""
+    JWT -> JWT: Verification of token
+    alt token verified
+        BankServer <-- JWT: Token Verified
+        BankServer -> BankServer: Ensure user possesses the correct\npermissions (e.g. ID 123 can only access\nID 123's data)
+        alt correct permissions
+            BankClient <<-- BankServer: Appropriate HTTP response to requested data.
+        else invalid permissions
+            BankClient <<-- BankServer: HTTP 403 Forbidden.
+        end
+    else token invalid
+        BankServer <-- JWT: Token INVALID
+        BankClient <<-- BankServer: HTTP 403 Forbidden.
+    end
+end
+
+group User Sign-out
+    hnote over BankClient: User clicks the "Log Out" button.
+    BankClient -> BankServer: ""POST /api/user-token-terminate""
+    BankClient <<-- BankServer: HTTP 204 No Content. ""Cookie: -, -""\nJWT token and user ID cookies are cleared.
+end
+@enduml

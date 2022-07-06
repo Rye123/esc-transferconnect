@@ -1,0 +1,52 @@
+@startuml Program Information Sequence Diagram
+skinparam ParticipantPadding 10
+skinparam BoxPadding 5
+
+hide footbox
+title **Program Information**
+
+participant BankClient as "Bank Client"
+
+box "Bank Server Service" #LightYellow
+  participant BankCache as "Bank Server Cache"
+  participant BankServer as "Bank Server"
+end box
+
+box "TransferConnect" #LightBlue
+  participant TransferConnect as "TransferConnect"
+  participant TCInfoDB as "TC Database: Program Information"
+end box
+
+participant LoyaltyProgram as "Loyalty Program"
+
+group Daily polling for information
+  TransferConnect ->> LoyaltyProgram: ""GET /lp_api/program_info""
+  TransferConnect <<-- LoyaltyProgram: HTTP 200 OK, ""{content: {program-info for {id}}}""
+  TransferConnect ->> TCInfoDB: ""DB_STORE/DB_UPDATE {id: {id}, content: {program-info for {id}}}""
+end
+
+group User wants to view program with ID {id}.
+  BankClient ->> BankServer: ""GET /api/program-info/:id""
+
+  BankCache <<- BankServer: CACHE_REQUEST ""program-info for {id}""
+  alt {id} in cache
+    BankCache --> BankServer: ""{id: {id}, content: {program-info for {id}}}""
+    BankClient <<-- BankServer: HTTP 200 OK, ""{id: {id}, content: {program-info for {id}}}""
+  else {id} is NOT in cache OR info is outdated
+    BankCache --> BankServer: CACHE MISS
+    BankServer ->> TransferConnect: ""GET /api/program-info/:id""
+    TransferConnect ->> TCInfoDB: ""DB_REQUEST program-info for {id}""
+    TCInfoDB -> TCInfoDB: Search for {id}
+    alt {id} in TC Database
+      TransferConnect <-- TCInfoDB: ""{id: {id}, content: {program-info for {id}}}""
+      BankServer <<-- TransferConnect: HTTP 200 OK, ""{id: {id}, content: {program-info for {id}}}""
+      BankCache <<- BankServer: ""{id: {id}, content: {program-info for {id}}}""
+      BankClient <<-- BankServer: HTTP 200 OK, ""{id: {id}, content: {program-info for {id}}}""
+    else {id} NOT in TC Database
+      TransferConnect <-- TCInfoDB: ""DB MISS""
+      BankServer <<-- TransferConnect: HTTP 404 Not Found
+      BankClient <<-- BankServer: HTTP 404 Not Found.
+    end
+  end
+end
+@enduml

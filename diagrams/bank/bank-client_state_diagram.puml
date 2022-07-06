@@ -1,0 +1,51 @@
+@startuml Bank Client State Diagram
+hide empty description
+
+state LoginPage as "Login Page"
+state UserPanelPage as "User Panel/Profile Page"
+state LoyaltyProgramsPage as "Loyalty Programs Listing"
+state TransferHistoryPage as "Transfer History Page"
+state TransferPointsPage as "Points Transfer Page"
+state ProgramMembershipPage as "Loyalty Program Membership Page"
+
+state hasMembershipAtLoyaltyProgramsPage <<choice>>
+state hasMembershipAtProgramMembershipPage <<choice>>
+
+[*] -[#red]> LoginPage: No session
+[*] -[#green]> UserPanelPage: Session exists
+
+LoginPage -[#green]-> UserPanelPage: Auth success
+LoginPage -[#red]-> LoginPage: Auth failure
+
+UserPanelPage --> LoyaltyProgramsPage: 'Programs' clicked
+UserPanelPage --> TransferHistoryPage: 'Transfer History' clicked
+UserPanelPage -[#red,dotted]-> LoginPage: 'Logout'
+UserPanelPage: Contains basic information of the user.\n- Username\n- Points
+
+TransferHistoryPage -[dotted]-> UserPanelPage: 'Profile' clicked
+TransferHistoryPage --> TransferDetailsPage: 'View details' clicked\n(on specific transfer)
+TransferHistoryPage: Contains list of all the transfers made so far\nEach transfer can be viewed by clicking it.
+
+TransferDetailsPage -[dotted]-> TransferHistoryPage: 'Return'
+TransferDetailsPage: Contains details of a specific transfer\n(pending, completed, etc)
+
+LoyaltyProgramsPage -[dotted]-> UserPanelPage: 'Profile' clicked
+LoyaltyProgramsPage --> hasMembershipAtLoyaltyProgramsPage: 'Transfer Points' clicked\n(on specific program)
+    hasMembershipAtLoyaltyProgramsPage --> TransferPointsPage: Membership is registered
+    hasMembershipAtLoyaltyProgramsPage --> ProgramMembershipPage: Membership not registered
+    note left of hasMembershipAtLoyaltyProgramsPage: Action varies if user has registered\na membership with this loyalty program
+LoyaltyProgramsPage: Contains list of the loyalty programs.\nEach program can be viewed by clicking it.
+
+TransferPointsPage -[dotted]-> LoyaltyProgramsPage: 'Cancel Transfer' clicked
+TransferPointsPage --> ProgramMembershipPage: 'Edit membership' clicked
+TransferPointsPage ----> TransferDetailsPage: 'Transfer' clicked\n(And validation success)
+TransferPointsPage: Transfer points to a specific loyalty program
+
+ProgramMembershipPage -[dotted]-> hasMembershipAtProgramMembershipPage: 'Cancel' clicked
+    hasMembershipAtProgramMembershipPage -[dotted]-> TransferPointsPage: Membership exists
+    hasMembershipAtProgramMembershipPage -[dotted]-> LoyaltyProgramsPage: Membership doesn't exist
+    note right of hasMembershipAtProgramMembershipPage: We don't want to go back to Points Transfer Page\nif the membership doesn't exist!
+ProgramMembershipPage --> TransferPointsPage: 'Confirm' clicked\n(membership is registered/edited)
+ProgramMembershipPage: User can set or modify their loyalty program membership
+
+@enduml

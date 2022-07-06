@@ -1,0 +1,43 @@
+@startuml Bank Class Diagram
+
+title "Bank Server Database Models"
+
+class Bank {
+    Note: This represents the overall database.
+    + ""partner-code"": ""String""
+    + ""users"": ""Array<User>""
+    + ""loyalty-program-memberships"": ""Array<LoyaltyProgramMembership>""
+    + ""transfers"": ""Array<AccrualTransfer>""
+}
+
+class User {
+    + ""id"": ""String""
+    + ""username"": ""String""
+    + ""first-name"": ""String""
+    + ""last-name"": ""String""
+    + {field} ""password"": ""String"" (hashed)
+    + ""points"": ""Number""
+    + {field} ""memberships"": ""Array<Number>"" (IDs of corresponding memberships)
+    + {field} ""transfers"": ""Array<Number>"" (IDs of corresponding transfers)
+}
+
+class LoyaltyProgramMembership {
+    + ""id"": ""String""
+    + {field} ""exchange-rate"": ""Number"" (ratio TC points/Program points)
+}
+
+class AccrualTransfer {
+    + ""id"": ""String""
+    + ""membership-id"": ""String""
+    + ""status"": ""String""
+}
+
+Bank "1" *-- "0..*" User : contains
+Bank "1" *-- "0..*" LoyaltyProgramMembership : contains
+Bank "1" *-- "0..*" AccrualTransfer : contains
+
+User  -right- "0..*" LoyaltyProgramMembership : ""Number"" points to >
+User  -right- "0..*" AccrualTransfer: ""Number"" points to >
+AccrualTransfer -left- LoyaltyProgramMembership: ""membership-id"" points to >
+
+@enduml
