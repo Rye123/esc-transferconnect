@@ -23,3 +23,38 @@ GET http://localhost:3002/api/bank/get-transfer/62c16bd657cd7abc0d1712a7
 ### Input: loyalty program id in the url
 ### Output: JSON file with loyalty program information
 GET http://localhost:3002/api/bank/get-loyalty-data/GOPOINTS
+
+### Testing: route for bank server to validate loyalty points id, given program
+### Input: program id, followed by loyalty points id in the url
+### Output: JSON file true/false boolean value 
+GET http://localhost:3002/api/bank/get-LPID-validation/GOPOINTS/1234567890
+
+### Testing: route for bank server to validate loyalty points id, given program
+### Input: program id, followed by loyalty points id in the url
+### Output: JSON file true/false boolean value 
+GET http://localhost:3002/api/bank/get-LPID-validation/INDOMILES/1234567890
+
+### Testing: route for bank server to validate loyalty points id, given program
+### Input: program id, followed by loyalty points id in the url
+### Output: JSON file true/false boolean value 
+GET http://localhost:3002/api/bank/get-LPID-validation/EMINENTGUEST/123456789012
+
+### Testing: route for bank server to validate loyalty points id, given program
+### Input: program id, followed by loyalty points id in the url
+### Output: JSON file true/false boolean value 
+GET http://localhost:3002/api/bank/get-LPID-validation/QFLYER/1234567890
+
+### Testing: route for bank server to validate loyalty points id, given program
+### Input: program id, followed by loyalty points id in the url
+### Output: JSON file true/false boolean value 
+GET http://localhost:3002/api/bank/get-LPID-validation/CONRADCLUB/123456789
+
+### Testing: route for bank server to validate loyalty points id, given program
+### Input: program id, followed by loyalty points id in the url
+### Output: JSON file true/false boolean value 
+GET http://localhost:3002/api/bank/get-LPID-validation/MILLENIUMREWARDS/123456789L
+
+### Testing: route for bank server to validate loyalty points id, given program
+### Input: program id, followed by loyalty points id in the url
+### Output: JSON file true/false boolean value 
+GET http://localhost:3002/api/bank/get-LPID-validation/DOESNTEXIST/123456789
