@@ -2,19 +2,39 @@
 
 This contains the code for the banking company server.
 
-To set up, simply run:
+## Installation
 
-### `npm install`
+```bash
+npm install
+```
 
 This will install all necessary dependencies into a `node_modules` directory.
 
-## Available Scripts
+```bash
+npm install --only=dev
+```
+
+This will install the development dependencies like `nodemon`.
+
+Next, run `node`, and in the given shell, generate a $64$-byte secret key for the JSON Web Token:
+
+```js
+> require('crypto').randomBytes(64).toString('hex')
+```
+
+Save that token in a `.env` file in this directory as `JWT_TOKEN_SECRET`. Also, a user database should be set up in a MongoDB server, and saved as `MONGODB_URI`. PM me for the URI :L.
+
+```
+JWT_TOKEN_SECRET=<your generated token>
+```
+
+## Usage
 
 In the project directory, you can run:
 
-### `npm start`
+```bash
+npm start
+```
 
-Runs the server in the development mode.\
+This runs the app in development mode. The page will reload when you make changes.\
 Open [http://localhost:3001](http://localhost:3001) to view it in your browser.
-
-The page will reload when you make changes.
