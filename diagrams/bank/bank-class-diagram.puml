@@ -1,43 +1,61 @@
 @startuml Bank Class Diagram
 
-title "Bank Server Database Models"
+title "Bank Models"
 
 class Bank {
-    Note: This represents the overall database.
+    This represents the bank's database.
+    ---
     + ""partner-code"": ""String""
     + ""users"": ""Array<User>""
-    + ""loyalty-program-memberships"": ""Array<LoyaltyProgramMembership>""
-    + ""transfers"": ""Array<AccrualTransfer>""
+    + ""loyaltyProgramMemberships"": ""Array<LoyaltyProgramMembership>""
+    + ""loyaltyPrograms"": ""Array<LoyaltyProgram>""
+    + ""transfers"": ""Array<Transfer>""
 }
 
 class User {
-    + ""id"": ""String""
+    This represents a user of the bank.
+    ---
+    + ""userId"": ""String""
     + ""username"": ""String""
-    + ""first-name"": ""String""
-    + ""last-name"": ""String""
+    + ""firstName"": ""String""
+    + ""lastName"": ""String""
     + {field} ""password"": ""String"" (hashed)
     + ""points"": ""Number""
-    + {field} ""memberships"": ""Array<Number>"" (IDs of corresponding memberships)
-    + {field} ""transfers"": ""Array<Number>"" (IDs of corresponding transfers)
+    + {field} ""loyaltyProgramMembershipIds"": ""Array<Number>"" \nIDs of memberships registered to this user
+    + {field} ""transferIds"": ""Array<Number>"" \nIDs of transfers made by this user
 }
 
-class LoyaltyProgramMembership {
-    + ""id"": ""String""
+class LoyaltyProgram {
+    This represents a single loyalty program.
+    ---
+    + ""loyaltyProgramId"": ""String""
     + {field} ""exchange-rate"": ""Number"" (ratio TC points/Program points)
 }
 
-class AccrualTransfer {
-    + ""id"": ""String""
-    + ""membership-id"": ""String""
+class LoyaltyProgramMembership {
+    This represents a membership registered under\n a specific Bank User for a specific Loyalty Program.
+    ---
+    + ""userId"": ""String""\nID of Bank User this membership is registered to.
+    + ""loyaltyProgramMemberId"": ""String""\nID of loyalty program membership.
+    + ""loyaltyProgramId"": ""String""\nID of loyalty program.
+}
+
+class Transfer {
+    This represents a single accrual transfer made by a specific bank user\nunder a specific program membership.
+    ---
+    + ""transferId"": ""String""
+    + ""loyaltyProgramMemberId"": ""String""
     + ""status"": ""String""
 }
 
-Bank "1" *-- "0..*" User : contains
-Bank "1" *-- "0..*" LoyaltyProgramMembership : contains
-Bank "1" *-- "0..*" AccrualTransfer : contains
+Bank "1" *-- "0..*" User : ""users"" contains >
+Bank "1" *---- "0..*" LoyaltyProgramMembership : ""loyaltyProgramMemberships"" contains >
+Bank "1" *-- "0..*" Transfer : ""transfers"" contains >
+Bank "1" *-- "0..*" LoyaltyProgram : ""loyaltyPrograms"" contains >
 
-User  -right- "0..*" LoyaltyProgramMembership : ""Number"" points to >
-User  -right- "0..*" AccrualTransfer: ""Number"" points to >
-AccrualTransfer -left- LoyaltyProgramMembership: ""membership-id"" points to >
+User "1"*---"0..*" LoyaltyProgramMembership : ""loyaltyProgramMembershipIds"" contains\n""loyaltyProgramMembershipId"" of... \n >
+User "1"*---"0..*" Transfer : ""transferIds"" contains ""transferId"" of...\n >
+
+LoyaltyProgram --- LoyaltyProgramMembership : has ""loyaltyProgramId"" <
 
 @enduml

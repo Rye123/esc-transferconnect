@@ -3,10 +3,19 @@ hide empty description
 
 state LoginPage as "Login Page"
 state UserPanelPage as "User Panel/Profile Page"
+UserPanelPage: Contains basic information of the user.\n- Username\n- Points
 state LoyaltyProgramsPage as "Loyalty Programs Listing"
+LoyaltyProgramsPage: Contains a list of the loyalty programs.\nEach program is rendered as an element in the list,\nthat links to the program's respective info page.\nEach program also has a 'Transfer' button that links\nto the Points Transfer Page.
+state LoyaltyProgramInfoPage as "Loyalty Program Info Page"
+LoyaltyProgramInfoPage: Contains information on the specific loyalty program.\nThis page also has several links:\n- Transfer: Links to transfer page with the current program set\n- Membership: Links to the membership edit page for the current program.
 state TransferHistoryPage as "Transfer History Page"
+TransferHistoryPage: Contains list of all the transfers made so far\nEach transfer can be viewed by clicking it.
+state TransferDetailsPage as "Transfer Details Page"
+TransferDetailsPage: Contains details of a specific transfer\n(pending, completed, etc)
 state TransferPointsPage as "Points Transfer Page"
+TransferPointsPage: Transfer points to a specific loyalty program
 state ProgramMembershipPage as "Loyalty Program Membership Page"
+ProgramMembershipPage: Loyalty program membership for a specific program can be set or edited here.
 
 state hasMembershipAtLoyaltyProgramsPage <<choice>>
 state hasMembershipAtProgramMembershipPage <<choice>>
@@ -20,32 +29,31 @@ LoginPage -[#red]-> LoginPage: Auth failure
 UserPanelPage --> LoyaltyProgramsPage: 'Programs' clicked
 UserPanelPage --> TransferHistoryPage: 'Transfer History' clicked
 UserPanelPage -[#red,dotted]-> LoginPage: 'Logout'
-UserPanelPage: Contains basic information of the user.\n- Username\n- Points
 
 TransferHistoryPage -[dotted]-> UserPanelPage: 'Profile' clicked
-TransferHistoryPage --> TransferDetailsPage: 'View details' clicked\n(on specific transfer)
-TransferHistoryPage: Contains list of all the transfers made so far\nEach transfer can be viewed by clicking it.
+TransferHistoryPage ---> TransferDetailsPage: 'View details' clicked\n(on specific transfer)
 
-TransferDetailsPage -[dotted]-> TransferHistoryPage: 'Return'
-TransferDetailsPage: Contains details of a specific transfer\n(pending, completed, etc)
+TransferDetailsPage -[dotted]--> TransferHistoryPage: 'Return'
 
 LoyaltyProgramsPage -[dotted]-> UserPanelPage: 'Profile' clicked
-LoyaltyProgramsPage --> hasMembershipAtLoyaltyProgramsPage: 'Transfer Points' clicked\n(on specific program)
+LoyaltyProgramsPage ----> hasMembershipAtLoyaltyProgramsPage: 'Transfer' clicked\n(on specific program)
     hasMembershipAtLoyaltyProgramsPage --> TransferPointsPage: Membership is registered
     hasMembershipAtLoyaltyProgramsPage --> ProgramMembershipPage: Membership not registered
     note left of hasMembershipAtLoyaltyProgramsPage: Action varies if user has registered\na membership with this loyalty program
-LoyaltyProgramsPage: Contains list of the loyalty programs.\nEach program can be viewed by clicking it.
+LoyaltyProgramsPage --> LoyaltyProgramInfoPage: Specific loyalty program clicked
+
+LoyaltyProgramInfoPage -[dotted]-> LoyaltyProgramsPage: 'Back'
+LoyaltyProgramInfoPage --> hasMembershipAtLoyaltyProgramsPage: 'Transfer' clicked
+LoyaltyProgramInfoPage ---> ProgramMembershipPage: 'Membership' clicked
 
 TransferPointsPage -[dotted]-> LoyaltyProgramsPage: 'Cancel Transfer' clicked
 TransferPointsPage --> ProgramMembershipPage: 'Edit membership' clicked
-TransferPointsPage ----> TransferDetailsPage: 'Transfer' clicked\n(And validation success)
-TransferPointsPage: Transfer points to a specific loyalty program
+TransferPointsPage --> TransferDetailsPage: 'Transfer' clicked\n(And validation success)
 
 ProgramMembershipPage -[dotted]-> hasMembershipAtProgramMembershipPage: 'Cancel' clicked
     hasMembershipAtProgramMembershipPage -[dotted]-> TransferPointsPage: Membership exists
-    hasMembershipAtProgramMembershipPage -[dotted]-> LoyaltyProgramsPage: Membership doesn't exist
+    hasMembershipAtProgramMembershipPage -[dotted]--> LoyaltyProgramInfoPage: Membership doesn't exist
     note right of hasMembershipAtProgramMembershipPage: We don't want to go back to Points Transfer Page\nif the membership doesn't exist!
 ProgramMembershipPage --> TransferPointsPage: 'Confirm' clicked\n(membership is registered/edited)
-ProgramMembershipPage: User can set or modify their loyalty program membership
 
 @enduml
