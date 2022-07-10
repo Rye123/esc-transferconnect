@@ -12,16 +12,18 @@ const mongoose = require('mongoose');
 
 /* Local Module Imports */
 const bankRoutes = require('./routes/bank-routes');
+const programRoutes = require('./routes/program-routes');
 const HttpError = require('./models/http-error');
 
 /* Express Setup */
 const app = express();
 const PORT = process.env.PORT || 3002;
-const APP_NAME = "Bank Server";
 
 app.use(bodyParser.json());
 
 app.use('/api/bank', bankRoutes);
+
+app.use('/api/program', programRoutes);
 
 app.use((req, res, next) => {  //this catches the case when non existent routes are called
     throw new HttpError("Could not find this route.", 404);
