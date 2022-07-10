@@ -12,3 +12,16 @@ Follow the installation instructions in [`bank-server`](bank-server/README.md) a
 ## Usage
 
 In two separate terminals, run `npm start` in `bank-server` and in `bank-client`. Your browser should automatically go to [http://localhost:3000](http://localhost:3000), otherwise click the link.
+
+## Current Functionality
+- JWT Authentication, with users from a MongoDB Atlas database.
+- Basic design for Banking Client.
+
+## Future Functionality
+- Security
+  - HTTPS to prevent MITM attacks on authentication
+  - SHA256 hashing of passwords
+- Views
+  - Routing to allow the views as described in the [Bank Client State Diagram](https://github.com/Rye123/esc-transferconnect/blob/main/diagrams/bank/Bank%20Client%20State%20Diagram.png).
+- Communication with TransferConnect
+  - Functionality for the above views, which likely involve sending and receiving requests from the [TransferConnect](https://github.com/Rye123/esc-transferconnect/tree/main/transfer-connect) side.

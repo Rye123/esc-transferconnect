@@ -1,0 +1,39 @@
+@startuml 
+!theme plain
+
+title TC handling API requests
+
+bank_server.js -> index.js: send API request
+index.js -> index.js: parse body data
+
+alt API request starts with '/api/bank'
+
+    index.js -> bank_routes.js: send API request to BankRoutes
+
+    alt API request matches route in bank_routes.js
+        bank_routes.js -> bank_controller.js: send API request to\nspecific controller
+        activate bank_controller.js
+
+        bank_controller.js -[#FFFFFF]>> bank_controller.js: controller carries out\nspecified function
+        bank_controller.js -> bank_routes.js: return json document
+
+        deactivate bank_controller.js
+
+        bank_routes.js -> index.js: return json document
+        index.js -> bank_server.js: return json document
+
+    else API request not found in bank_routes.js
+
+        bank_routes.js -> index.js: return null
+        index.js -> bank_server.js: send error code 404,\nroute not found
+
+    end
+
+else API request does not start with 'api/bank'
+    
+    index.js -> bank_server.js: send error code 404,\nroute not found
+
+end
+
+
+@enduml
