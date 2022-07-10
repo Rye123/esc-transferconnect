@@ -1,0 +1,32 @@
+@startuml Loyalty Program Membership ID Validation
+skinparam ParticipantPadding 10
+skinparam BoxPadding 5
+
+hide footbox
+title **Loyalty Program Membership ID Validation**
+
+box "Bank Server Service" #LightYellow
+  participant BankServer as "Bank Server"
+end box
+
+box "TransferConnect" #LightBlue
+  participant TransferConnect as "TransferConnect"
+  participant TCInfoDB as "TC Database: Program Information"
+end box
+
+BankServer -> TransferConnect: GET ""/api/program/validate/:programId?membershipId=:membershipId""
+TransferConnect ->> TCInfoDB: Query for ""programId""
+TCInfoDB -> TCInfoDB: Search for ""programId""
+alt ""programId"" found
+    TransferConnect <-- TCInfoDB: Relevant validation information\n(e.g. ""regex"")
+    TransferConnect ->> TransferConnect: Validate ""membershipId"" with\nvalidation information
+    alt ""membershipId"" is validated
+        BankServer <<-- TransferConnect: 200 OK, program information\n{\n\t""programId: ...""\n\t""programName: ...""\n\t""currencyName: ...""\n\t""processingTime: ...""\n\t""description: ...""\n\t""enrolmentLink: ...""\n\t""tncLink: ...""\n}
+    else invalid ""membershipId""
+        BankServer <<-- TransferConnect: 404 Not Found
+    end
+else program not found
+    BankServer <<-- TransferConnect: 404 Not Found
+end
+
+@enduml
