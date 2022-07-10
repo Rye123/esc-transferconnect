@@ -16,17 +16,26 @@ npm install --only=dev
 
 This will install the development dependencies like `nodemon`.
 
-Next, run `node`, and in the given shell, generate a $64$-byte secret key for the JSON Web Token:
+### Environment File Setup
+
+`bank-server` relies on a `.env` file for secrets. **For project submission, the `.env` file is already provided in the report.**
+
+Otherwise, the following are instructions to generate a custom `.env` file.
+
+#### `JWT_TOKEN_SECRET`
+
+The secret private key for the generation of a unique JWT token.
+
+Run `node`, and in the given shell, generate a $64$-byte secret key for the JSON Web Token:
 
 ```js
 > require('crypto').randomBytes(64).toString('hex')
 ```
 
-Save that token in a `.env` file in this directory as `JWT_TOKEN_SECRET`. Also, a user database should be set up in a MongoDB server, and saved as `MONGODB_URI`. PM me for the URI :L.
+Save that token in a `.env` file in this directory as `JWT_TOKEN_SECRET`. 
 
-```
-JWT_TOKEN_SECRET=<your generated token>
-```
+#### `MONGODB_URI`
+The URL for the MongoDB Atlas instance.
 
 ## Usage
 
