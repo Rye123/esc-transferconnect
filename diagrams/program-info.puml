@@ -20,8 +20,8 @@ end box
 participant LoyaltyProgram as "Loyalty Program"
 
 group Daily polling for information
-  TransferConnect ->> LoyaltyProgram: ""GET /lp_api/program_info""
-  TransferConnect <<-- LoyaltyProgram: HTTP 200 OK, ""{content: {program-info for {id}}}""
+  TransferConnect ->> LoyaltyProgram: ""SFTP_GET"" program info for ""{id}""
+  TransferConnect <<-- LoyaltyProgram: ""SFTP_RESPONSE {content: {program-info for {id}}}""
   TransferConnect ->> TCInfoDB: ""DB_STORE/DB_UPDATE {id: {id}, content: {program-info for {id}}}""
 end
 
