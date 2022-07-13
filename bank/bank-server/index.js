@@ -60,7 +60,7 @@ app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, res
  * Route serving user token resolution.
  * If token is valid, returns the authenticated user's information.
  */
-app.get('/api/token-resolve', auth_user_service.requireAuthentication, (request, response) => {
+app.get('/api/user-token-resolve', auth_user_service.requireAuthentication, (request, response) => {
     const foundUser = request.user; // attached from requireAuthentication: Any error there should be resolved already
     const userInfo = {
         id: foundUser.id,
@@ -70,11 +70,11 @@ app.get('/api/token-resolve', auth_user_service.requireAuthentication, (request,
     return response.status(200).json(userInfo);
 });
 
-app.post('/api/token-terminate', auth_user_service.deauthenticateUser, (request, response) => {
+app.post('/api/user-token-terminate', auth_user_service.deauthenticateUser, (request, response) => {
     response.status(204).end();
 });
 
-app.post('/api/token-auth', auth_user_service.authenticateUser, (request, response) => {
+app.post('/api/user-token-auth', auth_user_service.authenticateUser, (request, response) => {
     response.status(201).end();
 });
 
