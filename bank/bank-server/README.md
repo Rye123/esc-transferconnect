@@ -37,7 +37,7 @@ Save that token in a `.env` file in this directory as `JWT_TOKEN_SECRET`.
 #### `MONGODB_URI`
 The URL for the MongoDB Atlas instance.
 
-## usage
+## Usage
 
 In the project directory, you can run:
 
