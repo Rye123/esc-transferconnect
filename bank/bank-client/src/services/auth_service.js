@@ -6,7 +6,7 @@
 import axios from 'axios';
 
 /* Constants */
-const SERVER_URI = process.env.BANK_SERVER_URI || "http://localhost:3001/api/";
+const SERVER_URI = "/api/";
 const AUTH_URI = SERVER_URI + "user-token-auth";             // URI for authentication and token saving
 const RESOLVE_URI = SERVER_URI + "user-token-resolve";       // URI for resolving the token and getting user information
 const TERMINATE_URI = SERVER_URI + "user-token-terminate";   // URI for terminating the session

@@ -22,14 +22,6 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const APP_NAME = "Bank Server";
 
-/* Allow all cross-origin requests -- this is TEMPORARY */
-const cors = require('cors');
-const CLIENT_URI = 'http://localhost:3000';
-app.use(cors({
-    origin: CLIENT_URI,
-    credentials: true
-}));
-
 /* Cookie Parsing */
 app.use(cookieParser()); // now any request with a cookie is sent automatically
 
