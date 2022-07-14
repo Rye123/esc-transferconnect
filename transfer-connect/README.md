@@ -19,6 +19,10 @@ Open [http://localhost:3002](http://localhost:3002) to view it in your browser.
 
 The page will reload when you make changes.
 
+### `npm install ssh2-sftp-client@^8.0.0`
+
+This will specifically install ssh2 dependencies for the SFTP client into the `node_modules` directory for testing purposes.
+
 ## Current Functionality
 - Can receive transfer requests and store them inside a MongoDB database. (**Use Case #3**: Verify accrual data received from Banks.)
 - Can request for transfer request information (**Use Case #4:** Return status of transaction until its completion.)
