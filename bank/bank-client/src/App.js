@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Outlet, Link } from 'react-router-dom';
 import './App.css';
 
 /* Services */
@@ -8,14 +9,15 @@ import auth_service from './services/auth_service';
 import Utils from './utils/utils';
 
 /* Components */
-import LoginForm from './components/LoginForm';
-import UserPanel from './components/UserPanel';
+import Navbar from './components/Navbar';
+
+/* Contexts */
+import userContext from './contexts/userContext';
 
 /**
  * Main single-page application
- * @returns 
  */
-function App() {
+const App = () => {
   // State Variables
   const [user, setUser] = useState({});
 
@@ -26,16 +28,21 @@ function App() {
       setUser(currentUser);
     })
     .catch(error => {
-      console.log("User isn't signed in, redirecting to Login page.")
+      console.log("User isn't signed in.")
     })
   }, []);
 
+  const userState = {
+    user: user,
+    setUser: setUser
+  };
+
   return (
-    <>
-      <LoginForm user={user} setUser={setUser}/>
-      <UserPanel user={user} setUser={setUser}/>
-    </>
-  );
+    <userContext.Provider value={userState}>
+      <Navbar />
+      <Outlet />
+    </userContext.Provider>
+  )
 }
 
 export default App;
