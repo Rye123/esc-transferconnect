@@ -1,5 +1,5 @@
 /* Styling */
-import './NotFound.css';
+import '../styles/NotFound.css';
 
 
 const NotFound = () => {

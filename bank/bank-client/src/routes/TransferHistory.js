@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 /* Styling */
-import './TransferHistory.css';
+import '../styles/TransferHistory.css';
 
 /* Contexts */
 import userContext from '../contexts/userContext';

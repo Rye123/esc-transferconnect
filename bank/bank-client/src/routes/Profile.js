@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 /* Styling */
-import './Profile.css';
+import '../styles/Profile.css';
 
 /* Utils */
 import Utils from '../utils/utils';

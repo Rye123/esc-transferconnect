@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
 /* Styling */
-import './Login.css';
+import '../styles/Login.css';
 
 /* Services */
 import auth_service from '../services/auth_service';

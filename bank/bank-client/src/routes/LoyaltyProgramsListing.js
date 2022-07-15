@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 
 /* Styling */
-import './LoyaltyProgramsListing.css';
+import '../styles/LoyaltyProgramsListing.css';
 
 /* Contexts */
 import userContext from '../contexts/userContext';
