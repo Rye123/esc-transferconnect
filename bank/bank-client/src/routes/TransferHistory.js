@@ -6,9 +6,19 @@ import '../styles/TransferHistory.css';
 /* Contexts */
 import userContext from '../contexts/userContext';
 
+/* Classes */
+import Transfer from '../classes/Transfer';
+
+/* Components */
+import TransferHistoryElem from '../components/TransferHistory/TransferHistoryElem';
+
+const transfers = [];
+for (let i = 1; i < 11; i++) {
+    transfers.push(new Transfer((i*123).toString(), (i*432).toString(), (i*54).toString(), 'pending'))
+}
+
 const TransferHistory = () => {
     const userState = useContext(userContext);
-    console.log(transfers);
 
     return (
         <main>
@@ -16,7 +26,6 @@ const TransferHistory = () => {
             <table className="content-table">
                 <thead>
                     <tr>
-                        <th>S.No</th>
                         <th>Transfer ID</th>
                         <th>Program</th>
                         <th>Membership Number</th>
@@ -24,27 +33,9 @@ const TransferHistory = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>100005</td>
-                        <td>Dynasty Flyer</td>
-                        <td>H1234567</td>
-                        <td>COMPLETED</td>
-                    </tr>
-                    <tr className="active-row">
-                        <td>2</td>
-                        <td>100006</td>
-                        <td>Emirates Skywards</td>
-                        <td>P1234567</td>
-                        <td>PENDING</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>100007</td>
-                        <td>Asia Miles</td>
-                        <td>G1234567</td>
-                        <td>PENDING</td>
-                    </tr>
+                    {
+                        transfers.map(transfer => <TransferHistoryElem key={transfer.transferId} transfer={transfer} />)
+                    }
                 </tbody>
             </table>
         </main>
