@@ -8,11 +8,12 @@ import userContext from '../contexts/userContext';
 
 const TransferHistory = () => {
     const userState = useContext(userContext);
+    console.log(transfers);
 
     return (
         <main>
             <h1>Transfer History</h1><br />
-            <table class="content-table">
+            <table className="content-table">
                 <thead>
                     <tr>
                         <th>S.No</th>
@@ -30,7 +31,7 @@ const TransferHistory = () => {
                         <td>H1234567</td>
                         <td>COMPLETED</td>
                     </tr>
-                    <tr class="active-row">
+                    <tr className="active-row">
                         <td>2</td>
                         <td>100006</td>
                         <td>Emirates Skywards</td>
