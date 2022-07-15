@@ -13,18 +13,18 @@ const Logout = () => {
     const setUser = userState.setUser;
 
     auth_service.user_logout(user.id)
-    .then(() => {
-        console.log("Successful Logout");
-        setUser({});
-    })
-    .catch(err => {
-        console.error("Logout error", err);
-    })
-    .finally(() => {
-        return (
-            <Navigate to='/' />
-        )
-    });
+        .then(() => {
+            console.log("Successful Logout");
+            setUser({});
+        })
+        .catch(err => {
+            console.error("Logout error", err);
+        })
+        .finally(() => {
+            return (
+                <Navigate to='/' />
+            )
+        });
 }
 
 export default Logout;

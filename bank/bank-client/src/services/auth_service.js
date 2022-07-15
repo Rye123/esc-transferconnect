@@ -17,12 +17,12 @@ const TERMINATE_URI = SERVER_URI + "user-token-terminate";   // URI for terminat
  * Gets a user's information with the existing token.
  * @returns Promise. Resolves to give user info if success.
  */
-const user_getinfo = async() => {
+const user_getinfo = async () => {
     return axios
-    .get(RESOLVE_URI, { withCredentials: true })
-    .then(response => {
-        return response.data;
-    });
+        .get(RESOLVE_URI, { withCredentials: true })
+        .then(response => {
+            return response.data;
+        });
 };
 
 /**
@@ -30,22 +30,22 @@ const user_getinfo = async() => {
  * @param {{username: string, password: string}} credentials 
  * @returns Promise. Resolves to give user info and set cookie if success.
  */
-const user_login = async(credentials) => {
+const user_login = async (credentials) => {
     if (!credentials.username || !credentials.password)
         return Promise.reject({ "error": "No username or password attribute provided" });
-    
+
     return axios
-    .post(AUTH_URI, credentials, { withCredentials: true })
-    .then(() => {
-        return user_getinfo();
-    });
+        .post(AUTH_URI, credentials, { withCredentials: true })
+        .then(() => {
+            return user_getinfo();
+        });
 };
 
 /**
  * Logs the current user out
  * @returns Promise. Session is ended upon promise resolution.
  */
-const user_logout = async() => {
+const user_logout = async () => {
     return axios.post(TERMINATE_URI, {}, { withCredentials: true });
 }
 

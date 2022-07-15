@@ -1,28 +1,28 @@
 /* CSS code specific to Login.css */
 /* TODO: See design of other pages and move common style tags out */
 
-.avatar{
+.avatar {
     width: 100px;
 }
 
-.login-container{
+.login-container {
     display: flex;
     align-items: center;
     text-align: center;
 }
 
-form{
+form {
     width: 360px;
 }
 
-form h2{
+form h2 {
     font-size: 2.9rem;
     text-transform: uppercase;
     margin: 15px 0;
     color: #333;
 }
 
-.input-div{
+.input-div {
     position: relative;
     display: grid;
     grid-template-columns: 7% 93%;
@@ -31,33 +31,33 @@ form h2{
     border-bottom: 2px solid #d9d9d9;
 }
 
-.input-div.one{
+.input-div.one {
     margin-top: 0;
 }
 
-.input-div.two{
+.input-div.two {
     margin-bottom: 4px;
 }
 
-.i{
+.i {
     display: flex;
     justify-content: center;
     align-items: center;
 
 }
 
-.i i{
+.i i {
     color: #d9d9d9;
     transition: .3s;
 }
 
-.input-div > div{
+.input-div>div {
     position: relative;
     height: 45px;
 
 }
 
-.input{
+.input {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -71,5 +71,3 @@ form h2{
     font-family: 'Poppins', sans-serif;
     color: #555;
 }
-
-

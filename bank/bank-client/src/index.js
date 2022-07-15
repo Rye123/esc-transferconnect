@@ -30,7 +30,7 @@ root.render(
         <Route path='loyalty_programs' element={<RequireAuth><LoyaltyProgramsListing /></RequireAuth>} />
         <Route path='transfer_history' element={<RequireAuth><TransferHistory /></RequireAuth>} />
         <Route path='logout' element={<RequireAuth><Logout /></RequireAuth>} />
-        <Route 
+        <Route
           path='*'
           element={<NotFound />}
         />

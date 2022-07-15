@@ -17,7 +17,7 @@ const LoyaltyProgramsListing = () => {
                     </ul>
                 </div>
                 <div className="view_main">
-                    <div className="view_wrap list-view" style={{display: 'block'}}>
+                    <div className="view_wrap list-view" style={{ display: 'block' }}>
                         <div className="view_item">
                             <div className="vi_left">
                                 <a href="asia_miles_info.html">
@@ -53,7 +53,7 @@ const LoyaltyProgramsListing = () => {
                         <div className="view_item">
                             <div className="vi_left">
                                 <a href="dynasty_flyer_info.html">
-                                <img src="images/china-airlines.png" alt="china-airlines" />
+                                    <img src="images/china-airlines.png" alt="china-airlines" />
                                 </a>
                             </div>
                             <div className="vi_right">
@@ -69,7 +69,7 @@ const LoyaltyProgramsListing = () => {
                         <div className="view_item">
                             <div className="vi_left">
                                 <a href="emirates_skywards_info.html">
-                                <img src="images/emirates.png" alt="emirates" />
+                                    <img src="images/emirates.png" alt="emirates" />
                                 </a>
                             </div>
                             <div className="vi_right">

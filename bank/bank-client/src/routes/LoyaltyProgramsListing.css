@@ -1,40 +1,40 @@
-*{
+* {
 	list-style: none;
 }
 
-body{
+body {
 	background: #ebecf1;
 	color: #b3b9b9;
 }
 
-.material-icons{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.material-icons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
-.view_item img{
+.view_item img {
 	width: 75px;
 }
 
-.wrapper{
+.wrapper {
 	width: 800px;
 	margin: 20px auto;
 }
 
-.links{
+.links {
 	margin-bottom: 25px;
 	background: #fff;
 	padding: 15px;
 	border-radius: 3px;
 }
 
-.links ul{
+.links ul {
 	display: flex;
 	justify-content: center;
 }
 
-.links ul li{
+.links ul li {
 	margin: 0 15px;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -44,11 +44,11 @@ body{
 }
 
 .links ul li:hover,
-.links ul li.active{
+.links ul li.active {
 	color: #32be8f;
 }
 
-.view_main{
+.view_main {
 	background: #fff;
 	border-radius: 3px;
 	padding: 15px;
@@ -63,27 +63,27 @@ body{
 	align-items: center;
 }
 
-.list-view .view_item:last-child{
+.list-view .view_item:last-child {
 	margin-bottom: 0;
 }
 
-.list-view .view_item .vi_left{
+.list-view .view_item .vi_left {
 	margin-right: 25px;
 }
 
-.view_item .title{
+.view_item .title {
 	font-weight: 600;
 }
 
-.view_item .content{
+.view_item .content {
 	margin: 5px 0;
-    padding-top: 0.2em;
+	padding-top: 0.2em;
 	font-size: 14px;
 	line-height: 16px;
 	font-weight: 200;
 }
 
-.view_item .btn{
+.view_item .btn {
 	width: 200px;
 	background: #32be8f;
 	padding: 8px 5px;
@@ -92,31 +92,31 @@ body{
 	text-align: center;
 	font-weight: 200;
 	cursor: pointer;
-    margin-left: 385px;
+	margin-left: 385px;
 
 }
 
-.view_item .btn:hover{
+.view_item .btn:hover {
 	background: #38d39f;
 }
 
-.grid-view{
+.grid-view {
 	width: 100%;
 }
 
 .grid-view .view_item {
 	display: inline-block;
-    border: 1px solid #e2efe1;
-    width: 230px;
-    padding: 25px;
-    text-align: center;
-    margin: 10px;
+	border: 1px solid #e2efe1;
+	width: 230px;
+	padding: 25px;
+	text-align: center;
+	margin: 10px;
 }
 
-.grid-view .view_item .vi_left{
+.grid-view .view_item .vi_left {
 	margin-bottom: 10px;
 }
 
-.grid-view .view_item .btn{
+.grid-view .view_item .btn {
 	margin: 0 auto;
 }
