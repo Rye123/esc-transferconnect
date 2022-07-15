@@ -1,4 +1,4 @@
-import {useState, useContext} from 'react';
+import { useState, useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
 /* Styling */
@@ -52,47 +52,47 @@ const Login = () => {
 
         // Send POST request
         auth_service.user_login(credentials)
-        .then(loggedInUser => {
-            setUser(loggedInUser);
-            // redirect to profile
-            console.log("going to /")
-            return (
-                <Navigate to='/' />
-            )
-        })
-        .catch(error => {
-            alert("Authentication failed. Please reenter credentials.");
-        });
+            .then(loggedInUser => {
+                setUser(loggedInUser);
+                // redirect to profile
+                console.log("going to /")
+                return (
+                    <Navigate to='/' />
+                )
+            })
+            .catch(error => {
+                alert("Authentication failed. Please reenter credentials.");
+            });
     };
 
     return (
         <>
-            <img className ="wave" src='/images/wave.png'></img>
-            <div className = "container">
-                <div className = "img">
+            <img className="wave" src='/images/wave.png'></img>
+            <div className="container">
+                <div className="img">
                     <img src='/images/vault.svg' alt="Banking app"></img>
                 </div>
-                <div className = "login-container">
+                <div className="login-container">
                     <form onSubmit={handleFormSubmission}>
                         <img className="avatar" src='/images/profile.svg' alt="Profile"></img>
                         <h2>Digibank</h2>
                         <div className="input-div one">
-                            <div className= "i">
+                            <div className="i">
                                 <i className="material-icons">person</i>
                             </div>
                             <div>
-                                <input className = "input" type="text" placeholder='Username' value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
+                                <input className="input" type="text" placeholder='Username' value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
                             </div>
                         </div>
                         <div className="input-div two">
-                            <div className= "i">
-                            <i className="material-icons">lock</i>
+                            <div className="i">
+                                <i className="material-icons">lock</i>
                             </div>
                             <div>
-                                <input className = "input" type="password" placeholder='Password' value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
+                                <input className="input" type="password" placeholder='Password' value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
                             </div>
                         </div>
-                        <button className = "btn" type="submit">Login</button>
+                        <button className="btn" type="submit">Login</button>
                     </form>
                 </div>
             </div>

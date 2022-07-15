@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 
-const NavbarLink = ({to, content}) => {
+const NavbarLink = ({ to, content }) => {
     return (
-        <NavLink className={ ({isActive}) => isActive ? "active" : ""} to={to}>{content}</NavLink>
+        <NavLink className={({ isActive }) => isActive ? "active" : ""} to={to}>{content}</NavLink>
     )
 }
 

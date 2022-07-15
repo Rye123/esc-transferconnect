@@ -7,7 +7,7 @@ import userContext from '../contexts/userContext';
 /* Utils */
 import Utils from '../utils/utils';
 
-const RequireAuth = ({children}) => {
+const RequireAuth = ({ children }) => {
     const userState = useContext(userContext);
     const user = userState.user;
 

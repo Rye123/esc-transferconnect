@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import { useContext } from 'react';
 
 /* Styling */
 import './Profile.css';
@@ -19,12 +19,12 @@ const Profile = () => {
 
     return (
         <main>
-            <img className ="wave" src='/images/wave.png'></img>
-            <div className = "container">
-                <div className = "img">
-                    <img src= "/images/UserPanel.svg" alt="Profile Page"></img>
+            <img className="wave" src='/images/wave.png'></img>
+            <div className="container">
+                <div className="img">
+                    <img src="/images/UserPanel.svg" alt="Profile Page"></img>
                 </div>
-                <div className = "display-container">
+                <div className="display-container">
                     <div>
                         <div>
                             <h2>Welcome, {user.username} </h2><br></br>

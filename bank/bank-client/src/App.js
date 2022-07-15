@@ -24,12 +24,12 @@ const App = () => {
   // Get initial state if it exists
   useEffect(() => {
     auth_service.user_getinfo()
-    .then(currentUser => {
-      setUser(currentUser);
-    })
-    .catch(error => {
-      console.log("User isn't signed in.")
-    })
+      .then(currentUser => {
+        setUser(currentUser);
+      })
+      .catch(error => {
+        console.log("User isn't signed in.")
+      })
   }, []);
 
   const userState = {
