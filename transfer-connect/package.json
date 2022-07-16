@@ -18,8 +18,9 @@
     "mongoose": "^6.4.2",
     "mongoose-unique-validator": "^3.1.0",
     "morgan": "^1.10.0",
+    "newman": "^5.3.2",
     "nodemon": "^2.0.16",
-    "ssh2-sftp-client": "^8.0.0",
+    "ssh2-sftp-client": "^8.1.0",
     "uuid": "^8.3.2"
   }
 }
