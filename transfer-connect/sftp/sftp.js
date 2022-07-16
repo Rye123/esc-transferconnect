@@ -6,9 +6,16 @@
 // 3) Run the script
 //   node sftp.js
 
+/* Local Module Imports */
 let Client = require('ssh2-sftp-client');
-require("dotenv").config();
+const { parse } = require('json2csv');
+const fs = require('fs');
 
+/* User Defined functions*/
+const HttpError = require('../models/http-error');
+const Transfer = require("../models/transfer");
+
+require("dotenv").config();
 class SFTPClient {
   constructor(config) {
     this.client = new Client();
@@ -106,39 +113,74 @@ class SFTPClient {
   }
 }
 
+const sendDailyTransfers = async () => {
+    let transfers;
+    let transferCSV;
+    const opts = {fields: ['memberId','amount','referenceNumber','partnerCode']};
+
+    // get all documents from mongodb
+    transfers = await Transfer.find({status: "processing"});
+    // console.log(transfers);
+    transferCSV = parse(transfers, opts);
+    console.log(transferCSV);
+
+    // save csv file
+    fs.writeFile("transfers.csv", transferCSV, function(error) {
+        if (error) throw error;
+        console.log("Write to transfers.csv successfully!")
+    })
+    
+    // SFTP section
+    config = {
+        host: process.env.SFTP_HOST,
+        port: process.env.SFTP_PORT,
+        username: process.env.SFTP_USERNAME,
+        password: process.env.SFTP_PASSWORD,
+      }
+    const client = new SFTPClient(config);
+    //* Open the connection
+    await client.connect();
+    
+    //* Upload local file to remote file
+    await client.uploadFile("./transfers.csv", "./remoteTransfer.csv");
+    
+    //* Close the connection
+    await client.disconnect();
+}
 // test case, will be worked on soon further
-(async () => {
-  config = {
-    host: process.env.SFTP_HOST,
-    port: process.env.SFTP_PORT,
-    username: process.env.SFTP_USERNAME,
-    password: process.env.SFTP_PASSWORD,
-  }
-  const client = new SFTPClient(config);
+// (async () => {
+//   config = {
+//     host: process.env.SFTP_HOST,
+//     port: process.env.SFTP_PORT,
+//     username: process.env.SFTP_USERNAME,
+//     password: process.env.SFTP_PASSWORD,
+//   }
+//   const client = new SFTPClient(config);
 
-  //* Open the connection
-  await client.connect();
+//   //* Open the connection
+//   await client.connect();
 
-  //* List working directory files
-  await client.listFiles(".");
+//   //* List working directory files
+//   await client.listFiles(".");
 
-  //* Upload local file to remote file
-  await client.uploadFile("./local.txt", "./remote.txt");
+//   //* Upload local file to remote file
+//   await client.uploadFile("./local.txt", "./remote.txt");
 
-  //* Download remote file to local file
-  await client.downloadFile("./remote.txt", "./download.txt");
+//   // //* Download remote file to local file
+//   // await client.downloadFile("./remote.txt", "./download.txt");
 
-  //* Make remote directory
-  await client.makeDirectory("./test_dir");
+//   // //* Make remote directory
+//   // await client.makeDirectory("./test_dir");
 
-  //* Delete remote directory
-  await client.removeDirectory("./test_dir");
+//   // //* Delete remote directory
+//   // await client.removeDirectory("./test_dir");
 
-  //* Delete remote file
-  await client.deleteFile("./remote.txt");
+//   // //* Delete remote file
+//   // await client.deleteFile("./remote.txt");
 
-  //* Close the connection
-  await client.disconnect();
-})();
+//   //* Close the connection
+//   await client.disconnect();
+// })();
 
-module.exports = SFTPClient;
+exports.SFTPClient = SFTPClient;
+exports.sendDailyTransfers = sendDailyTransfers;

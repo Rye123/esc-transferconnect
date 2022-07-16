@@ -47,13 +47,14 @@ const createTransfer = async (req, res, next) => {
         transferDate: moment().toISOString(),
         amount,
         referenceNumber,
-        partnerCode
+        partnerCode,
+        status: "processing"
     })
 
     try {
         await createdTransfer.save();
     } catch (err) {
-        return next( new HttpError('Creating place failed, please try again.', 500) );
+        return next( new HttpError('Creating Transfer failed, please try again.', 500) );
     }
 
     // DUMMY_TRANSFERS.push(createdTransfer);
