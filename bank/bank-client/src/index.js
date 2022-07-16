@@ -15,6 +15,7 @@ import Login from './routes/Login';
 import RequireAuth from './routes/RequireAuth';
 import Profile from './routes/Profile';
 import LoyaltyProgramsListing from './routes/LoyaltyProgramsListing';
+import LoyaltyProgramInfo from './routes/LoyaltyProgramInfo'
 import TransferHistory from './routes/TransferHistory';
 import Logout from './routes/Logout';
 import NotFound from './routes/NotFound';
@@ -28,6 +29,7 @@ root.render(
         <Route path='login' element={<Login />} />
         <Route path='profile' element={<RequireAuth><Profile /></RequireAuth>} />
         <Route path='loyalty_programs' element={<RequireAuth><LoyaltyProgramsListing /></RequireAuth>} />
+        <Route path='loyalty_programs/:loyaltyProgramId' element={<RequireAuth><LoyaltyProgramInfo /></RequireAuth>} />
         <Route path='transfer_history' element={<RequireAuth><TransferHistory /></RequireAuth>} />
         <Route path='logout' element={<RequireAuth><Logout /></RequireAuth>} />
         <Route
