@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 
 /* Styling */
 import '../styles/Login.css';
@@ -19,11 +19,12 @@ const LoginPage = () => {
     /* State Variables */
     const [usernameValue, setUsernameValue] = useState(""); // username text input for form
     const [passwordValue, setPasswordValue] = useState(""); // password text input for form
+    const from = useLocation().state?.from?.pathname || "/profile";
 
     // If user is logged in, don't show the Login
     if (!Utils.isEmptyObject(userAuth.user))
         return (
-            <Navigate to='/' />
+            <Navigate to={from} />
         )
 
 
@@ -44,7 +45,7 @@ const LoginPage = () => {
 
         // Send POST request
         userAuth.login(credentials).then(() => {
-            return (<Navigate to='/profile' />);
+            return (<Navigate to={from} />);
         })
         .catch(err => {
             alert("Error in signing in");

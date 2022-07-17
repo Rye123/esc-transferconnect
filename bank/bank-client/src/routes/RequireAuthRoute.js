@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 /* Hooks */
 import { useUserAuth } from '../hooks/UserAuthContext';
@@ -12,9 +12,10 @@ import Utils from '../utils/utils';
  */
 const RequireAuthRoute = ({ children }) => {
     const userAuth = useUserAuth();
+    const location = useLocation();
 
     if (Utils.isEmptyObject(userAuth.user))
-        return (<Navigate to='/login' />)
+        return (<Navigate to='/login' state={{from: location}} replace/>)
     return children;
 }
 
