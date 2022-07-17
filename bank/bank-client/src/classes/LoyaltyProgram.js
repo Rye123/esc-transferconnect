@@ -12,7 +12,7 @@ class LoyaltyProgram {
      * @param {number} estTransferTime 
      * @param {number} minTransfer 
      */
-    constructor(loyaltyProgramId, loyaltyProgramName, exchangeRate, href = "", imgSrc = "", estTransferTime = 1, minTransfer = 0) {
+    constructor(loyaltyProgramId, loyaltyProgramName, exchangeRate, href = "", imgSrc = "", estTransferTime = 1, minTransfer = 0, description="") {
         this.loyaltyProgramId = loyaltyProgramId;
         this.loyaltyProgramName = loyaltyProgramName;
         this.exchangeRate = exchangeRate;
@@ -20,6 +20,7 @@ class LoyaltyProgram {
         this.imgSrc = imgSrc;
         this.estTransferTime = estTransferTime;
         this.minTransfer = minTransfer;
+        this.description = description;
     }
 }
 
