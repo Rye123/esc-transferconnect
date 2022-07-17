@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import user_auth_service from '../services/user_auth_service';
 /**
  * Contains saved user context data for the app.
@@ -8,14 +8,17 @@ const UserAuthContext = createContext();
 export const UserAuthProvider = ({children }) => {
     const [user, setUser] = useState([]);
 
-    user_auth_service.user_getinfo()
-    .then(user => {
-        setUser(user);
-    })
-    .catch(() => {
-        setUser({});
-    });
-    
+    useEffect(() => {
+        user_auth_service.user_getinfo()
+        .then(user => {
+            setUser(user);
+        })
+        .catch(() => {
+            setUser({});
+        });
+    }, []);
+
+
     const value = {
         user: user,
         login: async (credentials) => {
