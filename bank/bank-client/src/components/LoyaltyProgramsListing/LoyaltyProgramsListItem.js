@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 const LoyaltyProgramsListingElem = ({ loyaltyProgram }) => {
     // TODO: resolve exchange rate into xxx Reward Points = yyy Program Points
     return (
-        <div className="view_item">
+        <Link className="view_item" to={`/loyalty_programs/${loyaltyProgram.loyaltyProgramId}`}>
             <div className="vi_left">
                 <a href={loyaltyProgram.href}>
                     <img src={loyaltyProgram.imgSrc} alt="" />
@@ -23,7 +23,7 @@ const LoyaltyProgramsListingElem = ({ loyaltyProgram }) => {
                 </div>
                 <Link to={`/loyalty_programs/${loyaltyProgram.loyaltyProgramId}`} className="btn">Transfer Points</Link>
             </div>
-        </div>
+        </Link>
     )
 }
 
