@@ -19,7 +19,9 @@ const LoginPage = () => {
     /* State Variables */
     const [usernameValue, setUsernameValue] = useState(""); // username text input for form
     const [passwordValue, setPasswordValue] = useState(""); // password text input for form
-    const from = useLocation().state?.from?.pathname || "/profile";
+    let from = useLocation().state?.from?.pathname || "/profile";
+    if (from === "/logout")
+        from = "/profile";
 
     // If user is logged in, don't show the Login
     if (!Utils.isEmptyObject(userAuth.user))
