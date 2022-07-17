@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import './Navbar.css';
 
 /* Services */
-import auth_service from '../services/auth_service';
+import user_auth_service from '../services/user_auth_service';
 
 /* Utils */
 import Utils from '../utils/utils';

@@ -3,7 +3,7 @@ import { Outlet, Link } from 'react-router-dom';
 import './App.css';
 
 /* Services */
-import auth_service from './services/auth_service';
+import user_auth_service from './services/user_auth_service';
 
 /* Utils */
 import Utils from './utils/utils';
@@ -23,7 +23,7 @@ const App = () => {
 
   // Get initial state if it exists
   useEffect(() => {
-    auth_service.user_getinfo()
+    user_auth_service.user_getinfo()
       .then(currentUser => {
         setUser(currentUser);
       })
