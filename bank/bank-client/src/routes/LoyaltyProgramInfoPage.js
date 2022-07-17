@@ -7,7 +7,7 @@ import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
  * LoyaltyProgramInfoPage - Displays loyalty program data for a single loyalty program
  */
 const LoyaltyProgramInfoPage = () => {
-    const [loyaltyProgram, setLoyaltyProgram] = useState({});
+    const [loyaltyProgram, setLoyaltyProgram] = useState(undefined);
     const params = useParams();
     const loyaltyProgramId = params.loyaltyProgramId;
 
@@ -23,8 +23,11 @@ const LoyaltyProgramInfoPage = () => {
 
     
     // Return HTML
-    if (Utils.isEmptyObject(loyaltyProgram))
+    console.log(loyaltyProgram)
+    if (typeof loyaltyProgram === 'undefined')
         return (<h1>Loading...</h1>);
+    if (Utils.isEmptyObject(loyaltyProgram))
+        return (<h1>No such loyalty program</h1>);
     return (
         <>
             <img className="wave" src='images/wave.png' />
