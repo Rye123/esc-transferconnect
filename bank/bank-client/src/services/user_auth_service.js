@@ -4,12 +4,19 @@
 */
 
 import axios from 'axios';
+import User from '../classes/User';
 
 /* Constants */
 const SERVER_URI = "/api/";
 const AUTH_URI = SERVER_URI + "user-token-auth";             // URI for authentication and token saving
 const RESOLVE_URI = SERVER_URI + "user-token-resolve";       // URI for resolving the token and getting user information
 const TERMINATE_URI = SERVER_URI + "user-token-terminate";   // URI for terminating the session
+// temporary user data
+const testFirstName = "First";
+const testLastName = "Last"
+const testMembershipIds = ["A1234"]; // Asia Miles membership
+const testTransferIds = [];
+
 
 /* Operations */
 
@@ -21,7 +28,16 @@ const user_getinfo = async () => {
     return axios
         .get(RESOLVE_URI, { withCredentials: true })
         .then(response => {
-            return response.data;
+            const data = response.data;
+            return new User(
+                data.id, //todo: change to userId
+                data.username,
+                testFirstName,
+                testLastName,
+                data.points,
+                testMembershipIds,
+                testTransferIds
+            );
         });
 };
 
