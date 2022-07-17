@@ -1,4 +1,5 @@
-import { useContext } from 'react'
+import { useState, useContext } from 'react'
+import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
 /* Styling */
 import '../styles/LoyaltyProgramsListing.css';
@@ -10,14 +11,18 @@ import userContext from '../contexts/userContext';
 import LoyaltyProgram from '../classes/LoyaltyProgram';
 import LoyaltyProgramsListingElem from '../components/LoyaltyProgramsListing/LoyaltyProgramsListingElem';
 
-const loyaltyPrograms = [];
-loyaltyPrograms.push(new LoyaltyProgram("2341", "Asia Miles", 400/250, "asia_miles_info.html", "images/asia-miles.jpeg", 4*7, 400));
-loyaltyPrograms.push(new LoyaltyProgram("1234", "British Airways", 400/312.5, "british_airway_info.html", "images/british-airways.jpeg", 4*8, 400));
-loyaltyPrograms.push(new LoyaltyProgram("2468", "Dynasty Flyer", 400/250, "dynasty_flyer_info.html", "images/china-airlines.jpeg", 4*4, 400))
-loyaltyPrograms.push(new LoyaltyProgram("6432", "Emirates Skywards", 400/250, "emirates_skywards_info.html", "images/emirates.png", 4*4, 400))
-
 const LoyaltyProgramsListing = () => {
+    const [loyaltyPrograms, setLoyaltyPrograms] = useState([]);
+
     const userState = useContext(userContext);
+    loyaltyPrograms_service.programs_getAllPrograms()
+    .then(loyaltyPrograms => {
+        setLoyaltyPrograms(loyaltyPrograms);
+    })
+    .catch(err => {
+        console.error("LoyaltyProgramsListing Error:", err);
+    });
+    
     return (
         <main>
             <div className="wrapper">
@@ -36,6 +41,7 @@ const LoyaltyProgramsListing = () => {
             </div>
         </main>
     )
+    
 }
 
 export default LoyaltyProgramsListing;
