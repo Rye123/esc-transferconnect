@@ -1,32 +1,27 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 
 /* Styling */
 import '../styles/Login.css';
 
-/* Services */
-import user_auth_service from '../services/user_auth_service';
-
 /* Utils */
 import Utils from '../utils/utils';
 
-/* Contexts */
-import userContext from '../contexts/userContext';
+/* Hooks */
+import { useUserAuth } from '../hooks/UserAuthContext';
 
 /**
  * Login Form Page.
  */
 const LoginPage = () => {
-    const userState = useContext(userContext);
-    const user = userState.user;
-    const setUser = userState.setUser;
+    const userAuth = useUserAuth();
 
     /* State Variables */
     const [usernameValue, setUsernameValue] = useState(""); // username text input for form
     const [passwordValue, setPasswordValue] = useState(""); // password text input for form
 
     // If user is logged in, don't show the Login
-    if (!Utils.isEmptyObject(user))
+    if (!Utils.isEmptyObject(userAuth.user))
         return (
             <Navigate to='/' />
         )
@@ -48,18 +43,12 @@ const LoginPage = () => {
         setPasswordValue("");
 
         // Send POST request
-        user_auth_service.user_login(credentials)
-            .then(loggedInUser => {
-                setUser(loggedInUser);
-                // redirect to profile
-                console.log("going to /")
-                return (
-                    <Navigate to='/' />
-                )
-            })
-            .catch(error => {
-                alert("Authentication failed. Please reenter credentials.");
-            });
+        userAuth.login(credentials).then(() => {
+            return (<Navigate to='/profile' />);
+        })
+        .catch(err => {
+            alert("Error in signing in");
+        });
     };
 
     return (

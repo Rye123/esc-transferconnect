@@ -1,20 +1,18 @@
-import { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 
 /* Utils */
 import Utils from '../utils/utils';
 
-/* Contexts */
-import userContext from '../contexts/userContext';
+/* Hooks */
+import { useUserAuth } from '../hooks/UserAuthContext';
 
 /**
  * Index Page -- routes to `/login` or `/profile` depending on logged-in status
  */
 const IndexPage = () => {
-    const userState = useContext(userContext);
-    const user = userState.user;
+    const userAuth = useUserAuth();
 
-    if (Utils.isEmptyObject(user))
+    if (Utils.isEmptyObject(userAuth.user))
         return (<Navigate to='/login' />)
     return (<Navigate to='/profile' />)
 }

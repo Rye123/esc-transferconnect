@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom';
 import Utils from '../utils/utils';
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
-/* Contexts */
-import userContext from '../contexts/userContext';
+/* Hooks */
+import { useUserAuth } from '../hooks/UserAuthContext';
 
 /**
  * LoyaltyProgramMembershipPage - Form to create or modify an existing membership
@@ -13,8 +13,6 @@ const LoyaltyProgramMembershipPage = () => {
     const [loyaltyProgram, setLoyaltyProgram] = useState({});
 
     // Load User
-    const userState = useContext(userContext);
-    const user = userState.user;
     const params = useParams();
     const loyaltyProgramId = params.loyaltyProgramId;
 

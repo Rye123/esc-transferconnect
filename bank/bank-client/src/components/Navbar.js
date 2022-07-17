@@ -1,10 +1,5 @@
-import { useContext } from 'react'
-
 /* Styling */
 import './Navbar.css';
-
-/* Services */
-import user_auth_service from '../services/user_auth_service';
 
 /* Utils */
 import Utils from '../utils/utils';
@@ -12,8 +7,8 @@ import Utils from '../utils/utils';
 /* Components */
 import NavbarLink from './NavbarLink';
 
-/* Contexts */
-import userContext from '../contexts/userContext';
+/* Hooks */
+import { useUserAuth } from '../hooks/UserAuthContext';
 
 /**
  * Navbar Component: Displays navbar
@@ -23,11 +18,10 @@ import userContext from '../contexts/userContext';
  * @returns 
  */
 const Navbar = () => {
-    const userState = useContext(userContext);
-    const user = userState.user;
+    const userAuth = useUserAuth();
 
     // If user is not logged in, don't show user-only info
-    if (Utils.isEmptyObject(user))
+    if (Utils.isEmptyObject(userAuth.user))
         return (
             <nav>
                 <a href='/' className='site-title'>Digibank</a>
