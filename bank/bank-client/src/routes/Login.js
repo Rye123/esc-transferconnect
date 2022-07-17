@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 import '../styles/Login.css';
 
 /* Services */
-import auth_service from '../services/auth_service';
+import user_auth_service from '../services/user_auth_service';
 
 /* Utils */
 import Utils from '../utils/utils';
@@ -51,7 +51,7 @@ const Login = () => {
         setPasswordValue("");
 
         // Send POST request
-        auth_service.user_login(credentials)
+        user_auth_service.user_login(credentials)
             .then(loggedInUser => {
                 setUser(loggedInUser);
                 // redirect to profile
