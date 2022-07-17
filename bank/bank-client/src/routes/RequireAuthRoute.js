@@ -1,8 +1,7 @@
-import { useContext } from 'react'
 import { Navigate } from 'react-router-dom';
 
-/* Contexts */
-import userContext from '../contexts/userContext';
+/* Hooks */
+import { useUserAuth } from '../hooks/UserAuthContext';
 
 /* Utils */
 import Utils from '../utils/utils';
@@ -12,13 +11,10 @@ import Utils from '../utils/utils';
  * @param {Route} route
  */
 const RequireAuthRoute = ({ children }) => {
-    const userState = useContext(userContext);
-    const user = userState.user;
+    const userAuth = useUserAuth();
 
-    if (Utils.isEmptyObject(user))
-        return (
-            <Navigate to='/' />
-        )
+    if (Utils.isEmptyObject(userAuth.user))
+        return (<Navigate to='/login' />)
     return children;
 }
 

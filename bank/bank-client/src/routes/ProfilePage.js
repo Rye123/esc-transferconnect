@@ -1,21 +1,19 @@
-import { useContext } from 'react';
-
 /* Styling */
 import '../styles/Profile.css';
 
 /* Utils */
 import Utils from '../utils/utils';
 
-/* Contexts */
-import userContext from '../contexts/userContext';
+/* Hooks */
+import { useUserAuth } from '../hooks/UserAuthContext';
 
 /**
  * Profile Page
  * Displays user information
  */
 const ProfilePage = () => {
-    const userState = useContext(userContext);
-    const user = userState.user;
+    const userAuth = useUserAuth();
+    const user = userAuth.user;
 
     return (
         <main>

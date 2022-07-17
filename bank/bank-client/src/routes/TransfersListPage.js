@@ -1,11 +1,8 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
 import transfers_service from '../services/transfers_service';
 
 /* Styling */
 import '../styles/TransferHistory.css';
-
-/* Contexts */
-import userContext from '../contexts/userContext';
 
 /* Classes */
 import Transfer from '../classes/Transfer';
@@ -19,7 +16,6 @@ import TransferHistoryElem from '../components/TransferHistory/TransfersListItem
 const TransfersListPage = () => {
     const [transfers, setTransfer] = useState([]);
 
-    const userState = useContext(userContext);
     transfers_service.transfer_getAllTransfers()
     .then(transfers => {
         setTransfer(transfers);
