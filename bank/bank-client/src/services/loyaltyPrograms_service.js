@@ -67,5 +67,5 @@ const programs_getMembershipForProgram = async(loyaltyProgramId) => {
     return Promise.resolve(loyaltyProgramMembership);
 }
 
-const exports = { programs_getAllPrograms, programs_getProgramById }
+const exports = { programs_getAllPrograms, programs_getProgramById, programs_getMembershipForProgram }
 export default exports;
