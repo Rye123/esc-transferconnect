@@ -7,7 +7,10 @@ import user_auth_service from '../services/user_auth_service';
 /* Contexts */
 import userContext from '../contexts/userContext';
 
-const Logout = () => {
+/**
+ * Logout Route -- auto routes to `Index`.
+ */
+const LogoutRoute = () => {
     const userState = useContext(userContext);
     const user = userState.user;
     const setUser = userState.setUser;
@@ -27,4 +30,4 @@ const Logout = () => {
         });
 }
 
-export default Logout;
+export default LogoutRoute;

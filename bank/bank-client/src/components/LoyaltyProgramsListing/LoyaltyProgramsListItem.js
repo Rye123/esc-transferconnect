@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom';
 
-const LoyaltyProgramsListingElem = ({loyaltyProgram}) => {
+/**
+ * List Item for the `LoyaltyProgramsListPage`.
+ * @param {LoyaltyProgram} loyaltyProgram 
+ * @returns 
+ */
+const LoyaltyProgramsListingElem = ({ loyaltyProgram }) => {
     // TODO: resolve exchange rate into xxx Reward Points = yyy Program Points
     return (
         <div className="view_item">

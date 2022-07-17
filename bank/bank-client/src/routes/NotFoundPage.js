@@ -1,8 +1,10 @@
 /* Styling */
 import '../styles/NotFound.css';
 
-
-const NotFound = () => {
+/**
+ * NotFoundPage - Route for 404 Error.
+ */
+const NotFoundPage = () => {
     return (
         <main>
             <img className="wave" src='images/wave.png' />
@@ -18,4 +20,4 @@ const NotFound = () => {
     )
 }
 
-export default NotFound;
+export default NotFoundPage;

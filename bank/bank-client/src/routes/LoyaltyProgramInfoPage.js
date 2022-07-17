@@ -1,6 +1,9 @@
 import { useParams } from 'react-router-dom';
 
-const LoyaltyProgramInfo = () => {
+/**
+ * LoyaltyProgramInfoPage - Displays loyalty program data for a single loyalty program
+ */
+const LoyaltyProgramInfoPage = () => {
     // TODO: resolve loyaltyProgramId into loyaltyProgram
     const params = useParams();
     const loyaltyProgramId = params.loyaltyProgramId;
@@ -9,4 +12,4 @@ const LoyaltyProgramInfo = () => {
     )
 }
 
-export default LoyaltyProgramInfo;
+export default LoyaltyProgramInfoPage;

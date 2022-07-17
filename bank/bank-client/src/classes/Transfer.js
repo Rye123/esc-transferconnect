@@ -9,7 +9,7 @@ class Transfer {
      * @param {string} loyaltyProgramMembershipId 
      * @param {string} status 
      */
-    constructor (transferId, loyaltyProgramId, loyaltyProgramMembershipId, status) {
+    constructor(transferId, loyaltyProgramId, loyaltyProgramMembershipId, status) {
         this.transferId = transferId;
         this.loyaltyProgramId = loyaltyProgramId;
         this.loyaltyProgramMembershipId = loyaltyProgramMembershipId;

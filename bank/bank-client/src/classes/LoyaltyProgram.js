@@ -1,7 +1,7 @@
 /**
  * Represents a single loyalty program
  */
- class LoyaltyProgram {
+class LoyaltyProgram {
     /**
      * 
      * @param {string} loyaltyProgramId ID of the loyalty program
@@ -12,7 +12,7 @@
      * @param {number} estTransferTime 
      * @param {number} minTransfer 
      */
-    constructor (loyaltyProgramId, loyaltyProgramName, exchangeRate, href="", imgSrc="", estTransferTime=1, minTransfer=0) {
+    constructor(loyaltyProgramId, loyaltyProgramName, exchangeRate, href = "", imgSrc = "", estTransferTime = 1, minTransfer = 0) {
         this.loyaltyProgramId = loyaltyProgramId;
         this.loyaltyProgramName = loyaltyProgramName;
         this.exchangeRate = exchangeRate;

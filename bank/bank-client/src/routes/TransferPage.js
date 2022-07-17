@@ -1,6 +1,9 @@
 import { useParams } from 'react-router-dom';
 
-const TransferHistoryItem = () => {
+/**
+ * TransferPage - Shows transfer information for a single transfer.
+ */
+const TransferPage = () => {
     // TODO: resolve loyaltyProgramId into loyaltyProgram
     const params = useParams();
     const transferId = params.transferId;
@@ -9,4 +12,4 @@ const TransferHistoryItem = () => {
     )
 }
 
-export default TransferHistoryItem;
+export default TransferPage;

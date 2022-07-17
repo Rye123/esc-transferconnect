@@ -9,9 +9,12 @@ import userContext from '../contexts/userContext';
 
 /* Classes */
 import LoyaltyProgram from '../classes/LoyaltyProgram';
-import LoyaltyProgramsListingElem from '../components/LoyaltyProgramsListing/LoyaltyProgramsListingElem';
+import LoyaltyProgramsListingElem from '../components/LoyaltyProgramsListing/LoyaltyProgramsListItem';
 
-const LoyaltyProgramsListing = () => {
+/**
+ * LoyaltyProgramsListPage - Displays all available loyalty programs
+ */
+const LoyaltyProgramsListPage = () => {
     const [loyaltyPrograms, setLoyaltyPrograms] = useState([]);
 
     const userState = useContext(userContext);
@@ -44,4 +47,4 @@ const LoyaltyProgramsListing = () => {
     
 }
 
-export default LoyaltyProgramsListing;
+export default LoyaltyProgramsListPage;

@@ -1,6 +1,11 @@
 import { Link } from 'react-router-dom';
 
-const TransferHistoryElem = ({transfer}) => {
+/**
+ * List Item for the `TransfersListPage`.
+ * @param {Transfer} transfer 
+ * @returns 
+ */
+const TransferHistoryElem = ({ transfer }) => {
     // TODO: resolve loyaltyProgramId into name of loyalty program
     return (
         <tr>
