@@ -11,9 +11,12 @@ import userContext from '../contexts/userContext';
 import Transfer from '../classes/Transfer';
 
 /* Components */
-import TransferHistoryElem from '../components/TransferHistory/TransferHistoryElem';
+import TransferHistoryElem from '../components/TransferHistory/TransfersListItem';
 
-const TransferHistory = () => {
+/**
+ * TransfersListPage - Shows all transfers for the current user.
+ */
+const TransfersListPage = () => {
     const [transfers, setTransfer] = useState([]);
 
     const userState = useContext(userContext);
@@ -48,4 +51,4 @@ const TransferHistory = () => {
     )
 }
 
-export default TransferHistory;
+export default TransfersListPage;

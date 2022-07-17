@@ -14,12 +14,9 @@ import Utils from '../utils/utils';
 import userContext from '../contexts/userContext';
 
 /**
- * Login Form Component
- * - `user`: The user that is signed in.
- * - `setUser`: Function that changes the signed-in user
- * @returns 
+ * Login Form Page.
  */
-const Login = () => {
+const LoginPage = () => {
     const userState = useContext(userContext);
     const user = userState.user;
     const setUser = userState.setUser;
@@ -100,4 +97,4 @@ const Login = () => {
     )
 };
 
-export default Login;
+export default LoginPage;

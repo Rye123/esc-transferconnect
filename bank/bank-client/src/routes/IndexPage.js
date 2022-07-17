@@ -7,7 +7,10 @@ import Utils from '../utils/utils';
 /* Contexts */
 import userContext from '../contexts/userContext';
 
-const Index = () => {
+/**
+ * Index Page -- routes to `/login` or `/profile` depending on logged-in status
+ */
+const IndexPage = () => {
     const userState = useContext(userContext);
     const user = userState.user;
 
@@ -16,4 +19,4 @@ const Index = () => {
     return (<Navigate to='/profile' />)
 }
 
-export default Index;
+export default IndexPage;

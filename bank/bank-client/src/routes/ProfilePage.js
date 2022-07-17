@@ -13,7 +13,7 @@ import userContext from '../contexts/userContext';
  * Profile Page
  * Displays user information
  */
-const Profile = () => {
+const ProfilePage = () => {
     const userState = useContext(userContext);
     const user = userState.user;
 
@@ -38,4 +38,4 @@ const Profile = () => {
     )
 }
 
-export default Profile;
+export default ProfilePage;
