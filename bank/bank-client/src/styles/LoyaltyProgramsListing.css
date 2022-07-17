@@ -83,6 +83,16 @@ body {
 	font-weight: 200;
 }
 
+a.view_item {
+	color: #7f8484;
+	transition-duration: 0.6s;
+}
+
+a.view_item:hover {
+	color: #686c6c;
+	background: #f3f3f3;
+}
+
 .view_item .btn {
 	width: 200px;
 	background: #32be8f;
@@ -93,7 +103,6 @@ body {
 	font-weight: 200;
 	cursor: pointer;
 	margin-left: 385px;
-
 }
 
 .view_item .btn:hover {

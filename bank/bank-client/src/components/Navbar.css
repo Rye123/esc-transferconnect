@@ -27,12 +27,13 @@ nav>a {
     margin: 0;
     height: max-content;
     gap: 1rem;
+    transition-duration: 0.4s;
 }
 
 nav>a:hover {
-    color: #777;
+    color: #248b68;
 }
 
 nav>a.active {
-    color: #555;
+    color: #1d7155;
 }
