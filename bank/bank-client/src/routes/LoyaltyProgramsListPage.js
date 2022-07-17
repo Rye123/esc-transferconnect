@@ -9,7 +9,7 @@ import userContext from '../contexts/userContext';
 
 /* Classes */
 import LoyaltyProgram from '../classes/LoyaltyProgram';
-import LoyaltyProgramsListingElem from '../components/LoyaltyProgramsListing/LoyaltyProgramsListItem';
+import LoyaltyProgramsListItem from '../components/LoyaltyProgramsListing/LoyaltyProgramsListItem';
 
 /**
  * LoyaltyProgramsListPage - Displays all available loyalty programs
@@ -37,7 +37,7 @@ const LoyaltyProgramsListPage = () => {
                 <div className="view_main">
                     <div className="view_wrap list-view" style={{ display: 'block' }}>
                         {
-                            loyaltyPrograms.map(loyaltyProgram => <LoyaltyProgramsListingElem key={loyaltyProgram.loyaltyProgramId} loyaltyProgram={loyaltyProgram} />)
+                            loyaltyPrograms.map(loyaltyProgram => <LoyaltyProgramsListItem key={loyaltyProgram.loyaltyProgramId} loyaltyProgram={loyaltyProgram} />)
                         }
                     </div>
                 </div>
