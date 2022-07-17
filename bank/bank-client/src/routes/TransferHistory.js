@@ -1,4 +1,5 @@
-import { useContext } from 'react'
+import { useState, useContext } from 'react'
+import transfers_service from '../services/transfers_service';
 
 /* Styling */
 import '../styles/TransferHistory.css';
@@ -12,13 +13,17 @@ import Transfer from '../classes/Transfer';
 /* Components */
 import TransferHistoryElem from '../components/TransferHistory/TransferHistoryElem';
 
-const transfers = [];
-for (let i = 1; i < 11; i++) {
-    transfers.push(new Transfer((i*123).toString(), (i*432).toString(), (i*54).toString(), 'pending'))
-}
-
 const TransferHistory = () => {
+    const [transfers, setTransfer] = useState([]);
+
     const userState = useContext(userContext);
+    transfers_service.transfer_getAllTransfers()
+    .then(transfers => {
+        setTransfer(transfers);
+    })
+    .catch(err => {
+        console.error("TransferHistory Error: ", err);
+    });
 
     return (
         <main>
