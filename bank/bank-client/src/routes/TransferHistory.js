@@ -35,6 +35,7 @@ const TransferHistory = () => {
                         <th>Program</th>
                         <th>Membership Number</th>
                         <th>Status</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>

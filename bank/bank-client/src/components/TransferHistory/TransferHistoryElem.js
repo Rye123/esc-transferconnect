@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 
 const TransferHistoryElem = ({transfer}) => {
     // TODO: resolve loyaltyProgramId into name of loyalty program
@@ -7,6 +8,7 @@ const TransferHistoryElem = ({transfer}) => {
             <td>{transfer.loyaltyProgramId}</td>
             <td>{transfer.loyaltyProgramMembershipId}</td>
             <td>{transfer.status}</td>
+            <td><Link to={`/transfers/${transfer.transferId}`} className='btn'>View</Link></td>
         </tr>
     )
 }
