@@ -15,15 +15,15 @@ import IndexPage from './routes/IndexPage';
 import LoginPage from './routes/LoginPage';
 import ProfilePage from './routes/ProfilePage';
 import LoyaltyProgramsListPage from './routes/LoyaltyProgramsListPage';
-import LoyaltyProgramInfoPage from './routes/LoyaltyProgramInfoPage'
+import LoyaltyProgramInfoPage from './routes/LoyaltyProgramInfoPage';
+import LoyaltyProgramMembershipPage from './routes/LoyaltyProgramMembershipPage';
+import LoyaltyProgramMakeTransferPage from './routes/LoyaltyProgramMakeTransferPage';
 import TransfersListPage from './routes/TransfersListPage';
 import TransferPage from './routes/TransferPage';
 import NotFoundPage from './routes/NotFoundPage';
 // Routes
 import RequireAuthRoute from './routes/RequireAuthRoute';
 import LogoutRoute from './routes/LogoutRoute';
-import LoyaltyProgramMembershipPage from './routes/LoyaltyProgramMembershipPage';
-import LoyaltyProgramMakeTransferPage from './routes/LoyaltyProgramMakeTransferPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -35,7 +35,7 @@ root.render(
         <Route path='profile' element={<RequireAuthRoute><ProfilePage /></RequireAuthRoute>} />
 
         <Route path='loyalty_programs' element={<RequireAuthRoute><LoyaltyProgramsListPage /></RequireAuthRoute>} />
-        <Route path='loyalty_programs/:loyaltyProgramId' element={<RequireAuthRoute><LoyaltyProgramInfoPage /></RequireAuthRoute>} />
+        <Route path='loyalty_programs/loyalty_program' element={<RequireAuthRoute><LoyaltyProgramInfoPage /></RequireAuthRoute>} />
         <Route path='loyalty_programs/membership' element={<RequireAuthRoute><LoyaltyProgramMembershipPage /></RequireAuthRoute>} />
 
         <Route path='transfer_history' element={<RequireAuthRoute><TransfersListPage /></RequireAuthRoute>} />

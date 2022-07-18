@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 /**
  * List Item for the `LoyaltyProgramsListPage`.
@@ -9,7 +9,7 @@ const LoyaltyProgramsListingElem = ({ loyaltyProgram }) => {
     // TODO: resolve exchange rate into xxx Reward Points = yyy Program Points
     return (
         <div className="view_item">
-            <Link className="overlay" to={`/loyalty_programs/${loyaltyProgram.loyaltyProgramId}`} />
+            <Link className="overlay" to={{pathname: `/loyalty_programs/loyalty_program`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}`}} />
             <div className="vi_left">
                 <a href={loyaltyProgram.href}>
                     <img src={loyaltyProgram.imgSrc} alt="" />
