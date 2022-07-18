@@ -38,3 +38,15 @@ h1 {
 .content-table tbody tr:last-of-type {
     border-bottom: 2px solid #32be8f;
 }
+
+.transfer-fulfilled {
+    color: #32be8f;
+}
+
+.transfer-error {
+    color: #be3261;
+}
+
+.transfer-pending {
+    color: #be8f32;
+}
