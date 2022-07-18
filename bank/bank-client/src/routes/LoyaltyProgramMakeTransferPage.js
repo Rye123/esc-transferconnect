@@ -13,6 +13,7 @@ const LoyaltyProgramMakeTransferPage = () => {
     const [loyaltyProgramMembership, setLoyaltyProgramMembership] = useState(undefined);
     const [loyaltyProgram, setLoyaltyProgram] = useState(undefined);
     const [searchParams, setSearchParams] = useSearchParams();
+    const [pointsInputValue, setPointsInputValue] = useState({inputStr: "", points: 0});
     const userAuth = useUserAuth();
     const user = userAuth.user;
 
@@ -39,11 +40,35 @@ const LoyaltyProgramMakeTransferPage = () => {
         });
     }, []);
 
+    // Handle Points Input
+    const handlePointsInputChange = (event) => {
+        if (event.target.value === "") {
+            setPointsInputValue({
+                inputStr: "",
+                points: 0
+            });
+            return;
+        }
+
+        let inputVal = parseInt(event.target.value);
+        let newPointsInputValue = {
+            inputStr: pointsInputValue.inputStr,
+            points: pointsInputValue.points
+        };
+        if (inputVal < 0)
+            inputVal = -inputVal;
+        if (!isNaN(inputVal)) 
+            newPointsInputValue.points = inputVal;
+        
+        newPointsInputValue.inputStr = (newPointsInputValue.points === 0) ? "" : newPointsInputValue.points;
+        setPointsInputValue(newPointsInputValue);
+    }
+
     // Handle Transfer Form Submission
     const handleFormSubmission = (event) => {
         event.preventDefault();
     }
-    let currentPoints = 50;
+    
     // Return HTML
     if (typeof loyaltyProgramMembership === 'undefined' || typeof loyaltyProgram === 'undefined')
         return (<h1>Loading...</h1>);
@@ -63,9 +88,9 @@ const LoyaltyProgramMakeTransferPage = () => {
                         <h3>Transfer Points to {loyaltyProgram.loyaltyProgramName}</h3>
                         <h2>{loyaltyProgramMembership.loyaltyProgramMembershipId}</h2>
                         <div className='box'>
-                            <b>AVAILABLE: {user.points}</b><br /><br />
-                            <b>USING: {currentPoints}</b><br /><br />
-                            <b>REMAINING: {user.points - currentPoints}</b><br /><br />
+                            <b>AVAILABLE: {isNaN(user.points) ? 0 : user.points}</b><br /><br />
+                            <b>USING: {isNaN(pointsInputValue.points) ? 0 : pointsInputValue.points}</b><br /><br />
+                            <b>REMAINING: {(isNaN(user.points) || isNaN(pointsInputValue.points)) ? 0 : user.points - pointsInputValue.points}</b><br /><br />
                         </div>
                         <br />
                         <br />
@@ -75,14 +100,14 @@ const LoyaltyProgramMakeTransferPage = () => {
                                 <i className='material-icons'>card_membership</i>
                             </div>
                             <div>
-                                <input className='input' type='password' placeholder='Enter the number of points...' /><br />
+                                <input className='input' type='number' value={pointsInputValue.inputStr} onChange={handlePointsInputChange} placeholder='Enter the number of points...' /><br />
                             </div>
                         </div>
                         <br />
-                        <h3>Equates to {currentPoints * loyaltyProgram.exchangeRate} points</h3>
-                        <button className='btn' type='submit'>Complete Transfer</button>
+                        <h3>Equates to {(isNaN(pointsInputValue.points) || isNaN(loyaltyProgram.exchangeRate)) ? 0 : Math.round(pointsInputValue.points * loyaltyProgram.exchangeRate)} points</h3>
+                        <button className='btn' type='submit' disabled={((user.points - pointsInputValue.points) <= 0) || pointsInputValue.points <= 0}>Complete Transfer</button>
                         <h5>All transfers are final</h5><br />
-                        <h6>Once rewards have been transfered, they are subject to the terms of the Loyalty Program to which they are transferred</h6>
+                        <h6>Once rewards have been transferred, they are subject to the terms of the Loyalty Program to which they are transferred</h6>
                     </form>
                 </div>
             </div>
