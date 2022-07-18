@@ -50,7 +50,20 @@ const LoginPage = () => {
             return (<Navigate to={from} />);
         })
         .catch(err => {
-            alert("Error in signing in");
+            const inputShake = [
+                { transform: 'translate(0px, 0px)' },
+                { transform: 'translate(-3px, 0px)' },
+                { transform: 'translate(0px, 0px)' },
+                { transform: 'translate(3px, 0px)' },
+                { transform: 'translate(0px, 0px)' },
+            ];
+            const inputShakeTiming = {
+                duration: 250,
+                iterations: 2
+            }
+            Array.prototype.forEach.call(document.getElementsByClassName('input'), el => {
+                el.animate(inputShake, inputShakeTiming);
+            });
         });
     };
 
