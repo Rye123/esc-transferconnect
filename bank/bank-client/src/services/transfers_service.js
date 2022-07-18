@@ -20,8 +20,14 @@ const randomLoyaltyProgram = () => {
     return loyaltyProgramIds[Utils.getRandomInt(0, 4)];
 }
 const transfers = [];
+const randomTransferStatus = () => {
+    const statuses = ["pending", "fulfilled", "error"];
+    return statuses[Utils.getRandomInt(0, 3)];
+}
 for (let i = 1; i < 11; i++) {
-    transfers.push(new Transfer((i*123).toString(), randomLoyaltyProgram(), (i*54).toString(), 'pending', randomDate(), Utils.getRandomInt(1, 100)));
+    let status = randomTransferStatus();
+    let statusMessage = (status === 'error') ? "Unknown Error" : undefined;
+    transfers.push(new Transfer((i*123).toString(), randomLoyaltyProgram(), (i*54).toString(), status, statusMessage, randomDate(), Utils.getRandomInt(1, 100)));
 }
 // future endpoints for transfer data
 const SERVER_URI = "/api/";
@@ -44,7 +50,7 @@ const transfer_getTransferById = async(id) => {
 }
 
 const transfer_postTransfer = async(loyaltyProgramId, membershipId, points) => {
-    const transfer = new Transfer(Utils.getRandomInt(10000, 20000).toString(), loyaltyProgramId, membershipId, 'pending', new Date(), points);
+    const transfer = new Transfer(Utils.getRandomInt(10000, 20000).toString(), loyaltyProgramId, membershipId, 'pending', undefined, new Date(), points);
     transfers.push(transfer);
     return Promise.resolve(transfer);
 }
