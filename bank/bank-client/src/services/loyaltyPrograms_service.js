@@ -67,5 +67,56 @@ const programs_getMembershipForProgram = async(loyaltyProgramId) => {
     return Promise.resolve(loyaltyProgramMembership);
 }
 
-const exports = { programs_getAllPrograms, programs_getProgramById, programs_getMembershipForProgram }
+/**
+ * Creates a new membership for the given program and user.
+ * @param {string} loyaltyProgramId 
+ * @param {string} membershipId 
+ * @returns Promise. Resolves to give the membership if successful.
+ */
+const programs_postMembershipForProgram = async(loyaltyProgramId, membershipId) => {
+    // TODO: Submit credentials in cookie when sending to server
+    const loyaltyProgram = loyaltyPrograms.find(loyaltyProgram => loyaltyProgram.loyaltyProgramId === loyaltyProgramId);
+    if (Utils.isEmptyObject(loyaltyProgram)) {
+        return Promise.reject({ "error": "Loyalty Program doesn't exist"});
+    }
+    // ensure membership doesn't already exist
+    const existingMembership = memberships.find(membership => membership.loyaltyProgramId === loyaltyProgramId);
+    if (!Utils.isEmptyObject(existingMembership)) {
+        return Promise.reject({ "error": "Membership already exists" });
+    }
+    // TODO: validate membershipId
+    // temp details
+    const userId = "xxyy";
+    const membership = new LoyaltyProgramMembership(membershipId, userId, loyaltyProgramId);
+    memberships.push(membership);
+    return Promise.resolve(membership);
+}
+
+/**
+ * Updates an existing membership for the given program and user.
+ * @param {string} loyaltyProgramId 
+ * @param {string} membershipId 
+ * @returns Promise. Resolves to give the membership if successful.
+ */
+const programs_updateMembershipForProgram = async(loyaltyProgramId, newMembershipId) => {
+    // TODO: Submit credentials in cookie when sending to server
+    const loyaltyProgram = loyaltyPrograms.find(loyaltyProgram => loyaltyProgram.loyaltyProgramId === loyaltyProgramId);
+    if (Utils.isEmptyObject(loyaltyProgram)) {
+        return Promise.reject({ "error": "Loyalty Program doesn't exist"});
+    }
+    // TODO: validate membershipId
+    // temp details
+    const userId = "xxyy";
+    const membership = memberships.find(membership => membership.loyaltyProgramId === loyaltyProgramId);
+    if (Utils.isEmptyObject(membership)) {
+        return Promise.reject({ "error": "Membership doesn't exist" });
+    }
+    if (membership.loyaltyProgramMembershipId === newMembershipId) {
+        return Promise.reject({ "error": "No change in membershipId"})
+    }
+    membership.loyaltyProgramMembershipId = newMembershipId;
+    return Promise.resolve(membership);
+}
+
+const exports = { programs_getAllPrograms, programs_getProgramById, programs_getMembershipForProgram, programs_postMembershipForProgram, programs_updateMembershipForProgram }
 export default exports;

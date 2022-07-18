@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import Utils from '../utils/utils';
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
@@ -14,6 +14,7 @@ const LoyaltyProgramMembershipPage = () => {
     const [loyaltyProgramMembership, setLoyaltyProgramMembership] = useState(undefined);
     const [searchParams, setSearchParams] = useSearchParams();
     const [membershipIdInput, setMembershipIdInput] = useState("");
+    const navigate = useNavigate();
 
     // Load User
     const userAuth = useUserAuth();
@@ -43,11 +44,27 @@ const LoyaltyProgramMembershipPage = () => {
     // Form Submission
     const handleFormSubmission_new = (event) => {
         event.preventDefault();
-        console.log("submitting new membership");
+        const membershipId = membershipIdInput;
+        setMembershipIdInput("");
+        loyaltyPrograms_service.programs_postMembershipForProgram(loyaltyProgramId, membershipId)
+        .then(membership => {
+            navigate({pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}`});
+        })
+        .catch(err => {
+            console.error("LoyaltyProgramMembershipPage Error:", err);
+        })
     }
     const handleFormSubmission_modify = (event) => {
         event.preventDefault();
-        console.log("modifying membership");
+        const membershipId = membershipIdInput;
+        setMembershipIdInput("");
+        loyaltyPrograms_service.programs_updateMembershipForProgram(loyaltyProgramId, membershipId)
+        .then(membership => {
+            navigate({pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}`});
+        })
+        .catch(err => {
+            console.error("LoyaltyProgramMembershipPage Error:", err);
+        })
     }
     
     // Return HTML
