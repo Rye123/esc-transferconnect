@@ -50,6 +50,7 @@ a {
     outline: none;
     border: none;
     background-image: linear-gradient(to right, #32be8f, #38d39f, #32be8f);
+    background-color: #32be8f;
     cursor: pointer;
     color: #fff;
     font-family: 'Poppins', sans-serif;
@@ -64,6 +65,11 @@ a {
     background-position: right;
 }
 
+.btn:disabled {
+    cursor: default;
+    background-image: none;
+    background-color: #1d7155;
+}
 
 
 @media screen and (max-width: 1050px) {
