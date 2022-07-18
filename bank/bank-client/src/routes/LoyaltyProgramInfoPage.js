@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import Utils from '../utils/utils';
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
@@ -43,7 +43,7 @@ const LoyaltyProgramInfoPage = () => {
                         <h3>{loyaltyProgram.loyaltyProgramName}</h3>
                         <p>{loyaltyProgram.description}</p>
 
-                        <button className='btn' type='submit'>Edit/Save Membership</button>
+                        <Link className='btn' to={{pathname: '/loyalty_programs/membership', search: `?loyaltyProgramId=${loyaltyProgramId}`}}>Edit Membership</Link>
                         <button className='btn' type='submit'>Transfer Points</button>
                     </div>
                 </div>
