@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import Utils from '../utils/utils';
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
@@ -7,25 +7,29 @@ import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
  * LoyaltyProgramMakeTransferPage - Form to allow user to make a single accrual transfer, for a particular program.
  */
 const LoyaltyProgramMakeTransferPage = () => {
-    const [loyaltyProgramMembership, setLoyaltyProgramMembership] = useState({});
+    const [loyaltyProgramMembership, setLoyaltyProgramMembership] = useState(undefined);
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    // Load User
-    const params = useParams();
-    const loyaltyProgramId = params.loyaltyProgramId;
+    // Load Loyalty Program ID
+    const loyaltyProgramId = searchParams.get("loyaltyProgramId") || "";
 
-    // Check for membership
-    loyaltyPrograms_service.programs_getMembershipForProgram(loyaltyProgramId)
-    .then(membership => {
-        setLoyaltyProgramMembership(membership);
-    })
-    .catch(err => {
-        console.error("LoyaltyProgramMakeTransferPage Error: ", err);
-    });
-
+    // Check for membership for this user
+    useEffect(() => {
+        loyaltyPrograms_service.programs_getMembershipForProgram(loyaltyProgramId)
+        .then(membership => {
+            setLoyaltyProgramMembership(membership);
+        })
+        .catch(err => {
+            console.error("LoyaltyProgramMakeTransferPage Error: ", err);
+            setLoyaltyProgramMembership({})
+        });
+    }, []);
     
     // Return HTML
-    if (Utils.isEmptyObject(loyaltyProgramMembership))
+    if (typeof loyaltyProgramMembership === 'undefined')
         return (<h1>Loading...</h1>);
+    if (Utils.isEmptyObject(loyaltyProgramMembership))
+        return (<h1>No membership</h1>);
     return (
         <>
             <h1>Make transfer with membership ID: {loyaltyProgramMembership.loyaltyProgramMembershipId}</h1>
