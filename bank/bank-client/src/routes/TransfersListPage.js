@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import transfers_service from '../services/transfers_service';
 
 /* Styling */
@@ -9,22 +9,30 @@ import Transfer from '../classes/Transfer';
 
 /* Components */
 import TransferHistoryElem from '../components/TransferHistory/TransfersListItem';
+import Utils from '../utils/utils';
 
 /**
  * TransfersListPage - Shows all transfers for the current user.
  */
 const TransfersListPage = () => {
-    const [transfers, setTransfer] = useState([]);
+    const [transfers, setTransfers] = useState(undefined);
+    
+    useEffect(() => {
+        transfers_service.transfer_getAllTransfers()
+        .then(transfers => {
+            transfers.sort((a, b) => a.submissionDate < b.submissionDate);
+            setTransfers(transfers);
+        })
+        .catch(err => {
+            console.error("TransferHistory Error: ", err);
+            setTransfers([]);
+        });
+    }, [])
 
-    transfers_service.transfer_getAllTransfers()
-    .then(transfers => {
-        transfers.sort((a, b) => a.submissionDate < b.submissionDate);
-        setTransfer(transfers);
-    })
-    .catch(err => {
-        console.error("TransferHistory Error: ", err);
-    });
-
+    if (typeof transfers === 'undefined')
+        return (<h1>Loading...</h1>);
+    if (Utils.isEmptyObject(transfers))
+        return (<h1>Could not load Transfer History</h1>); // TODO: decide routing for this
     return (
         <main>
             <h1>Transfer History</h1><br />
