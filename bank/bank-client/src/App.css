@@ -166,3 +166,7 @@ a {
     -moz-font-feature-settings: 'liga';
     -moz-osx-font-smoothing: grayscale;
 }
+
+b {
+    color: #32be8f;
+}
