@@ -44,7 +44,7 @@ const LoyaltyProgramInfoPage = () => {
                         <p>{loyaltyProgram.description}</p>
 
                         <Link className='btn' to={{pathname: '/loyalty_programs/membership', search: `?loyaltyProgramId=${loyaltyProgramId}`}}>Edit Membership</Link>
-                        <button className='btn' type='submit'>Transfer Points</button>
+                        <Link className='btn' to={{pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}`}}>Transfer Points</Link>
                     </div>
                 </div>
             </div>
