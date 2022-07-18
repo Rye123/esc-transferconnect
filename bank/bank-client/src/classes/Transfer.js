@@ -7,9 +7,9 @@ class Transfer {
      * @param {string} transferId 
      * @param {string} loyaltyProgramId 
      * @param {string} loyaltyProgramMembershipId 
-     * @param {string} status 
-     * @param {string} statusMessage
-     * @param {Date} submissionDate
+     * @param {string} status status of the transfer: pending, fulfilled or error
+     * @param {string} statusMessage status message, displayed when status is an error.
+     * @param {Date} submissionDate date of submission of the transfer
      * @param {number} points
      */
     constructor(transferId, loyaltyProgramId, loyaltyProgramMembershipId, status, statusMessage, submissionDate, points) {

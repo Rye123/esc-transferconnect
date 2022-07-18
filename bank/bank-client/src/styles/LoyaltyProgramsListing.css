@@ -92,7 +92,7 @@ body {
 	font-weight: 200;
 }
 
-.view_item > .overlay {
+.view_item>.overlay {
 	position: absolute;
 	left: 0;
 	right: 0;

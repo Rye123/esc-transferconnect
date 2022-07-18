@@ -1,30 +1,31 @@
 import { useEffect, useState } from 'react'
-import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
 /* Styling */
 import '../styles/LoyaltyProgramsListing.css';
 
 /* Classes */
-import LoyaltyProgram from '../classes/LoyaltyProgram';
 import LoyaltyProgramsListItem from '../components/LoyaltyProgramsListing/LoyaltyProgramsListItem';
+
+/* Services */
+import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
 /**
  * LoyaltyProgramsListPage - Displays all available loyalty programs
  */
 const LoyaltyProgramsListPage = () => {
     const [loyaltyPrograms, setLoyaltyPrograms] = useState([]);
-    
+
     useEffect(() => {
         loyaltyPrograms_service.programs_getAllPrograms()
-        .then(loyaltyPrograms => {
-            setLoyaltyPrograms(loyaltyPrograms);
-        })
-        .catch(err => {
-            console.error("LoyaltyProgramsListing Error:", err);
-            setLoyaltyPrograms([]);
-        });
+            .then(loyaltyPrograms => {
+                setLoyaltyPrograms(loyaltyPrograms);
+            })
+            .catch(err => {
+                console.error("LoyaltyProgramsListing Error:", err);
+                setLoyaltyPrograms([]);
+            });
     }, []);
-    
+
     return (
         <main>
             <div className="wrapper">
@@ -43,7 +44,7 @@ const LoyaltyProgramsListPage = () => {
             </div>
         </main>
     )
-    
+
 }
 
 export default LoyaltyProgramsListPage;

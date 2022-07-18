@@ -15,7 +15,7 @@ const RequireAuthRoute = ({ children }) => {
     const location = useLocation();
 
     if (Utils.isEmptyObject(userAuth.user))
-        return (<Navigate to='/login' state={{from: location}} replace/>)
+        return (<Navigate to='/login' state={{ from: location }} replace />)
     return children;
 }
 

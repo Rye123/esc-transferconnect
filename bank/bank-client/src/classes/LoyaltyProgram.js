@@ -5,12 +5,13 @@ class LoyaltyProgram {
     /**
      * 
      * @param {string} loyaltyProgramId ID of the loyalty program
-     * @param {string} loyaltyProgramName 
+     * @param {string} loyaltyProgramName name of the loyalty program
      * @param {number} exchangeRate ratio of TC points to the loyalty program points
-     * @param {string} href 
-     * @param {string} imgSrc 
-     * @param {number} estTransferTime 
-     * @param {number} minTransfer 
+     * @param {string} href link to loyalty program site
+     * @param {string} imgSrc link to loyalty program logo image
+     * @param {number} estTransferTime estimated time until transfer is completed
+     * @param {number} minTransfer minimum amount for transfers
+     * @param {string} description loyalty program description
      */
     constructor(loyaltyProgramId, loyaltyProgramName, exchangeRate, href = "", imgSrc = "/images/card.svg", estTransferTime = 1, minTransfer = 0, description="") {
         this.loyaltyProgramId = loyaltyProgramId;

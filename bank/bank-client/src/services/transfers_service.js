@@ -27,7 +27,7 @@ const randomTransferStatus = () => {
 for (let i = 1; i < 11; i++) {
     let status = randomTransferStatus();
     let statusMessage = (status === 'error') ? "Unknown Error" : undefined;
-    transfers.push(new Transfer((i*123).toString(), randomLoyaltyProgram(), (i*54).toString(), status, statusMessage, randomDate(), Utils.getRandomInt(1, 100)));
+    transfers.push(new Transfer((i * 123).toString(), randomLoyaltyProgram(), (i * 54).toString(), status, statusMessage, randomDate(), Utils.getRandomInt(1, 100)));
 }
 // future endpoints for transfer data
 const SERVER_URI = "/api/";
@@ -35,21 +35,21 @@ const PROGRAMS_URI = SERVER_URI + "transfers";
 
 /* Operations */
 
-const transfer_getAllTransfers = async() => {
+const transfer_getAllTransfers = async () => {
     // TODO: the axios request will include credentials
     return Promise.resolve(transfers);
 }
 
-const transfer_getTransferById = async(id) => {
+const transfer_getTransferById = async (id) => {
     const transfer = transfers.find(transfer => transfer.transferId === id);
 
     if (Utils.isEmptyObject(transfer)) {
-        return Promise.reject({ "error": "Transfer doesn't exist."});
+        return Promise.reject({ "error": "Transfer doesn't exist." });
     }
     return Promise.resolve(transfer);
 }
 
-const transfer_postTransfer = async(loyaltyProgramId, membershipId, points) => {
+const transfer_postTransfer = async (loyaltyProgramId, membershipId, points) => {
     const transfer = new Transfer(Utils.getRandomInt(10000, 20000).toString(), loyaltyProgramId, membershipId, 'pending', undefined, new Date(), points);
     transfers.push(transfer);
     return Promise.resolve(transfer);

@@ -1,10 +1,14 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import Utils from '../utils/utils';
+
+/* Services */
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
 /* Hooks */
 import { useUserAuth } from '../hooks/UserAuthContext';
+
+/* Utils */
+import Utils from '../utils/utils';
 
 /**
  * LoyaltyProgramMembershipPage - Form to create or modify an existing membership
@@ -20,24 +24,24 @@ const LoyaltyProgramMembershipPage = () => {
     const userAuth = useUserAuth();
     const user = userAuth.user;
     const loyaltyProgramId = searchParams.get("loyaltyProgramId") || "";
-    
+
     useEffect(() => {
         loyaltyPrograms_service.programs_getProgramById(loyaltyProgramId)
-        .then(loyaltyProgram => {
-            setLoyaltyProgram(loyaltyProgram);
-        })
-        .catch(err => {
-            console.error("LoyaltyProgramMembershipPage Error:", err);
-            setLoyaltyProgram({});
-        });
+            .then(loyaltyProgram => {
+                setLoyaltyProgram(loyaltyProgram);
+            })
+            .catch(err => {
+                console.error("LoyaltyProgramMembershipPage Error:", err);
+                setLoyaltyProgram({});
+            });
         loyaltyPrograms_service.programs_getMembershipForProgram(loyaltyProgramId)
-        .then(membership => {
-            setLoyaltyProgramMembership(membership);
-            setMembershipIdInput(membership.loyaltyProgramMembershipId);
-        })
-        .catch(err => {
-            setLoyaltyProgramMembership({});
-        })
+            .then(membership => {
+                setLoyaltyProgramMembership(membership);
+                setMembershipIdInput(membership.loyaltyProgramMembershipId);
+            })
+            .catch(err => {
+                setLoyaltyProgramMembership({});
+            })
     }, [])
 
 
@@ -47,26 +51,26 @@ const LoyaltyProgramMembershipPage = () => {
         const membershipId = membershipIdInput;
         setMembershipIdInput("");
         loyaltyPrograms_service.programs_postMembershipForProgram(loyaltyProgramId, membershipId)
-        .then(membership => {
-            navigate({pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}`});
-        })
-        .catch(err => {
-            console.error("LoyaltyProgramMembershipPage Error:", err);
-        })
+            .then(membership => {
+                navigate({ pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}` });
+            })
+            .catch(err => {
+                console.error("LoyaltyProgramMembershipPage Error:", err);
+            })
     }
     const handleFormSubmission_modify = (event) => {
         event.preventDefault();
         const membershipId = membershipIdInput;
         setMembershipIdInput("");
         loyaltyPrograms_service.programs_updateMembershipForProgram(loyaltyProgramId, membershipId)
-        .then(membership => {
-            navigate({pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}`});
-        })
-        .catch(err => {
-            console.error("LoyaltyProgramMembershipPage Error:", err);
-        })
+            .then(membership => {
+                navigate({ pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}` });
+            })
+            .catch(err => {
+                console.error("LoyaltyProgramMembershipPage Error:", err);
+            })
     }
-    
+
     // Return HTML
     if (typeof loyaltyProgram === 'undefined' || typeof loyaltyProgramMembership === 'undefined')
         return (<h1>Loading membership page...</h1>);
@@ -87,7 +91,7 @@ const LoyaltyProgramMembershipPage = () => {
                                 <h4>Once linked, we'll use this membership for your future points transfers.</h4>
                             </>
                         }
-                        
+
                         {(!Utils.isEmptyObject(loyaltyProgramMembership)) &&
                             <>
                                 <h3>Modify your {loyaltyProgram.loyaltyProgramName} account</h3>
@@ -101,7 +105,7 @@ const LoyaltyProgramMembershipPage = () => {
                                 <i className='material-icons'>person</i>
                             </div>
                             <div>
-                                <input className='input' type='text' value={user.firstName + " " + user.lastName} placeholder='Primary Cardholder' disabled/><br />
+                                <input className='input' type='text' value={user.firstName + " " + user.lastName} placeholder='Primary Cardholder' disabled /><br />
                             </div>
                         </div>
                         <div className='input-div two'>
