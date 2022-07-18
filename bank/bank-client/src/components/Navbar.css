@@ -27,7 +27,7 @@ nav>a {
     margin: 0;
     height: max-content;
     gap: 1rem;
-    transition-duration: 0.4s;
+    transition-duration: 0.2s;
 }
 
 nav>a:hover {
