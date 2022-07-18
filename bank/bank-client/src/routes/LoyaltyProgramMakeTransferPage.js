@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Utils from '../utils/utils';
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
@@ -29,7 +29,7 @@ const LoyaltyProgramMakeTransferPage = () => {
     if (typeof loyaltyProgramMembership === 'undefined')
         return (<h1>Loading...</h1>);
     if (Utils.isEmptyObject(loyaltyProgramMembership))
-        return (<h1>No membership</h1>);
+        return (<Navigate to={{pathname: '/loyalty_programs/membership', search: `?loyaltyProgramId=${loyaltyProgramId}`}} />);
     return (
         <>
             <h1>Make transfer with membership ID: {loyaltyProgramMembership.loyaltyProgramMembershipId}</h1>
