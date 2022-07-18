@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import transfers_service from '../services/transfers_service';
+import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
 /* Styling */
 import '../styles/TransferHistory.css';
@@ -16,22 +17,32 @@ import Utils from '../utils/utils';
  */
 const TransfersListPage = () => {
     const [transfers, setTransfers] = useState(undefined);
+    const [loyaltyProgramMapping, setLoyaltyProgramMapping] = useState(undefined); // maps ids to the program name
     
     useEffect(() => {
         transfers_service.transfer_getAllTransfers()
         .then(transfers => {
             transfers.sort((a, b) => a.submissionDate < b.submissionDate);
             setTransfers(transfers);
+            return loyaltyPrograms_service.programs_getAllPrograms();
+        })
+        .then(loyaltyPrograms => {
+            const newLoyaltyProgramMapping = {};
+            loyaltyPrograms.forEach(loyaltyProgram => {
+                newLoyaltyProgramMapping[loyaltyProgram.loyaltyProgramId] = loyaltyProgram.loyaltyProgramName;
+            });
+            setLoyaltyProgramMapping(newLoyaltyProgramMapping);
         })
         .catch(err => {
             console.error("TransferHistory Error: ", err);
             setTransfers([]);
+            setLoyaltyProgramMapping({})
         });
     }, [])
 
-    if (typeof transfers === 'undefined')
+    if (loyaltyProgramMapping === 'undefined')
         return (<h1>Loading...</h1>);
-    if (Utils.isEmptyObject(transfers))
+    if (Utils.isEmptyObject(loyaltyProgramMapping)) // TODO: allow it to load even if some loyalty programs don't
         return (<h1>Could not load Transfer History</h1>); // TODO: decide routing for this
     return (
         <main>
@@ -50,7 +61,11 @@ const TransfersListPage = () => {
                 </thead>
                 <tbody>
                     {
-                        transfers.map(transfer => <TransferHistoryElem key={transfer.transferId} transfer={transfer} />)
+                        transfers.map(transfer => <TransferHistoryElem 
+                            key={transfer.transferId} 
+                            transfer={transfer} 
+                            loyaltyProgramName={loyaltyProgramMapping[transfer.loyaltyProgramId]}
+                            />)
                     }
                 </tbody>
             </table>
