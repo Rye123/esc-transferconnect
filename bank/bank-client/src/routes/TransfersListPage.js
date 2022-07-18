@@ -18,6 +18,7 @@ const TransfersListPage = () => {
 
     transfers_service.transfer_getAllTransfers()
     .then(transfers => {
+        transfers.sort((a, b) => a.submissionDate < b.submissionDate);
         setTransfer(transfers);
     })
     .catch(err => {
