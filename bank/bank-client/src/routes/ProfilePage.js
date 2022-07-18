@@ -25,9 +25,9 @@ const ProfilePage = () => {
                 <div className="display-container">
                     <div>
                         <div>
-                            <h2>Welcome, {user.firstName} {user.lastName}</h2><br></br>
-                            <b>Logged in as: </b> {user.username} <br></br><br></br>
-                            <b>Points: </b> {user.points || 0} <br></br><br></br>
+                            <h2>Welcome, <b>{user.firstName} {user.lastName}</b></h2><br></br>
+                            Logged in as: <b>{user.username}</b> <br></br><br></br>
+                            Points:  <b>{user.points || 0}</b> <br></br><br></br>
                         </div>
                     </div>
                 </div>
