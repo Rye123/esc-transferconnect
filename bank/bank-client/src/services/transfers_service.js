@@ -12,9 +12,12 @@ import Transfer from '../classes/Transfer';
 
 /* Constants */
 // temporary storage
+const randomDate = () => {
+    return new Date(Date.now() - Utils.getRandomInt(1000000000, 10000000000))
+}
 const transfers = [];
 for (let i = 1; i < 11; i++) {
-    transfers.push(new Transfer((i*123).toString(), (i*432).toString(), (i*54).toString(), 'pending'))
+    transfers.push(new Transfer((i*123).toString(), (i*432).toString(), (i*54).toString(), 'pending', randomDate()))
 }
 // future endpoints for transfer data
 const SERVER_URI = "/api/";
@@ -36,5 +39,11 @@ const transfer_getTransferById = async(id) => {
     return Promise.resolve(transfer);
 }
 
-const exports = { transfer_getAllTransfers, transfer_getTransferById };
+const transfer_postTransfer = async(loyaltyProgramId, membershipId, points) => {
+    const transfer = new Transfer(Utils.getRandomInt(10000, 20000), loyaltyProgramId, membershipId, 'pending', new Date());
+    transfers.push(transfer);
+    Promise.resolve(transfer);
+}
+
+const exports = { transfer_getAllTransfers, transfer_getTransferById, transfer_postTransfer };
 export default exports;

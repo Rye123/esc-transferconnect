@@ -34,6 +34,7 @@ const TransfersListPage = () => {
                         <th>Program</th>
                         <th>Membership Number</th>
                         <th>Status</th>
+                        <th>Submission Date</th>
                         <th></th>
                     </tr>
                 </thead>
