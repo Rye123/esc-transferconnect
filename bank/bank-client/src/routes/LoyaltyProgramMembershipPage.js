@@ -11,6 +11,7 @@ import { useUserAuth } from '../hooks/UserAuthContext';
  */
 const LoyaltyProgramMembershipPage = () => {
     const [loyaltyProgram, setLoyaltyProgram] = useState(undefined);
+    const [loyaltyProgramMembership, setLoyaltyProgramMembership] = useState(undefined);
     const [searchParams, setSearchParams] = useSearchParams();
 
     // Load User
@@ -25,20 +26,37 @@ const LoyaltyProgramMembershipPage = () => {
             console.error("LoyaltyProgramMembershipPage Error:", err);
             setLoyaltyProgram({});
         });
+        loyaltyPrograms_service.programs_getMembershipForProgram(loyaltyProgramId)
+        .then(membership => {
+            setLoyaltyProgramMembership(membership);
+        })
+        .catch(err => {
+            setLoyaltyProgramMembership({});
+        })
     }, [])
 
     
     // Return HTML
-    if (typeof loyaltyProgram === 'undefined')
+    if (typeof loyaltyProgram === 'undefined' || typeof loyaltyProgramMembership === 'undefined')
         return (<h1>Loading membership page...</h1>);
     if (Utils.isEmptyObject(loyaltyProgram))
         return (<h1>No such Loyalty Program</h1>); //TODO: decide where to redirect
-    
-    return (
-        <>
-            <h1>Membership for {loyaltyProgram.loyaltyProgramName}</h1>
-        </>
-    )
+    if (Utils.isEmptyObject(loyaltyProgramMembership)) {
+        // return new membership page
+        return (
+            <main>
+                <h1>New Membership for {loyaltyProgram.loyaltyProgramName}</h1>
+            </main>
+        )
+    } else {
+        // return modify membership page
+        return (
+            <main>
+                <h1>Modify Membership for {loyaltyProgram.loyaltyProgramName}</h1>
+                <h2>Membership ID: {loyaltyProgramMembership.loyaltyProgramMembershipId}</h2>
+            </main>
+        )
+    }
 }
 
 export default LoyaltyProgramMembershipPage;
