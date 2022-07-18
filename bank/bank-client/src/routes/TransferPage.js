@@ -45,8 +45,23 @@ const TransferPage = () => {
                 <div className='success-container'>
                     <div>
                         <h2>TRANSFER ID <u>{transfer.transferId}</u></h2>
-                        <h1>{transfer.status.toUpperCase()}</h1>
-                        <h3>Your <b>{transfer.points}</b> points are on their way to <b>{loyaltyProgram.loyaltyProgramName}</b>!</h3> <br />
+                        <h1 className={`transfer-${transfer.status}`}>{transfer.status.toUpperCase()}</h1>
+                        {transfer.status === 'pending' && 
+                            <h3>
+                                Your <b>{transfer.points}</b> points are on their way to <b>{loyaltyProgram.loyaltyProgramName}</b>!
+                            </h3> 
+                        }
+                        {transfer.status === 'fulfilled' &&
+                            <h3>
+                                You successfully sent <b>{transfer.points}</b> points to <b>{loyaltyProgram.loyaltyProgramName}</b>!
+                            </h3>
+                        }
+                        {transfer.status === 'error' &&
+                            <h3>
+                                There was an error sending your points to <b>{loyaltyProgram.loyaltyProgramName}</b>: {transfer.statusMessage}
+                            </h3>
+                        }
+                        <br />
                         <p>Date of submission: {transfer.submissionDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     </div>
                 </div>
