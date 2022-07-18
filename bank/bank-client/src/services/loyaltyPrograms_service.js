@@ -12,10 +12,10 @@ import LoyaltyProgramMembership from '../classes/LoyaltyProgramMembership';
 /* Constants */
 // temporary storage
 const loyaltyPrograms = [];
-loyaltyPrograms.push(new LoyaltyProgram("2341", "Asia Miles", 400/250, "asia_miles_info.html", "/images/asia-miles.jpeg", 4*7, 400));
-loyaltyPrograms.push(new LoyaltyProgram("1234", "British Airways", 400/312.5, "british_airway_info.html", "/images/british-airways.jpeg", 4*8, 400));
-loyaltyPrograms.push(new LoyaltyProgram("2468", "Dynasty Flyer", 400/250, "dynasty_flyer_info.html", "/images/china-airlines.jpeg", 4*4, 400));
-loyaltyPrograms.push(new LoyaltyProgram("6432", "Emirates Skywards", 400/250, "emirates_skywards_info.html", "/images/emirates.png", 4*4, 400));
+loyaltyPrograms.push(new LoyaltyProgram("2341", "Asia Miles", 400/250, undefined, undefined, 4*7, 400));
+loyaltyPrograms.push(new LoyaltyProgram("1234", "British Airways", 400/312.5, undefined, undefined, 4*8, 400));
+loyaltyPrograms.push(new LoyaltyProgram("2468", "Dynasty Flyer", 400/250, undefined, undefined, 4*4, 400));
+loyaltyPrograms.push(new LoyaltyProgram("6432", "Emirates Skywards", 400/250, undefined, undefined, 4*4, 400));
 const memberships = [];
 memberships.push(new LoyaltyProgramMembership("A1234", "xxyy", "2341"));
 // future endpoints for program data
