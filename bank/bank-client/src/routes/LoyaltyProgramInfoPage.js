@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Utils from '../utils/utils';
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
@@ -10,14 +10,17 @@ const LoyaltyProgramInfoPage = () => {
     const [loyaltyProgram, setLoyaltyProgram] = useState(undefined);
     const [searchParams, setSearchParams] = useSearchParams();
     const loyaltyProgramId = searchParams.get("loyaltyProgramId") || "";
-    loyaltyPrograms_service.programs_getProgramById(loyaltyProgramId)
-    .then(loyaltyProgram => {
-        setLoyaltyProgram(loyaltyProgram);
-    })
-    .catch(err => {
-        console.error("LoyaltyProgramInfoPage Error: ", err);
-        setLoyaltyProgram({});
-    })
+
+    useEffect(() => {
+        loyaltyPrograms_service.programs_getProgramById(loyaltyProgramId)
+        .then(loyaltyProgram => {
+            setLoyaltyProgram(loyaltyProgram);
+        })
+        .catch(err => {
+            console.error("LoyaltyProgramInfoPage Error: ", err);
+            setLoyaltyProgram({});
+        })
+    }, []);
 
     
     // Return HTML
