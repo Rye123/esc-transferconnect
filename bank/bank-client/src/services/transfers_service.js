@@ -15,9 +15,13 @@ import Transfer from '../classes/Transfer';
 const randomDate = () => {
     return new Date(Date.now() - Utils.getRandomInt(1000000000, 10000000000))
 }
+const randomLoyaltyProgram = () => {
+    const loyaltyProgramIds = ["2341", "1234", "2468", "6432"];
+    return loyaltyProgramIds[Utils.getRandomInt(0, 5)];
+}
 const transfers = [];
 for (let i = 1; i < 11; i++) {
-    transfers.push(new Transfer((i*123).toString(), (i*432).toString(), (i*54).toString(), 'pending', randomDate()))
+    transfers.push(new Transfer((i*123).toString(), randomLoyaltyProgram().toString(), (i*54).toString(), 'pending', randomDate()))
 }
 // future endpoints for transfer data
 const SERVER_URI = "/api/";
