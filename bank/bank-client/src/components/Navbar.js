@@ -36,7 +36,7 @@ const Navbar = () => {
             <a href='/' className='site-title'>Digibank</a>
             <NavbarLink to='/profile' content='Profile' />
             <NavbarLink to='/loyalty_programs' content='Loyalty Programs' />
-            <NavbarLink to='/transfer_history' content='Transfer History' />
+            <NavbarLink to='/transfers' content='Transfer History' />
             <NavbarLink to='/logout' content='Logout' />
         </nav>
     )
