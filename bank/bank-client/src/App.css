@@ -178,6 +178,12 @@ form {
     width: 360px;
 }
 
+.form-container {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
 form h2 {
     font-size: 2.9rem;
     text-transform: uppercase;
