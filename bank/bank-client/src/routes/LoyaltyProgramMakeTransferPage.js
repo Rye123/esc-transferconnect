@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useSearchParams, useNavigate } from 'react-router-dom';
 import Utils from '../utils/utils';
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
+import transfers_service from '../services/transfers_service';
 
 /* Hooks */
 import { useUserAuth } from '../hooks/UserAuthContext';
@@ -14,6 +15,9 @@ const LoyaltyProgramMakeTransferPage = () => {
     const [loyaltyProgram, setLoyaltyProgram] = useState(undefined);
     const [searchParams, setSearchParams] = useSearchParams();
     const [pointsInputValue, setPointsInputValue] = useState({inputStr: "", points: 0});
+
+    const navigate = useNavigate();
+
     const userAuth = useUserAuth();
     const user = userAuth.user;
 
@@ -67,6 +71,23 @@ const LoyaltyProgramMakeTransferPage = () => {
     // Handle Transfer Form Submission
     const handleFormSubmission = (event) => {
         event.preventDefault();
+        const pointsToTransfer = pointsInputValue.points;
+
+        //Clear input elements
+        setPointsInputValue({
+            inputStr: "",
+            points: 0
+        });
+
+        // Send Request
+        transfers_service.transfer_postTransfer(loyaltyProgramId, loyaltyProgramMembership.loyaltyProgramMembershipId, pointsToTransfer)
+        .then(transfer => {
+            navigate(`/transfers/${transfer.transferId}`);
+        })
+        .catch(err => {
+            console.error("LoyaltyProgramMakeTransferPage Error:", err);
+            alert("Error in form submission");
+        });
     }
     
     // Return HTML
