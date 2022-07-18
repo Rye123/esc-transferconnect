@@ -109,9 +109,9 @@ const LoyaltyProgramMakeTransferPage = () => {
                         <h3>Transfer Points to {loyaltyProgram.loyaltyProgramName}</h3>
                         <h2>{loyaltyProgramMembership.loyaltyProgramMembershipId}</h2>
                         <div className='box'>
-                            <b>AVAILABLE: {isNaN(user.points) ? 0 : user.points}</b><br /><br />
-                            <b>USING: {isNaN(pointsInputValue.points) ? 0 : pointsInputValue.points}</b><br /><br />
-                            <b>REMAINING: {(isNaN(user.points) || isNaN(pointsInputValue.points)) ? 0 : user.points - pointsInputValue.points}</b><br /><br />
+                            AVAILABLE: {isNaN(user.points) ? 0 : user.points}<br /><br />
+                            USING: {isNaN(pointsInputValue.points) ? 0 : pointsInputValue.points}<br /><br />
+                            REMAINING: {(isNaN(user.points) || isNaN(pointsInputValue.points)) ? 0 : user.points - pointsInputValue.points}<br /><br />
                         </div>
                         <br />
                         <br />
@@ -125,7 +125,7 @@ const LoyaltyProgramMakeTransferPage = () => {
                             </div>
                         </div>
                         <br />
-                        <h3>Equates to {(isNaN(pointsInputValue.points) || isNaN(loyaltyProgram.exchangeRate)) ? 0 : Math.round(pointsInputValue.points * loyaltyProgram.exchangeRate)} points</h3>
+                        <h3>Equates to <b>{(isNaN(pointsInputValue.points) || isNaN(loyaltyProgram.exchangeRate)) ? 0 : Math.round(pointsInputValue.points * loyaltyProgram.exchangeRate)}</b> points</h3>
                         <button className='btn' type='submit' disabled={((user.points - pointsInputValue.points) <= 0) || pointsInputValue.points <= 0}>Complete Transfer</button>
                         <h5>All transfers are final</h5><br />
                         <h6>Once rewards have been transferred, they are subject to the terms of the Loyalty Program to which they are transferred</h6>
