@@ -13,15 +13,15 @@ const LogoutRoute = () => {
     const userAuth = useUserAuth();
 
     userAuth.logout()
-    .then(() => {
-        console.log("Successful logout");
-    })
-    .catch(err => {
-        console.error("LogoutRoute Error:", err);
-    })
-    .finally(() => {
-        return (<Navigate to='/' />);
-    });
+        .then(() => {
+            console.log("Successful logout");
+        })
+        .catch(err => {
+            console.error("LogoutRoute Error:", err);
+        })
+        .finally(() => {
+            return (<Navigate to='/' />);
+        });
 }
 
 export default LogoutRoute;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 /* Styling */
 import '../styles/Login.css';
@@ -49,22 +49,22 @@ const LoginPage = () => {
         userAuth.login(credentials).then(() => {
             return (<Navigate to={from} />);
         })
-        .catch(err => {
-            const inputShake = [
-                { transform: 'translate(0px, 0px)' },
-                { transform: 'translate(-3px, 0px)' },
-                { transform: 'translate(0px, 0px)' },
-                { transform: 'translate(3px, 0px)' },
-                { transform: 'translate(0px, 0px)' },
-            ];
-            const inputShakeTiming = {
-                duration: 250,
-                iterations: 2
-            }
-            Array.prototype.forEach.call(document.getElementsByClassName('input'), el => {
-                el.animate(inputShake, inputShakeTiming);
+            .catch(err => {
+                const inputShake = [
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(-4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                ];
+                const inputShakeTiming = {
+                    duration: 250,
+                    iterations: 1
+                }
+                Array.prototype.forEach.call(document.getElementsByClassName('input'), el => {
+                    el.animate(inputShake, inputShakeTiming);
+                });
             });
-        });
     };
 
     return (

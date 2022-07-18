@@ -5,9 +5,6 @@ import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 /* Styling */
 import '../styles/TransferHistory.css';
 
-/* Classes */
-import Transfer from '../classes/Transfer';
-
 /* Components */
 import TransferHistoryElem from '../components/TransferHistory/TransfersListItem';
 import Utils from '../utils/utils';
@@ -18,26 +15,27 @@ import Utils from '../utils/utils';
 const TransfersListPage = () => {
     const [transfers, setTransfers] = useState(undefined);
     const [loyaltyProgramMapping, setLoyaltyProgramMapping] = useState(undefined); // maps ids to the program name
-    
+
+    // Load Transfers
     useEffect(() => {
         transfers_service.transfer_getAllTransfers()
-        .then(transfers => {
-            transfers.sort((a, b) => a.submissionDate < b.submissionDate);
-            setTransfers(transfers);
-            return loyaltyPrograms_service.programs_getAllPrograms();
-        })
-        .then(loyaltyPrograms => {
-            const newLoyaltyProgramMapping = {};
-            loyaltyPrograms.forEach(loyaltyProgram => {
-                newLoyaltyProgramMapping[loyaltyProgram.loyaltyProgramId] = loyaltyProgram.loyaltyProgramName;
+            .then(transfers => {
+                transfers.sort((a, b) => a.submissionDate < b.submissionDate);
+                setTransfers(transfers);
+                return loyaltyPrograms_service.programs_getAllPrograms();
+            })
+            .then(loyaltyPrograms => {
+                const newLoyaltyProgramMapping = {};
+                loyaltyPrograms.forEach(loyaltyProgram => {
+                    newLoyaltyProgramMapping[loyaltyProgram.loyaltyProgramId] = loyaltyProgram.loyaltyProgramName;
+                });
+                setLoyaltyProgramMapping(newLoyaltyProgramMapping);
+            })
+            .catch(err => {
+                console.error("TransferHistory Error: ", err);
+                setTransfers([]);
+                setLoyaltyProgramMapping({})
             });
-            setLoyaltyProgramMapping(newLoyaltyProgramMapping);
-        })
-        .catch(err => {
-            console.error("TransferHistory Error: ", err);
-            setTransfers([]);
-            setLoyaltyProgramMapping({})
-        });
     }, [])
 
     if (loyaltyProgramMapping === 'undefined')
@@ -61,11 +59,11 @@ const TransfersListPage = () => {
                 </thead>
                 <tbody>
                     {
-                        transfers.map(transfer => <TransferHistoryElem 
-                            key={transfer.transferId} 
-                            transfer={transfer} 
+                        transfers.map(transfer => <TransferHistoryElem
+                            key={transfer.transferId}
+                            transfer={transfer}
                             loyaltyProgramName={loyaltyProgramMapping[transfer.loyaltyProgramId]}
-                            />)
+                        />)
                     }
                 </tbody>
             </table>

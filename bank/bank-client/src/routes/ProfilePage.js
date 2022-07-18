@@ -1,9 +1,6 @@
 /* Styling */
 import '../styles/Profile.css';
 
-/* Utils */
-import Utils from '../utils/utils';
-
 /* Hooks */
 import { useUserAuth } from '../hooks/UserAuthContext';
 
