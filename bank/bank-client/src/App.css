@@ -40,6 +40,10 @@ a {
     width: 500px;
 }
 
+.avatar {
+    width: 100px;
+}
+
 .btn {
     display: block;
     width: 100%;

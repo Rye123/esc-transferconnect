@@ -1,9 +1,4 @@
 /* CSS code specific to Login.css */
-/* TODO: See design of other pages and move common style tags out */
-
-.avatar {
-    width: 100px;
-}
 
 .login-container {
     display: flex;

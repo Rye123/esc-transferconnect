@@ -35,7 +35,7 @@ const LoyaltyProgramInfoPage = () => {
                 <div className='img'>
                     <img src='/images/points.svg' alt="Information" />
                 </div>
-                <div className='container2'>
+                <div className='display-container'>
                     <div className='container3'>
                         <a href={`${loyaltyProgram.href}`}>
                             <img className='avatar' src={`${loyaltyProgram.imgSrc}`} alt=''/>
