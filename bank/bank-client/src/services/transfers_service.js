@@ -17,7 +17,7 @@ const randomDate = () => {
 }
 const randomLoyaltyProgram = () => {
     const loyaltyProgramIds = ["2341", "1234", "2468", "6432"];
-    return loyaltyProgramIds[Utils.getRandomInt(0, 5)];
+    return loyaltyProgramIds[Utils.getRandomInt(0, 4)];
 }
 const transfers = [];
 for (let i = 1; i < 11; i++) {
