@@ -13,8 +13,11 @@ const LoyaltyProgramMembershipPage = () => {
     const [loyaltyProgram, setLoyaltyProgram] = useState(undefined);
     const [loyaltyProgramMembership, setLoyaltyProgramMembership] = useState(undefined);
     const [searchParams, setSearchParams] = useSearchParams();
+    const [membershipIdInput, setMembershipIdInput] = useState("");
 
     // Load User
+    const userAuth = useUserAuth();
+    const user = userAuth.user;
     const loyaltyProgramId = searchParams.get("loyaltyProgramId") || "";
     
     useEffect(() => {
@@ -29,34 +32,76 @@ const LoyaltyProgramMembershipPage = () => {
         loyaltyPrograms_service.programs_getMembershipForProgram(loyaltyProgramId)
         .then(membership => {
             setLoyaltyProgramMembership(membership);
+            setMembershipIdInput(membership.loyaltyProgramMembershipId);
         })
         .catch(err => {
             setLoyaltyProgramMembership({});
         })
     }, [])
 
+
+    // Form Submission
+    const handleFormSubmission_new = (event) => {
+        event.preventDefault();
+        console.log("submitting new membership");
+    }
+    const handleFormSubmission_modify = (event) => {
+        event.preventDefault();
+        console.log("modifying membership");
+    }
     
     // Return HTML
     if (typeof loyaltyProgram === 'undefined' || typeof loyaltyProgramMembership === 'undefined')
         return (<h1>Loading membership page...</h1>);
     if (Utils.isEmptyObject(loyaltyProgram))
         return (<h1>No such Loyalty Program</h1>); //TODO: decide where to redirect
-    if (Utils.isEmptyObject(loyaltyProgramMembership)) {
-        // return new membership page
-        return (
-            <main>
-                <h1>New Membership for {loyaltyProgram.loyaltyProgramName}</h1>
-            </main>
-        )
-    } else {
-        // return modify membership page
-        return (
-            <main>
-                <h1>Modify Membership for {loyaltyProgram.loyaltyProgramName}</h1>
-                <h2>Membership ID: {loyaltyProgramMembership.loyaltyProgramMembershipId}</h2>
-            </main>
-        )
-    }
+    return (
+        <main>
+            <img className='wave' src='/images/wave.png' />
+            <div className='container'>
+                <div className='img'>
+                    <img src='/images/reward.svg' alt='' />
+                </div>
+                <div className='form-container'>
+                    <form onSubmit={(Utils.isEmptyObject(loyaltyProgramMembership)) ? handleFormSubmission_new : handleFormSubmission_modify}>
+                        {(Utils.isEmptyObject(loyaltyProgramMembership)) &&
+                            <>
+                                <h3>Link your {loyaltyProgram.loyaltyProgramName} account to start</h3>
+                                <h4>Once linked, we'll use this membership for your future points transfers.</h4>
+                            </>
+                        }
+                        
+                        {(!Utils.isEmptyObject(loyaltyProgramMembership)) &&
+                            <>
+                                <h3>Modify your {loyaltyProgram.loyaltyProgramName} account</h3>
+                                <h4>We'll use this membership for your future points transfers.</h4>
+                            </>
+                        }
+
+
+                        <div className='input-div one'>
+                            <div className='i'>
+                                <i className='material-icons'>person</i>
+                            </div>
+                            <div>
+                                <input className='input' type='text' value={user.firstName + " " + user.lastName} placeholder='Primary Cardholder' disabled/><br />
+                            </div>
+                        </div>
+                        <div className='input-div two'>
+                            <div className='i'>
+                                <i className='material-icons'>card_membership</i>
+                            </div>
+                            <div>
+                                <input className='input' type='text' value={membershipIdInput} onChange={(event) => setMembershipIdInput(event.target.value)} placeholder='Membership ID' /><br />
+                            </div>
+                        </div>
+                        <button className='btn' type='submit'>Save Membership</button>
+                        <h6>Please ensure that your Loyalty Membership name matches your cardholder name or transfer may be rejected. Rewards can also be transfered to a Loyalty Program registered to the exact cardholder name on the DigiBank account.</h6>
+                    </form>
+                </div>
+            </div>
+        </main>
+    )
 }
 
 export default LoyaltyProgramMembershipPage;
