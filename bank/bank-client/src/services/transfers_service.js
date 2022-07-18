@@ -40,7 +40,7 @@ const transfer_getTransferById = async(id) => {
 }
 
 const transfer_postTransfer = async(loyaltyProgramId, membershipId, points) => {
-    const transfer = new Transfer(Utils.getRandomInt(10000, 20000), loyaltyProgramId, membershipId, 'pending', new Date());
+    const transfer = new Transfer(Utils.getRandomInt(10000, 20000).toString(), loyaltyProgramId, membershipId, 'pending', new Date());
     transfers.push(transfer);
     return Promise.resolve(transfer);
 }
