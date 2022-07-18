@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
 /* Styling */
@@ -14,13 +14,16 @@ import LoyaltyProgramsListItem from '../components/LoyaltyProgramsListing/Loyalt
 const LoyaltyProgramsListPage = () => {
     const [loyaltyPrograms, setLoyaltyPrograms] = useState([]);
     
-    loyaltyPrograms_service.programs_getAllPrograms()
-    .then(loyaltyPrograms => {
-        setLoyaltyPrograms(loyaltyPrograms);
-    })
-    .catch(err => {
-        console.error("LoyaltyProgramsListing Error:", err);
-    });
+    useEffect(() => {
+        loyaltyPrograms_service.programs_getAllPrograms()
+        .then(loyaltyPrograms => {
+            setLoyaltyPrograms(loyaltyPrograms);
+        })
+        .catch(err => {
+            console.error("LoyaltyProgramsListing Error:", err);
+            setLoyaltyPrograms([]);
+        });
+    }, []);
     
     return (
         <main>
