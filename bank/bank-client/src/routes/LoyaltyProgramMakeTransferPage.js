@@ -82,7 +82,7 @@ const LoyaltyProgramMakeTransferPage = () => {
         // Send Request
         transfers_service.transfer_postTransfer(loyaltyProgramId, loyaltyProgramMembership.loyaltyProgramMembershipId, pointsToTransfer)
         .then(transfer => {
-            navigate(`/transfers/${transfer.transferId}`);
+            navigate({pathname: `/transfers/transfer`, search: `transferId=${transfer.transferId}`});
         })
         .catch(err => {
             console.error("LoyaltyProgramMakeTransferPage Error:", err);

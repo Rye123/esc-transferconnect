@@ -39,7 +39,7 @@ root.render(
         <Route path='loyalty_programs/membership' element={<RequireAuthRoute><LoyaltyProgramMembershipPage /></RequireAuthRoute>} />
 
         <Route path='transfer_history' element={<RequireAuthRoute><TransfersListPage /></RequireAuthRoute>} />
-        <Route path='transfers/:transferId' element={<RequireAuthRoute><TransferPage /></RequireAuthRoute>} />
+        <Route path='transfers/transfer' element={<RequireAuthRoute><TransferPage /></RequireAuthRoute>} />
         <Route path='transfers/make_transfer' element={<RequireAuthRoute><LoyaltyProgramMakeTransferPage /></RequireAuthRoute>} />
         
         <Route path='logout' element={<RequireAuthRoute><LogoutRoute /></RequireAuthRoute>} />
