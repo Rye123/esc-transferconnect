@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import Utils from '../utils/utils';
 import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
 
@@ -8,12 +8,10 @@ import loyaltyPrograms_service from '../services/loyaltyPrograms_service';
  */
 const LoyaltyProgramInfoPage = () => {
     const [loyaltyProgram, setLoyaltyProgram] = useState(undefined);
-    const params = useParams();
-    const loyaltyProgramId = params.loyaltyProgramId;
-
+    const [searchParams, setSearchParams] = useSearchParams();
+    const loyaltyProgramId = searchParams.get("loyaltyProgramId") || "";
     loyaltyPrograms_service.programs_getProgramById(loyaltyProgramId)
     .then(loyaltyProgram => {
-        console.log("loaded");
         setLoyaltyProgram(loyaltyProgram);
     })
     .catch(err => {
@@ -23,7 +21,6 @@ const LoyaltyProgramInfoPage = () => {
 
     
     // Return HTML
-    console.log(loyaltyProgram)
     if (typeof loyaltyProgram === 'undefined')
         return (<h1>Loading...</h1>);
     if (Utils.isEmptyObject(loyaltyProgram))
