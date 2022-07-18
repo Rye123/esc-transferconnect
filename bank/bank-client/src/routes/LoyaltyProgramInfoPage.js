@@ -30,10 +30,10 @@ const LoyaltyProgramInfoPage = () => {
         return (<h1>No such loyalty program</h1>);
     return (
         <>
-            <img className="wave" src='images/wave.png' />
+            <img className="wave" src='/images/wave.png' />
             <div className='container'>
                 <div className='img'>
-                    <img src='images/info.svg' alt="Information" />
+                    <img src='/images/points.svg' alt="Information" />
                 </div>
                 <div className='container2'>
                     <div className='container3'>
