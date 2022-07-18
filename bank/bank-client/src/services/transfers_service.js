@@ -21,7 +21,7 @@ const randomLoyaltyProgram = () => {
 }
 const transfers = [];
 for (let i = 1; i < 11; i++) {
-    transfers.push(new Transfer((i*123).toString(), randomLoyaltyProgram().toString(), (i*54).toString(), 'pending', randomDate()))
+    transfers.push(new Transfer((i*123).toString(), randomLoyaltyProgram(), (i*54).toString(), 'pending', randomDate(), Utils.getRandomInt(1, 100)));
 }
 // future endpoints for transfer data
 const SERVER_URI = "/api/";
@@ -44,7 +44,7 @@ const transfer_getTransferById = async(id) => {
 }
 
 const transfer_postTransfer = async(loyaltyProgramId, membershipId, points) => {
-    const transfer = new Transfer(Utils.getRandomInt(10000, 20000).toString(), loyaltyProgramId, membershipId, 'pending', new Date());
+    const transfer = new Transfer(Utils.getRandomInt(10000, 20000).toString(), loyaltyProgramId, membershipId, 'pending', new Date(), points);
     transfers.push(transfer);
     return Promise.resolve(transfer);
 }
