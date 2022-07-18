@@ -22,7 +22,7 @@ const LoyaltyProgramsListingElem = ({ loyaltyProgram }) => {
                     <p>Estimated Transfer Time: {loyaltyProgram.estTransferTime}</p>
                     <p>Minimum Transfer Account: {loyaltyProgram.minTransfer}</p>
                 </div>
-                <Link to={`/transfers/make_transfer`} className="btn">Transfer Points</Link>
+                <Link to={{pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}`}} className="btn">Transfer Points</Link>
             </div>
         </div>
     )
