@@ -2,24 +2,29 @@
 const mongoose = require('mongoose');
 
 // Mongoose Users setup
-const UserSchema = new mongoose.Schema({
-    username: String,
-    password: String,
-    firstName: String,
-    lastName: String,
-    points: {
-        type: Number,
-        default: 0
+const UserSchema = new mongoose.Schema(
+    {
+        username: String,
+        password: String,
+        firstName: String,
+        lastName: String,
+        points: {
+            type: Number,
+            default: 0
+        },
+        loyaltyProgramMembershipIds: {
+            type: [String],
+            default: []
+        },
+        transferIds: {
+            type: [String],
+            default: []
+        }
     },
-    loyaltyProgramMembershipIds: {
-        type: [String],
-        default: []
-    },
-    transferIds: {
-        type: [String],
-        default: []
+    {
+        collection: 'users'
     }
-});
+);
 
 UserSchema.set('toJSON', {
     transform: (document, jsonObject) => {
