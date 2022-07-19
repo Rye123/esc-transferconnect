@@ -50,20 +50,6 @@ app.use(express.json()); // any further requests will be stored in JSON in reque
 app.use(morgan('dev'));  // logs requests
 
 /* REST Endpoints for User Authentication */
-app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, response) => {
-    const foundUser = request.user; // attached from requireAuthentication: Any error there should be resolved already
-
-    // ensure user is AUTHORISED to view this
-    if (request.params.id !== foundUser.id)
-        throw new UserAuthorisationError();
-
-    const userInfo = {
-        id: foundUser.id,
-        username: foundUser.username,
-        points: foundUser.points
-    };
-    return response.status(200).json(userInfo);
-});
 
 /**
  * Route serving user token resolution.
@@ -71,7 +57,6 @@ app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, res
  */
 app.get('/api/user-token-resolve', auth_user_service.requireAuthentication, (request, response) => {
     const foundUser = request.user; // attached from requireAuthentication: Any error there should be resolved already
-    console.log(foundUser);
     return response.status(200).json(foundUser);
 });
 
@@ -83,6 +68,34 @@ app.post('/api/user-token-auth', auth_user_service.authenticateUser, (request, r
     response.status(201).end();
 });
 
+/**
+ * Route serving loyalty program requests
+ */
+app.get('/api/loyaltyPrograms', (request, response) => {
+    const loyaltyProgramId = request.query["loyaltyProgramId"];
+    if (typeof loyaltyProgramId === 'undefined') {
+        // get all programs
+        LoyaltyProgramModel.find({})
+        .then(loyaltyPrograms => {
+            response.status(200).json(loyaltyPrograms);
+        })
+        .catch(err => {
+            response.status(404).end();
+        });
+    } else {
+        // get all programs
+        LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
+        .then(loyaltyProgram => {
+            response.status(200).json(loyaltyProgram);
+        })
+        .catch(err => {
+            response.status(404).end();
+        });
+
+    }
+});
+
+app.get('/api/loyaltyPrograms/')
 
 /* Unknown Endpoint Handling */
 app.use((request, response) => {

@@ -32,3 +32,9 @@ Content-Type: application/json
 {
     "username": "michaelmyers123"
 }
+
+### Loyalty Programs API: Get all programs
+GET http://localhost:3001/api/loyaltyPrograms
+
+### Loyalty Programs API: Get single program
+GET http://localhost:3001/api/loyaltyPrograms?loyaltyProgramId=BRITISHAIRWAYS
