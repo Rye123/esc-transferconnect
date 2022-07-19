@@ -112,27 +112,19 @@ const programs_postMembershipForProgram = async (loyaltyProgramId, loyaltyProgra
 /**
  * Updates an existing membership for the given program and user.
  * @param {string} loyaltyProgramId 
- * @param {string} membershipId 
+ * @param {string} loyaltyProgramMembershipId 
  * @returns Promise. Resolves to give the membership if successful.
  */
-const programs_updateMembershipForProgram = async (loyaltyProgramId, newMembershipId) => {
-    // TODO: Submit credentials in cookie when sending to server
-    const loyaltyProgram = loyaltyPrograms.find(loyaltyProgram => loyaltyProgram.loyaltyProgramId === loyaltyProgramId);
-    if (Utils.isEmptyObject(loyaltyProgram)) {
-        return Promise.reject({ "error": "Loyalty Program doesn't exist" });
-    }
-    // TODO: validate membershipId
-    // temp details
-    const userId = "xxyy";
-    const membership = memberships.find(membership => membership.loyaltyProgramId === loyaltyProgramId);
-    if (Utils.isEmptyObject(membership)) {
-        return Promise.reject({ "error": "Membership doesn't exist" });
-    }
-    if (membership.loyaltyProgramMembershipId === newMembershipId) {
-        return Promise.reject({ "error": "No change in membershipId" })
-    }
-    membership.loyaltyProgramMembershipId = newMembershipId;
-    return Promise.resolve(membership);
+const programs_updateMembershipForProgram = async (loyaltyProgramId, loyaltyProgramMembershipId) => {
+    return axios
+    .put(MEMBERSHIPS_URI, {loyaltyProgramId, loyaltyProgramMembershipId}, {withCredentials: true})
+    .then(response => {
+        return new LoyaltyProgramMembership(
+            response.data.loyaltyProgramMembershipId,
+            response.data.userId,
+            response.data.loyaltyProgramId
+        )
+    })
 }
 
 const exports = { programs_getAllPrograms, programs_getProgramById, programs_getMembershipForProgram, programs_postMembershipForProgram, programs_updateMembershipForProgram }

@@ -196,6 +196,60 @@ app.post('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticati
 });
 
 /**
+ * Route serving loyalty program membership updates
+ */
+ app.put('/api/loyaltyProgramMemberships', auth_user_service.requireAuthentication, (request, response, next) => {
+    const loyaltyProgramId = request.body.loyaltyProgramId;
+    const newLoyaltyProgramMembershipId = request.body.loyaltyProgramMembershipId;
+    const userId = request.user.userId;
+    const membershipIds = request.user.loyaltyProgramMembershipIds;
+    let oldMembership = null;
+    
+    LoyaltyProgramMembershipModel.findOne({userId: userId, loyaltyProgramId: loyaltyProgramId})
+    .then(membership => {
+        if (membership == null)
+            return next(new Error("membership does not exist"));
+
+        // validate membershipId
+        const validationRegex = /^[a-zA-Z\d]+$/m;
+        const validMembershipId = newLoyaltyProgramMembershipId.match(validationRegex);
+        if (validMembershipId == null)
+            return next(new Error("invalid membership"));
+        
+        // then update the user's list of memberships
+        membershipIds[membershipIds.indexOf(membership.loyaltyProgramMembershipId)] = newLoyaltyProgramMembershipId;
+        const updatedUser = {
+            ...request.user,
+            loyaltyProgramMembershipIds: membershipIds
+        }
+        oldMembership = membership; // set here to update later
+        return UserModel.findByIdAndUpdate(userId, updatedUser, {
+            new: true,
+            runValidators: true,
+            context: 'query'
+        });
+    })
+    .then(updatedUser => {
+        // then update the membership
+        const newMembershipObj = {
+            ...(oldMembership.toObject()),
+            loyaltyProgramMembershipId: newLoyaltyProgramMembershipId
+        };
+        return LoyaltyProgramMembershipModel.findByIdAndUpdate(oldMembership.id, newMembershipObj, {
+            new: true,
+            runValidators: true,
+            context: 'query'
+        });
+    })
+    .then(updatedMembership => {
+        return response.json(updatedMembership.toObject());
+    })
+    .catch(err => {
+        return next(err);
+    })
+});
+
+/**
  * Route serving transfer get requests
  * - If `transferId` is provided as search query, returns the transfer that matches the transferId if the currently authenticated user is authorised to access it.
  * - Otherwise, returns all transfers that the currently authenticated user is authorised to access.
@@ -257,6 +311,7 @@ app.use((error, request, response, next) => {
             return response.status(error.status).json( {error: "not found"} );
 
         default:
+            console.log(error);
             return response.status(500).json({ error: "internal server error" })
     }
 });
