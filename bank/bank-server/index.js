@@ -37,6 +37,7 @@ mongoose.connect(mongoDBurl, {
 .catch(error => {
     console.error("Database Error: ", error);
 });
+const UserModel = require('./models/User');
 const LoyaltyProgramModel = require('./models/LoyaltyProgram');
 const LoyaltyProgramMembershipModel = require('./models/LoyaltyProgramMembership');
 const TransferModel = require('./models/Transfer');
@@ -81,6 +82,8 @@ app.get('/api/loyaltyPrograms', (request, response, next) => {
         // get all programs
         LoyaltyProgramModel.find({})
         .then(loyaltyPrograms => {
+            if (loyaltyPrograms.length === 0)
+                response.status(200).json([]);
             response.status(200).json(loyaltyPrograms.map(program => program.toObject()));
         })
         .catch(err => {
@@ -90,6 +93,8 @@ app.get('/api/loyaltyPrograms', (request, response, next) => {
         // get all programs
         LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
         .then(loyaltyProgram => {
+            if (!loyaltyProgram)
+                next(new DataAccessError());
             response.status(200).json(loyaltyProgram.toObject());
         })
         .catch(err => {
@@ -110,6 +115,8 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
         // get all memberships of the user
         LoyaltyProgramMembershipModel.find({userId: userId})
         .then(memberships => {
+            if (memberships.length === 0)
+                response.status(200).json([]);
             response.status(200).json(memberships.map(membership => membership.toObject()));
         })
         .catch(err => {
@@ -117,11 +124,15 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
         })
     } else {
         // ensure loyalty program exists, then continue
-        LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId}).lean()
+        LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
         .then(loyaltyProgram => {
+            if (!loyaltyProgram)
+                next(new DataAccessError());
             return LoyaltyProgramMembershipModel.findOne({userId: userId, loyaltyProgramId: loyaltyProgramId});
         })
         .then(membership => {
+            if (!membership)
+                next(new DataAccessError());
             response.status(200).json(membership.toObject());
         })
         .catch(err => {
@@ -137,35 +148,39 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
  */
 app.get('/api/transfers', auth_user_service.requireAuthentication, (request, response, next) => {
     const transferId = request.query["transferId"];
-    const userId = request.user.userId;
-    // get corresponding membership first
-    LoyaltyProgramMembershipModel.findOne({userId: userId})
-    .then(membership => {
-        if (typeof transferId === 'undefined') {
-            // get all transfers of user
-            TransferModel.find({loyaltyProgramMembershipId: membership.loyaltyProgramMembershipId})
-            .then(transfers => {
-                response.status(200).json(transfers.map(transfer => transfer.toObject()));
-            })
-            .catch(err => {
-                next(new DataAccessError(err));
-            })
-        } else {
-            // get single transfer
-            TransferModel.findById(transferId)
-            .then(transfer => {
-                if (!transfer.loyaltyProgramMembershipId === membership.loyaltyProgramMembershipId)
-                    next(new DataAccessError("Unauthorised membership"));
-                response.status(200).json(transfer.toObject());
-            })
-            .catch(err => {
-                next(new DataAccessError(err));
-            })
-        }
-    })
-    .catch(err => {
-        next(new DataAccessError(err));
-    })
+    const user = request.user;
+    const membershipIds = user.loyaltyProgramMembershipIds;
+    console.log(membershipIds);
+    // get corresponding memberships
+    if (typeof transferId === 'undefined') {
+        // get all transfers of user
+        const getTransfersForEachMembershipId_promises = [];
+        membershipIds.forEach(membershipId => {
+            getTransfersForEachMembershipId_promises.push(TransferModel.find({loyaltyProgramMembershipId: membershipId}))
+        });
+        Promise.all(getTransfersForEachMembershipId_promises)
+        .then(transfers => {
+            if (transfers.length === 0)
+                return response.status(200).json([]);
+            response.status(200).json(transfers.flat().map(transfer => transfer.toObject()));
+        })
+        .catch(err => {
+            next(new DataAccessError(err));
+        });
+    } else {
+        // get single transfer
+        TransferModel.findById(transferId)
+        .then(transfer => {
+            if (!transfer)
+                return next(new DataAccessError());
+            if (!(membershipIds.includes(transfer.loyaltyProgramMembershipId)))
+                return next(new DataAccessError("Unauthorised access"));
+            response.status(200).json(transfer.toObject());
+        })
+        .catch(err => {
+            next(new DataAccessError(err));
+        });
+    }
 })
 
 /* Unknown Endpoint Handling */
