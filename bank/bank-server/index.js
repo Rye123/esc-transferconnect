@@ -83,22 +83,22 @@ app.get('/api/loyaltyPrograms', (request, response, next) => {
         LoyaltyProgramModel.find({})
         .then(loyaltyPrograms => {
             if (loyaltyPrograms.length === 0)
-                response.status(200).json([]);
-            response.status(200).json(loyaltyPrograms.map(program => program.toObject()));
+                return response.status(200).json([]);
+            return response.status(200).json(loyaltyPrograms.map(program => program.toObject()));
         })
         .catch(err => {
-            next(new DataAccessError(err));
+            return next(new DataAccessError(err));
         });
     } else {
         // get all programs
         LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
         .then(loyaltyProgram => {
-            if (!loyaltyProgram)
-                next(new DataAccessError());
-            response.status(200).json(loyaltyProgram.toObject());
+            if (loyaltyProgram == null)
+                return next(new DataAccessError());
+            return response.status(200).json(loyaltyProgram.toObject());
         })
         .catch(err => {
-            next(new DataAccessError(err));
+            return next(new DataAccessError(err));
         });
     }
 });
@@ -150,7 +150,6 @@ app.get('/api/transfers', auth_user_service.requireAuthentication, (request, res
     const transferId = request.query["transferId"];
     const user = request.user;
     const membershipIds = user.loyaltyProgramMembershipIds;
-    console.log(membershipIds);
     // get corresponding memberships
     if (typeof transferId === 'undefined') {
         // get all transfers of user
@@ -162,23 +161,23 @@ app.get('/api/transfers', auth_user_service.requireAuthentication, (request, res
         .then(transfers => {
             if (transfers.length === 0)
                 return response.status(200).json([]);
-            response.status(200).json(transfers.flat().map(transfer => transfer.toObject()));
+            return response.status(200).json(transfers.flat().map(transfer => transfer.toObject()));
         })
         .catch(err => {
-            next(new DataAccessError(err));
+            return next(new DataAccessError(err));
         });
     } else {
         // get single transfer
         TransferModel.findById(transferId)
         .then(transfer => {
-            if (!transfer)
+            if (transfer == null)
                 return next(new DataAccessError());
             if (!(membershipIds.includes(transfer.loyaltyProgramMembershipId)))
                 return next(new DataAccessError("Unauthorised access"));
-            response.status(200).json(transfer.toObject());
+            return response.status(200).json(transfer.toObject());
         })
         .catch(err => {
-            next(new DataAccessError(err));
+            return next(new DataAccessError(err));
         });
     }
 })
