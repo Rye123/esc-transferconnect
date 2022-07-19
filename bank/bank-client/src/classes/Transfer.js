@@ -18,7 +18,7 @@ class Transfer {
         this.loyaltyProgramMembershipId = loyaltyProgramMembershipId;
         this.status = status;
         this.statusMessage = statusMessage || "";
-        this.submissionDate = submissionDate;
+        this.submissionDate = new Date(submissionDate) || undefined;
         this.points = points;
     }
 }

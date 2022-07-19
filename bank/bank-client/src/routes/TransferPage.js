@@ -68,7 +68,7 @@ const TransferPage = () => {
                             </h3>
                         }
                         <br />
-                        <p>Date of submission: {transfer.submissionDate.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p>Date of submission: {transfer.submissionDate?.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) || "-"}</p>
                     </div>
                 </div>
             </div>
