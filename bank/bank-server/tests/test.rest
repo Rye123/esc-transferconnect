@@ -3,21 +3,21 @@
 GET http://localhost:3001/api/users
 
 ### Test Authentication
-GET http://localhost:3001/api/token-resolve
+GET http://localhost:3001/api/user-token-resolve
 Content-Type: application/json
 Cookie: _bank_sess=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYmMyYjAzMDRjNGFmYmEzZGQ4YTZlMCIsImlhdCI6MTY1NjU3NjM0NywiZXhwIjoxNjYwMTc2MzQ3fQ.kuTxGWL4FhXi9DdXvN_BBnyxvOMIqdgaEJ3LtTJoUys; Max-Age=3600; Path=/; Expires=Thu, 30 Jun 2022 09:05:47 GMT; HttpOnly; Secure,bank_userid=62bc2b0304c4afba3dd8a6e0; Max-Age=3600; Path=/; Expires=Thu, 30 Jun 2022 09:05:47 GMT
 
 ### Authentication Success
-POST http://localhost:3001/api/token-auth
+POST http://localhost:3001/api/user-token-auth
 Content-Type: application/json
 
 {
-    "username": "michael_myers123",
+    "username": "michaelmyers123",
     "password": "halloween"
 }
 
 ### Authentication Failure (Wrong credentials)
-POST http://localhost:3001/api/token-auth
+POST http://localhost:3001/api/user-token-auth
 Content-Type: application/json
 
 {
@@ -26,7 +26,7 @@ Content-Type: application/json
 }
 
 ### Authentication Failure (Not enough information)
-POST http://localhost:3001/api/token-auth
+POST http://localhost:3001/api/user-token-auth
 Content-Type: application/json
 
 {
