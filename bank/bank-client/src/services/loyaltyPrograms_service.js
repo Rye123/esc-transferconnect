@@ -22,6 +22,7 @@ memberships.push(new LoyaltyProgramMembership("A1234", "xxyy", "2341"));
 // future endpoints for program data
 const SERVER_URI = "/api/";
 const PROGRAMS_URI = SERVER_URI + "loyaltyPrograms";
+const MEMBERSHIPS_URI = SERVER_URI + "loyaltyProgramMemberships";
 
 /* Operations */
 /**
@@ -79,20 +80,15 @@ const programs_getProgramById = async (loyaltyProgramId) => {
  * @returns Promise. Resolves to give the membership if successful.
  */
 const programs_getMembershipForProgram = async (loyaltyProgramId) => {
-    // TODO: Submit credentials in cookie when sending to server, server should only return the membership if the membership belongs to the user too.
-    const loyaltyProgram = loyaltyPrograms.find(loyaltyProgram => loyaltyProgram.loyaltyProgramId === loyaltyProgramId);
-
-    if (Utils.isEmptyObject(loyaltyProgram)) {
-        return Promise.reject({ "error": "Loyalty Program doesn't exist" });
-    }
-
-    const loyaltyProgramMembership = memberships.find(membership => membership.loyaltyProgramId === loyaltyProgramId);
-
-    if (Utils.isEmptyObject(loyaltyProgramMembership)) {
-        return Promise.reject({ "error": "Membership doesn't exist" });
-    }
-
-    return Promise.resolve(loyaltyProgramMembership);
+    return axios
+    .get(`${MEMBERSHIPS_URI}?loyaltyProgramId=${loyaltyProgramId}`)
+    .then(response => {
+        return new LoyaltyProgramMembership(
+            response.data.loyaltyProgramMembershipId,
+            response.data.userId,
+            response.data.loyaltyProgramId
+        )
+    });
 }
 
 /**

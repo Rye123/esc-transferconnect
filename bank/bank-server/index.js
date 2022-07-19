@@ -37,6 +37,7 @@ mongoose.connect(mongoDBurl, {
     console.error("Database Error: ", error);
 });
 const LoyaltyProgramModel = require('./models/LoyaltyProgram');
+const LoyaltyProgramMembershipModel = require('./models/LoyaltyProgramMembership');
 
 
 /* Cookie Parsing */
@@ -95,6 +96,38 @@ app.get('/api/loyaltyPrograms', (request, response) => {
         });
     }
 });
+
+/**
+ * Route serving loyalty program membership get requests
+ * - If `loyaltyProgramId` is provided as search query, returns a single loyaltyProgramMembership corresponding to the currently authenticated user.
+ * - Otherwise, returns all memberships under the user.
+ */
+app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthentication, (request, response) => {
+    const loyaltyProgramId = request.query["loyaltyProgramId"];
+    const userId = request.user.userId;
+    if (typeof loyaltyProgramId === 'undefined') {
+        // get all memberships of the user
+        LoyaltyProgramMembershipModel.find({userId: userId})
+        .then(memberships => {
+            response.status(200).json(memberships.map(membership => membership.toObject()));
+        })
+        .catch(err => {
+            response.status(404).end();
+        })
+    } else {
+        // ensure loyalty program exists, then continue
+        LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId}).lean()
+        .then(loyaltyProgram => {
+            return LoyaltyProgramMembershipModel.findOne({userId: userId, loyaltyProgramId: loyaltyProgramId});
+        })
+        .then(membership => {
+            response.status(200).json(membership.toObject());
+        })
+        .catch(err => {
+            response.status(404).end();
+        })
+    }
+})
 
 /* Unknown Endpoint Handling */
 app.use((request, response) => {
