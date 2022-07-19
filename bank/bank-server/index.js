@@ -148,6 +148,7 @@ app.post('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticati
     const loyaltyProgramId = request.body.loyaltyProgramId;
     const loyaltyProgramMembershipId = request.body.loyaltyProgramMembershipId;
     const userId = request.user.userId;
+    const membershipIds = request.user.loyaltyProgramMembershipIds;
     // ensure loyaltyProgram exists
     LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
     .then(loyaltyProgram => {
@@ -164,14 +165,30 @@ app.post('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticati
         const validMembershipId = loyaltyProgramMembershipId.match(validationRegex);
         if (validMembershipId == null)
             return next(new Error("invalid membership"));
+
+        // then update the user's list of memberships
+        membershipIds.push(loyaltyProgramMembershipId)
+        const updatedUser = {
+            ...request.user,
+            loyaltyProgramMembershipIds: membershipIds
+        }
+        return UserModel.findByIdAndUpdate(userId, updatedUser, {
+            new: true,
+            runValidators: true,
+            context: 'query'
+        });
+    })
+    .then(updatedUser => {
+        // then create a new membership
         const newMembership = new LoyaltyProgramMembershipModel({
             loyaltyProgramMembershipId: loyaltyProgramMembershipId,
             userId: userId,
             loyaltyProgramId: loyaltyProgramId
         });
-        newMembership.save().then(savedMembership => {
-            return response.json(savedMembership.toObject());
-        })
+        return newMembership.save();
+    })
+    .then(savedMembership => {
+        return response.json(savedMembership.toObject());
     })
     .catch(err => {
         return next(err);
