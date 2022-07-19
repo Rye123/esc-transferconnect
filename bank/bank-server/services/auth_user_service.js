@@ -3,6 +3,7 @@
  */
 /* Module Imports */
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 /* Error Logging */
 const ApplicationError = require('../errors/ApplicationError');
@@ -49,10 +50,18 @@ const auth_user_service = {
         };
 
         /* Find the user in the database */
-        UserModel.findOne({ username: credentials.username, password: credentials.password })
-            .then(foundUser => {
-                if (!foundUser)
+        let foundUser = {};
+        UserModel.findOne({ username: credentials.username })
+            .then(user => {
+                if (!user)
                     throw new UserAuthenticationError(this.name, ": valid user not found.");
+                foundUser = user;
+                return bcrypt.compare(credentials.password, user.password);
+            })
+            .then(compareResult => {
+                if (compareResult === false) {
+                    throw new UserAuthenticationError(this.name, ": invalid password");
+                }
 
                 /* Set cookies */
                 // set token cookie

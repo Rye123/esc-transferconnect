@@ -17,9 +17,19 @@ mongoose.connect(mongoDBurl, {
 const UserSchema = new mongoose.Schema({
     username: String,
     password: String,
+    firstName: String,
+    lastName: String,
     points: {
         type: Number,
         default: 0
+    },
+    loyaltyProgramMembershipIds: {
+        type: [String],
+        default: []
+    },
+    transferIds: {
+        type: [String],
+        default: []
     }
 });
 
