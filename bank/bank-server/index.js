@@ -38,7 +38,7 @@ mongoose.connect(mongoDBurl, {
 });
 const LoyaltyProgramModel = require('./models/LoyaltyProgram');
 const LoyaltyProgramMembershipModel = require('./models/LoyaltyProgramMembership');
-
+const TransferModel = require('./models/Transfer');
 
 /* Cookie Parsing */
 app.use(cookieParser()); // now any request with a cookie is sent automatically
@@ -127,6 +127,37 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
             response.status(404).end();
         })
     }
+});
+
+app.get('/api/transfers', auth_user_service.requireAuthentication, (request, response) => {
+    const transferId = request.query["transferId"];
+    const userId = request.user.userId;
+    // get corresponding membership first
+    LoyaltyProgramMembershipModel.findOne({userId: userId})
+    .then(membership => {
+        if (typeof transferId === 'undefined') {
+            // get all transfers of user
+            TransferModel.find({loyaltyProgramMembershipId: membership.loyaltyProgramMembershipId})
+            .then(transfers => {
+                response.status(200).json(transfers.map(transfer => transfer.toObject()));
+            })
+            .catch(err => {
+                response.status(404).end();
+            })
+        } else {
+            // get single transfer
+            TransferModel.findOne({id: transferId, loyaltyProgramMembershipId: membership.loyaltyProgramMembershipId})
+            .then(transfer => {
+                response.status(200).json(transfer.toObject());
+            })
+            .catch(err => {
+                response.status(404).end();
+            })
+        }
+    })
+    .catch(err => {
+        response.status(404).end();
+    })
 })
 
 /* Unknown Endpoint Handling */

@@ -11,33 +11,28 @@ import Utils from '../utils/utils';
 import Transfer from '../classes/Transfer';
 
 /* Constants */
-// temporary storage
-const randomDate = () => {
-    return new Date(Date.now() - Utils.getRandomInt(1000000000, 10000000000))
-}
-const randomLoyaltyProgram = () => {
-    const loyaltyProgramIds = ["2341", "1234", "2458", "6432"];
-    return loyaltyProgramIds[Utils.getRandomInt(0, 4)];
-}
 const transfers = [];
-const randomTransferStatus = () => {
-    const statuses = ["pending", "fulfilled", "error"];
-    return statuses[Utils.getRandomInt(0, 3)];
-}
-// for (let i = 1; i < 11; i++) {
-//     let status = randomTransferStatus();
-//     let statusMessage = (status === 'error') ? "Unknown Error" : undefined;
-//     transfers.push(new Transfer((i * 123).toString(), randomLoyaltyProgram(), (i * 54).toString(), status, statusMessage, randomDate(), Utils.getRandomInt(1, 100)));
-// }
 // future endpoints for transfer data
 const SERVER_URI = "/api/";
-const PROGRAMS_URI = SERVER_URI + "transfers";
+const TRANSFERS_URI = SERVER_URI + "transfers";
 
 /* Operations */
 
 const transfer_getAllTransfers = async () => {
-    // TODO: the axios request will include credentials
-    return Promise.resolve(transfers);
+    return axios.get(TRANSFERS_URI, {withCredentials: true})
+    .then(response => {
+        return response.data.map(data =>
+            new Transfer(
+                data.transferId,
+                data.loyaltyProgramId,
+                data.loyaltyProgramMembershipId,
+                data.status,
+                data.statusMessage,
+                data.submissionDate,
+                data.points
+            )
+        );
+    })
 }
 
 const transfer_getTransferById = async (id) => {
