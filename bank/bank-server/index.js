@@ -146,8 +146,10 @@ app.get('/api/transfers', auth_user_service.requireAuthentication, (request, res
             })
         } else {
             // get single transfer
-            TransferModel.findOne({id: transferId, loyaltyProgramMembershipId: membership.loyaltyProgramMembershipId})
+            TransferModel.findById(transferId)
             .then(transfer => {
+                if (!transfer.loyaltyProgramMembershipId === membership.loyaltyProgramMembershipId)
+                    throw new Error("unauth transfer");
                 response.status(200).json(transfer.toObject());
             })
             .catch(err => {

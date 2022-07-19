@@ -35,13 +35,20 @@ const transfer_getAllTransfers = async () => {
     })
 }
 
-const transfer_getTransferById = async (id) => {
-    const transfer = transfers.find(transfer => transfer.transferId === id);
-
-    if (Utils.isEmptyObject(transfer)) {
-        return Promise.reject({ "error": "Transfer doesn't exist." });
-    }
-    return Promise.resolve(transfer);
+const transfer_getTransferById = async (transferId) => {
+    return axios
+    .get(`${TRANSFERS_URI}?transferId=${transferId}`)
+    .then(response => {
+        return new Transfer(
+            response.data.transferId,
+            response.data.loyaltyProgramId,
+            response.data.loyaltyProgramMembershipId,
+            response.data.status,
+            response.data.statusMessage,
+            response.data.submissionDate,
+            response.data.points
+        )
+    })
 }
 
 const transfer_postTransfer = async (loyaltyProgramId, membershipId, points) => {
