@@ -21,7 +21,7 @@ const memberships = [];
 memberships.push(new LoyaltyProgramMembership("A1234", "xxyy", "2341"));
 // future endpoints for program data
 const SERVER_URI = "/api/";
-const PROGRAMS_URI = SERVER_URI + "programs";
+const PROGRAMS_URI = SERVER_URI + "loyaltyPrograms";
 
 /* Operations */
 /**
@@ -29,21 +29,48 @@ const PROGRAMS_URI = SERVER_URI + "programs";
  * @returns Promise. Resolves to give all the programs if success.
  */
 const programs_getAllPrograms = async () => {
-    return Promise.resolve(loyaltyPrograms);
+    return axios
+    .get(PROGRAMS_URI)
+    .then(response => {
+        return response.data.map(data => 
+            new LoyaltyProgram(
+                data.loyaltyProgramId,
+                data.loyaltyProgramName,
+                data.exchangeRate,
+                data.currencyName,
+                data.minTransfer,
+                data.processingTime,
+                data.description,
+                data.enrolmentLink,
+                data.tncLink,
+                data.imgSrc
+            )
+        );
+    });
 }
 
 /**
  * Gets a loyalty program by its loyaltyProgramId.
- * @param {string} id 
+ * @param {string} loyaltyProgramId 
  * @returns Promise. Resolves to give a specific program if successful.
  */
-const programs_getProgramById = async (id) => {
-    const loyaltyProgram = loyaltyPrograms.find(loyaltyProgram => loyaltyProgram.loyaltyProgramId === id);
-
-    if (Utils.isEmptyObject(loyaltyProgram)) {
-        return Promise.reject({ "error": "Loyalty Program doesn't exist" });
-    }
-    return Promise.resolve(loyaltyProgram);
+const programs_getProgramById = async (loyaltyProgramId) => {
+    return axios
+    .get(`${PROGRAMS_URI}?loyaltyProgramId=${loyaltyProgramId}`)
+    .then(response => {
+        return new LoyaltyProgram(
+            response.data.loyaltyProgramId,
+            response.data.loyaltyProgramName,
+            response.data.exchangeRate,
+            response.data.currencyName,
+            response.data.minTransfers,
+            response.data.processingTime,
+            response.data.description,
+            response.data.enrolmentLink,
+            response.data.tncLink,
+            response.data.imgSrc
+        );
+    })
 }
 
 /**

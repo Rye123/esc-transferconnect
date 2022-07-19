@@ -91,11 +91,8 @@ app.get('/api/loyaltyPrograms', (request, response) => {
         .catch(err => {
             response.status(404).end();
         });
-
     }
 });
-
-app.get('/api/loyaltyPrograms/')
 
 /* Unknown Endpoint Handling */
 app.use((request, response) => {

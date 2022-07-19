@@ -24,11 +24,11 @@ const randomTransferStatus = () => {
     const statuses = ["pending", "fulfilled", "error"];
     return statuses[Utils.getRandomInt(0, 3)];
 }
-for (let i = 1; i < 11; i++) {
-    let status = randomTransferStatus();
-    let statusMessage = (status === 'error') ? "Unknown Error" : undefined;
-    transfers.push(new Transfer((i * 123).toString(), randomLoyaltyProgram(), (i * 54).toString(), status, statusMessage, randomDate(), Utils.getRandomInt(1, 100)));
-}
+// for (let i = 1; i < 11; i++) {
+//     let status = randomTransferStatus();
+//     let statusMessage = (status === 'error') ? "Unknown Error" : undefined;
+//     transfers.push(new Transfer((i * 123).toString(), randomLoyaltyProgram(), (i * 54).toString(), status, statusMessage, randomDate(), Utils.getRandomInt(1, 100)));
+// }
 // future endpoints for transfer data
 const SERVER_URI = "/api/";
 const PROGRAMS_URI = SERVER_URI + "transfers";
