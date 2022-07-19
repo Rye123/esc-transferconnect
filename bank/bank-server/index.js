@@ -54,12 +54,8 @@ app.get('/api/users/:id', auth_user_service.requireAuthentication, (request, res
  */
 app.get('/api/user-token-resolve', auth_user_service.requireAuthentication, (request, response) => {
     const foundUser = request.user; // attached from requireAuthentication: Any error there should be resolved already
-    const userInfo = {
-        id: foundUser.id,
-        username: foundUser.username,
-        points: foundUser.points
-    };
-    return response.status(200).json(userInfo);
+    console.log(foundUser);
+    return response.status(200).json(foundUser);
 });
 
 app.post('/api/user-token-terminate', auth_user_service.deauthenticateUser, (request, response) => {

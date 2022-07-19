@@ -114,6 +114,7 @@ const auth_user_service = {
 
             /* Find the user in the database */
             UserModel.findById(userID)
+                .select('-password')
                 .then(foundUser => {
                     if (!foundUser)
                         throw new UserAuthenticationError();
