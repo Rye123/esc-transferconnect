@@ -130,6 +130,11 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
     }
 });
 
+/**
+ * Route serving transfer get requests
+ * - If `transferId` is provided as search query, returns the transfer that matches the transferId if the currently authenticated user is authorised to access it.
+ * - Otherwise, returns all transfers that the currently authenticated user is authorised to access.
+ */
 app.get('/api/transfers', auth_user_service.requireAuthentication, (request, response, next) => {
     const transferId = request.query["transferId"];
     const userId = request.user.userId;
