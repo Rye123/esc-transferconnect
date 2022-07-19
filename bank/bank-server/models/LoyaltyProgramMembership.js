@@ -1,7 +1,7 @@
-/* User.js: MongoDB Schema of a Bank User */
+/* LoyaltyProgramMembership.js: MongoDB Schema of a membership */
 const mongoose = require('mongoose');
 
-// Mongoose Users setup
+// Mongoose Membership setup
 const LoyaltyProgramMembershipSchema = new mongoose.Schema(
     {
         loyaltyProgramMembershipId: String,
@@ -20,5 +20,5 @@ LoyaltyProgramMembershipSchema.set('toObject', {
     }
 })
 
-// Export the User
+// Export the membership
 module.exports = mongoose.model('LoyaltyProgramMembership', LoyaltyProgramMembershipSchema);

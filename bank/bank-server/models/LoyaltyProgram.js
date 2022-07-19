@@ -1,7 +1,7 @@
 /* LoyaltyProgram.js: MongoDB Schema of a Loyalty Program */
 const mongoose = require('mongoose');
 
-// Mongoose Users setup
+// Mongoose Loyalty Program setup
 const LoyaltyProgramSchema = new mongoose.Schema(
     {
         loyaltyProgramId: String,
@@ -51,5 +51,5 @@ LoyaltyProgramSchema.set('toObject', {
     }
 })
 
-// Export the User
+// Export the Loyalty Program
 module.exports = mongoose.model('LoyaltyProgram', LoyaltyProgramSchema);
