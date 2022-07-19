@@ -46,7 +46,15 @@ const TransferPage = () => {
             <img className='wave' src='/images/wave.png' />
             <div className='container'>
                 <div className='img'>
-                    <img src='/images/success.svg' alt='Transfer Success' />
+                    {transfer.status === 'pending' &&
+                        <img src='/images/pending.svg' alt="" />
+                    }
+                    {transfer.status === 'fulfilled' &&
+                        <img src='/images/success.svg' alt="" />
+                    }
+                    {transfer.status === 'error' &&
+                        <img src='/images/error.svg' alt="" />
+                    }
                 </div>
                 <div className='success-container'>
                     <div>
