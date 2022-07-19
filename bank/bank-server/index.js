@@ -116,27 +116,27 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
         LoyaltyProgramMembershipModel.find({userId: userId})
         .then(memberships => {
             if (memberships.length === 0)
-                response.status(200).json([]);
+                return response.status(200).json([]);
             response.status(200).json(memberships.map(membership => membership.toObject()));
         })
         .catch(err => {
-            next(new DataAccessError(err));
+            return next(new DataAccessError(err));
         })
     } else {
         // ensure loyalty program exists, then continue
         LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
         .then(loyaltyProgram => {
-            if (!loyaltyProgram)
-                next(new DataAccessError());
+            if (loyaltyProgram == null)
+                return next(new DataAccessError());
             return LoyaltyProgramMembershipModel.findOne({userId: userId, loyaltyProgramId: loyaltyProgramId});
         })
         .then(membership => {
-            if (!membership)
-                next(new DataAccessError());
-            response.status(200).json(membership.toObject());
+            if (membership == null)
+                return next(new DataAccessError());
+            return response.status(200).json(membership.toObject());
         })
         .catch(err => {
-            next(new DataAccessError(err));
+            return next(new DataAccessError(err));
         })
     }
 });
