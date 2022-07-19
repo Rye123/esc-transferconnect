@@ -42,10 +42,11 @@ const LoyaltyProgramInfoPage = () => {
                 </div>
                 <div className='display-container'>
                     <div className='container3'>
-                        <a href={`${loyaltyProgram.href}`}>
+                        <a href={`${loyaltyProgram.enrolmentLink}`}>
                             <img className='avatar' src={`${loyaltyProgram.imgSrc}`} alt='' />
                         </a>
                         <h3>{loyaltyProgram.loyaltyProgramName}</h3>
+                        <h4>Processing Time: {loyaltyProgram.processingTime}</h4>
                         <p>{loyaltyProgram.description}</p>
 
                         <Link className='btn' to={{ pathname: '/loyalty_programs/membership', search: `?loyaltyProgramId=${loyaltyProgramId}` }}>Edit Membership</Link>

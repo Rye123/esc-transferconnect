@@ -16,7 +16,7 @@ const randomDate = () => {
     return new Date(Date.now() - Utils.getRandomInt(1000000000, 10000000000))
 }
 const randomLoyaltyProgram = () => {
-    const loyaltyProgramIds = ["2341", "1234", "2468", "6432"];
+    const loyaltyProgramIds = ["2341", "1234", "2458", "6432"];
     return loyaltyProgramIds[Utils.getRandomInt(0, 4)];
 }
 const transfers = [];

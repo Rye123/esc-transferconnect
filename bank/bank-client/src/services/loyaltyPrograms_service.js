@@ -12,10 +12,11 @@ import LoyaltyProgramMembership from '../classes/LoyaltyProgramMembership';
 /* Constants */
 // temporary storage
 const loyaltyPrograms = [];
-loyaltyPrograms.push(new LoyaltyProgram("2341", "Asia Miles", 400 / 250, undefined, undefined, 4 * 7, 400));
-loyaltyPrograms.push(new LoyaltyProgram("1234", "British Airways", 400 / 312.5, undefined, undefined, 4 * 8, 400));
-loyaltyPrograms.push(new LoyaltyProgram("2468", "Dynasty Flyer", 400 / 250, undefined, undefined, 4 * 4, 400));
-loyaltyPrograms.push(new LoyaltyProgram("6432", "Emirates Skywards", 400 / 250, undefined, undefined, 4 * 4, 400));
+loyaltyPrograms.push(new LoyaltyProgram("2341", "Asia Miles", 400 / 250, "Asia Miles", 400, undefined, "Asia Miles description", undefined, undefined, undefined))
+loyaltyPrograms.push(new LoyaltyProgram("1234", "British Airways", 400 / 312.5, "British Airways Miles", 500, undefined, "British Airways description", undefined, undefined, undefined))
+loyaltyPrograms.push(new LoyaltyProgram("2458", "Dynasty Flyer", 400 / 250, "Dynasty Flyer Miles", 100, undefined, "Dynasty Flyer description", undefined, undefined, undefined))
+loyaltyPrograms.push(new LoyaltyProgram("6432", "Emirates Skywards", 400 / 250, "Emirates Skywards Miles", undefined, undefined, "Emirates Skywards description", undefined, undefined, undefined))
+
 const memberships = [];
 memberships.push(new LoyaltyProgramMembership("A1234", "xxyy", "2341"));
 // future endpoints for program data
