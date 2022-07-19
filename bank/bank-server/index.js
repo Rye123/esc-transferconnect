@@ -70,6 +70,8 @@ app.post('/api/user-token-auth', auth_user_service.authenticateUser, (request, r
 
 /**
  * Route serving loyalty program requests
+ * - If `loyaltyProgramId` is provided as search query, returns a single loyaltyProgram with the same loyaltyProgramId
+ * - Otherwise, returns all loyalty programs available.
  */
 app.get('/api/loyaltyPrograms', (request, response) => {
     const loyaltyProgramId = request.query["loyaltyProgramId"];
@@ -77,7 +79,7 @@ app.get('/api/loyaltyPrograms', (request, response) => {
         // get all programs
         LoyaltyProgramModel.find({})
         .then(loyaltyPrograms => {
-            response.status(200).json(loyaltyPrograms);
+            response.status(200).json(loyaltyPrograms.map(program => program.toObject()));
         })
         .catch(err => {
             response.status(404).end();
@@ -86,7 +88,7 @@ app.get('/api/loyaltyPrograms', (request, response) => {
         // get all programs
         LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
         .then(loyaltyProgram => {
-            response.status(200).json(loyaltyProgram);
+            response.status(200).json(loyaltyProgram.toObject());
         })
         .catch(err => {
             response.status(404).end();

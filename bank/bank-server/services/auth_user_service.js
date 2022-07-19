@@ -55,7 +55,7 @@ const auth_user_service = {
             .then(user => {
                 if (!user)
                     throw new UserAuthenticationError(this.name, ": valid user not found.");
-                foundUser = user;
+                foundUser = user.toObject();
                 return bcrypt.compare(credentials.password, user.password);
             })
             .then(compareResult => {
@@ -66,7 +66,7 @@ const auth_user_service = {
                 /* Set cookies */
                 // set token cookie
                 const jwt_payload = {
-                    id: foundUser.id,
+                    userId: foundUser.userId,
                     username: foundUser.username
                 };
                 const jwt_token = jwt.sign(jwt_payload, JWT_SECRET, { expiresIn: AUTHENTICATION_MAX_AGE });
@@ -78,7 +78,7 @@ const auth_user_service = {
                 // set user ID cookie
                 response.cookie(
                     auth_user_service.cookie_userID_name,
-                    foundUser.id,
+                    foundUser.userId,
                     auth_user_service.cookie_userID_options
                 );
 
@@ -101,26 +101,26 @@ const auth_user_service = {
      */
     requireAuthentication(request, response, next) {
         const token = request.cookies[auth_user_service.cookie_token_name];
-        const userID = request.cookies[auth_user_service.cookie_userID_name];
+        const userId = request.cookies[auth_user_service.cookie_userID_name];
 
         /* Verify that the token is a valid token */
         jwt.verify(token, process.env.JWT_TOKEN_SECRET, (error, payload) => {
             if (error)
                 throw new UserAuthenticationError(this.name, ": invalid token.");
 
-            /* Verify that the token's userID matches the userID */
-            if (userID !== payload.id)
+            /* Verify that the token's userId matches the userID */
+            if (userId !== payload.userId)
                 throw new UserAuthenticationError(this.name, ": token doesn't match userID");
 
             /* Find the user in the database */
-            UserModel.findById(userID)
+            UserModel.findById(userId)
                 .select('-password')
                 .then(foundUser => {
                     if (!foundUser)
                         throw new UserAuthenticationError();
 
                     // Save user details in request body
-                    request.user = foundUser;
+                    request.user = foundUser.toObject();
 
                     /* Call the next function */
                     next();
