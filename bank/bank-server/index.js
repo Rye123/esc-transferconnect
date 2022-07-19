@@ -16,6 +16,7 @@ const auth_user_service = require('./services/auth_user_service');
 const ApplicationError = require('./errors/ApplicationError');
 const UserAuthorisationError = require('./errors/UserAuthorisationError');
 const UserAuthenticationError = require('./errors/UserAuthenticationError');
+const DataAccessError = require('./errors/DataAccessError');
 
 /* Express Setup */
 const app = express();
@@ -74,7 +75,7 @@ app.post('/api/user-token-auth', auth_user_service.authenticateUser, (request, r
  * - If `loyaltyProgramId` is provided as search query, returns a single loyaltyProgram with the same loyaltyProgramId
  * - Otherwise, returns all loyalty programs available.
  */
-app.get('/api/loyaltyPrograms', (request, response) => {
+app.get('/api/loyaltyPrograms', (request, response, next) => {
     const loyaltyProgramId = request.query["loyaltyProgramId"];
     if (typeof loyaltyProgramId === 'undefined') {
         // get all programs
@@ -83,7 +84,7 @@ app.get('/api/loyaltyPrograms', (request, response) => {
             response.status(200).json(loyaltyPrograms.map(program => program.toObject()));
         })
         .catch(err => {
-            response.status(404).end();
+            next(new DataAccessError(err));
         });
     } else {
         // get all programs
@@ -92,7 +93,7 @@ app.get('/api/loyaltyPrograms', (request, response) => {
             response.status(200).json(loyaltyProgram.toObject());
         })
         .catch(err => {
-            response.status(404).end();
+            next(new DataAccessError(err));
         });
     }
 });
@@ -102,7 +103,7 @@ app.get('/api/loyaltyPrograms', (request, response) => {
  * - If `loyaltyProgramId` is provided as search query, returns a single loyaltyProgramMembership corresponding to the currently authenticated user.
  * - Otherwise, returns all memberships under the user.
  */
-app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthentication, (request, response) => {
+app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthentication, (request, response, next) => {
     const loyaltyProgramId = request.query["loyaltyProgramId"];
     const userId = request.user.userId;
     if (typeof loyaltyProgramId === 'undefined') {
@@ -112,7 +113,7 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
             response.status(200).json(memberships.map(membership => membership.toObject()));
         })
         .catch(err => {
-            response.status(404).end();
+            next(new DataAccessError(err));
         })
     } else {
         // ensure loyalty program exists, then continue
@@ -124,12 +125,12 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
             response.status(200).json(membership.toObject());
         })
         .catch(err => {
-            response.status(404).end();
+            next(new DataAccessError(err));
         })
     }
 });
 
-app.get('/api/transfers', auth_user_service.requireAuthentication, (request, response) => {
+app.get('/api/transfers', auth_user_service.requireAuthentication, (request, response, next) => {
     const transferId = request.query["transferId"];
     const userId = request.user.userId;
     // get corresponding membership first
@@ -142,23 +143,23 @@ app.get('/api/transfers', auth_user_service.requireAuthentication, (request, res
                 response.status(200).json(transfers.map(transfer => transfer.toObject()));
             })
             .catch(err => {
-                response.status(404).end();
+                next(new DataAccessError(err));
             })
         } else {
             // get single transfer
             TransferModel.findById(transferId)
             .then(transfer => {
                 if (!transfer.loyaltyProgramMembershipId === membership.loyaltyProgramMembershipId)
-                    throw new Error("unauth transfer");
+                    next(new DataAccessError("Unauthorised membership"));
                 response.status(200).json(transfer.toObject());
             })
             .catch(err => {
-                response.status(404).end();
+                next(new DataAccessError(err));
             })
         }
     })
     .catch(err => {
-        response.status(404).end();
+        next(new DataAccessError(err));
     })
 })
 
@@ -173,15 +174,16 @@ app.use((error, request, response, next) => {
     switch (error.name) {
         case "UserAuthenticationError":
             return auth_user_service.deauthenticateUser(request, response, () => {
-                return response.status(error.status).json({ error: "forbidden" })
+                return response.status(error.status).json({ error: "forbidden" });
             });
         case "UserAuthorisationError":
             return auth_user_service.deauthenticateUser(request, response, () => {
-                return response.status(error.status).json({ error: "forbidden" })
+                return response.status(error.status).json({ error: "forbidden" });
             });
+        case "DataAccessError":
+            return response.status(error.status).json( {error: "not found"} );
 
         default:
-            console.error(error);
             return response.status(500).json({ error: "internal server error" })
     }
 });
