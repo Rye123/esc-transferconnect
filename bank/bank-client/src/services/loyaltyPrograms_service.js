@@ -57,7 +57,7 @@ const programs_getAllPrograms = async () => {
  */
 const programs_getProgramById = async (loyaltyProgramId) => {
     return axios
-    .get(`${PROGRAMS_URI}?loyaltyProgramId=${loyaltyProgramId}`)
+    .get(PROGRAMS_URI, {params: {loyaltyProgramId}})
     .then(response => {
         return new LoyaltyProgram(
             response.data.loyaltyProgramId,
@@ -81,7 +81,7 @@ const programs_getProgramById = async (loyaltyProgramId) => {
  */
 const programs_getMembershipForProgram = async (loyaltyProgramId) => {
     return axios
-    .get(`${MEMBERSHIPS_URI}?loyaltyProgramId=${loyaltyProgramId}`, {withCredentials: true})
+    .get(MEMBERSHIPS_URI, {params: {loyaltyProgramId}, withCredentials: true})
     .then(response => {
         return new LoyaltyProgramMembership(
             response.data.loyaltyProgramMembershipId,
