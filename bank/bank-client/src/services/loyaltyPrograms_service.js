@@ -94,26 +94,19 @@ const programs_getMembershipForProgram = async (loyaltyProgramId) => {
 /**
  * Creates a new membership for the given program and user.
  * @param {string} loyaltyProgramId 
- * @param {string} membershipId 
+ * @param {string} loyaltyProgramMembershipId 
  * @returns Promise. Resolves to give the membership if successful.
  */
-const programs_postMembershipForProgram = async (loyaltyProgramId, membershipId) => {
-    // TODO: Submit credentials in cookie when sending to server
-    const loyaltyProgram = loyaltyPrograms.find(loyaltyProgram => loyaltyProgram.loyaltyProgramId === loyaltyProgramId);
-    if (Utils.isEmptyObject(loyaltyProgram)) {
-        return Promise.reject({ "error": "Loyalty Program doesn't exist" });
-    }
-    // ensure membership doesn't already exist
-    const existingMembership = memberships.find(membership => membership.loyaltyProgramId === loyaltyProgramId);
-    if (!Utils.isEmptyObject(existingMembership)) {
-        return Promise.reject({ "error": "Membership already exists" });
-    }
-    // TODO: validate membershipId
-    // temp details
-    const userId = "xxyy";
-    const membership = new LoyaltyProgramMembership(membershipId, userId, loyaltyProgramId);
-    memberships.push(membership);
-    return Promise.resolve(membership);
+const programs_postMembershipForProgram = async (loyaltyProgramId, loyaltyProgramMembershipId) => {
+    return axios
+    .post(MEMBERSHIPS_URI, {loyaltyProgramId, loyaltyProgramMembershipId}, {withCredentials: true})
+    .then(response => {
+        return new LoyaltyProgramMembership(
+            response.data.loyaltyProgramMembershipId,
+            response.data.userId,
+            response.data.loyaltyProgramId
+        )
+    })
 }
 
 /**

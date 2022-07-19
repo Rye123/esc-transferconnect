@@ -142,6 +142,43 @@ app.get('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
 });
 
 /**
+ * Route serving loyalty program membership creation.
+ */
+app.post('/api/loyaltyProgramMemberships', auth_user_service.requireAuthentication, (request, response, next) => {
+    const loyaltyProgramId = request.body.loyaltyProgramId;
+    const loyaltyProgramMembershipId = request.body.loyaltyProgramMembershipId;
+    const userId = request.user.userId;
+    // ensure loyaltyProgram exists
+    LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
+    .then(loyaltyProgram => {
+        if (loyaltyProgram == null)
+            return next(new DataAccessError("loyalty program does not exist"))
+        return LoyaltyProgramMembershipModel.findOne({userId: userId, loyaltyProgramId: loyaltyProgramId})
+    })
+    .then(membership => {
+        if (!(membership == null))
+            return next(new Error("membership already exists"));
+
+        // validate membershipId
+        const validationRegex = /^[a-zA-Z\d]+$/m;
+        const validMembershipId = loyaltyProgramMembershipId.match(validationRegex);
+        if (validMembershipId == null)
+            return next(new Error("invalid membership"));
+        const newMembership = new LoyaltyProgramMembershipModel({
+            loyaltyProgramMembershipId: loyaltyProgramMembershipId,
+            userId: userId,
+            loyaltyProgramId: loyaltyProgramId
+        });
+        newMembership.save().then(savedMembership => {
+            return response.json(savedMembership.toObject());
+        })
+    })
+    .catch(err => {
+        return next(err);
+    })
+});
+
+/**
  * Route serving transfer get requests
  * - If `transferId` is provided as search query, returns the transfer that matches the transferId if the currently authenticated user is authorised to access it.
  * - Otherwise, returns all transfers that the currently authenticated user is authorised to access.
