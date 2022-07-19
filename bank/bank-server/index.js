@@ -22,6 +22,23 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const APP_NAME = "Bank Server";
 
+/* Models */
+const mongoose = require('mongoose');
+const mongoDBurl = process.env.MONGODB_URI;
+mongoose.set('debug', true);
+mongoose.connect(mongoDBurl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(result => {
+    console.log("Established connection to MongoDB.");
+})
+.catch(error => {
+    console.error("Database Error: ", error);
+});
+const LoyaltyProgramModel = require('./models/LoyaltyProgram');
+
+
 /* Cookie Parsing */
 app.use(cookieParser()); // now any request with a cookie is sent automatically
 
