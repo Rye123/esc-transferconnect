@@ -44,10 +44,10 @@ const LoyaltyProgramSchema = new mongoose.Schema(
     }
 );
 
-LoyaltyProgramSchema.set('toJSON', {
-    transform: (document, jsonObject) => {
-        delete jsonObject._id;
-        delete jsonObject.__v;
+LoyaltyProgramSchema.set('toObject', {
+    transform: (document, obj) => {
+        delete obj._id;
+        delete obj.__v;
     }
 })
 

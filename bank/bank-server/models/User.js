@@ -26,11 +26,14 @@ const UserSchema = new mongoose.Schema(
     }
 );
 
-UserSchema.set('toJSON', {
-    transform: (document, jsonObject) => {
-        jsonObject.userId = jsonObject._id.toString();
-        delete jsonObject._id;
-        delete jsonObject.__v;
+
+UserSchema.set('toObject', {
+    virtuals: true,
+    transform: (document, obj) => {
+        obj.userId = obj._id.toString();
+        delete obj.id;
+        delete obj._id;
+        delete obj.__v;
     }
 })
 
