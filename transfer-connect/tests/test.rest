@@ -2,6 +2,7 @@
 ### Input: JSON file with transfer information
 ### Expected Output: JSON message of successful outcome
 POST http://localhost:3002/api/bank/accrual-req
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 Content-Type: application/json
 
 {
@@ -10,13 +11,14 @@ Content-Type: application/json
     "memberLastName": "Doe",
     "amount": 200,
     "referenceNumber": 2020080101,
-    "partnerCode": "DBSSG1"
+    "partnerCode": "DBSSG3"
 }
 
 ### Testing: route for bank server to get information about previously sent transfer from TC
 ### Input: JSON file containing transfer id (id of collection in MongoDB)
 ### Output: JSON file with transfer information
 POST http://localhost:3002/api/bank/accrual-update
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 Content-Type: application/json
 
 {
@@ -30,48 +32,58 @@ Content-Type: application/json
 ### Input: loyalty program id in the url
 ### Output: JSON file with loyalty program information
 GET http://localhost:3002/api/program/info/GOPOINTS
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: route for bank server to get information about loyalty program
 ### Input: loyalty program id in the url
 ### Output: JSON file with loyalty program information
 GET http://localhost:3002/api/program/info/GOPOINTSzx
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: route for bank server to validate loyalty points id, given program
 ### Input: program id, followed by loyalty points id in the url
 ### Output: JSON file true/false boolean value 
 GET http://localhost:3002/api/program/validate/GOPOINTS/1234567890
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: route for bank server to validate loyalty points id, given program
 ### Input: program id, followed by loyalty points id in the url
 ### Output: JSON file true/false boolean value 
 GET http://localhost:3002/api/program/validate/INDOMILES/1234567890
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: route for bank server to validate loyalty points id, given program
 ### Input: program id, followed by loyalty points id in the url
 ### Output: JSON file true/false boolean value 
 GET http://localhost:3002/api/program/validate/EMINENTGUEST/123456789012
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: route for bank server to validate loyalty points id, given program
 ### Input: program id, followed by loyalty points id in the url
 ### Output: JSON file true/false boolean value 
 GET http://localhost:3002/api/program/validate/QFLYER/1234567890
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: route for bank server to validate loyalty points id, given program
 ### Input: program id, followed by loyalty points id in the url
 ### Output: JSON file true/false boolean value 
 GET http://localhost:3002/api/program/validate/CONRADCLUB/123456789
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: route for bank server to validate loyalty points id, given program
 ### Input: program id, followed by loyalty points id in the url
 ### Output: JSON file true/false boolean value 
 GET http://localhost:3002/api/program/validate/MILLENIUMREWARDS/123456789L
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: (Fail due to bad Program ID) route for bank server to validate loyalty points id, given program
 ### Input: program id, followed by loyalty points id in the url
 ### Output: JSON file true/false boolean value 
 GET http://localhost:3002/api/program/validate/DOESNTEXIST/123456789
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: (Fail due to bad Member ID) route for bank server to validate loyalty points id, given program
 ### Input: program id, followed by loyalty points id in the url
 ### Output: JSON file true/false boolean value 
 GET http://localhost:3002/api/program/validate/CONRADCLUB/1234567891
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}

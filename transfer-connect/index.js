@@ -16,15 +16,29 @@ const bankRoutes = require('./routes/bank-routes');
 const programRoutes = require('./routes/program-routes');
 const HttpError = require('./models/http-error');
 const SFTPClient = require('./sftp/sftp');
+const checkAuth = require('./middleware/check-auth');
 
 /* Express Setup */
 const app = express();
 const PORT = process.env.PORT || 3002;
 
 /* schedule sending data to SFTP in the background (currently every min at 42nd second)*/
-const job = schedule.scheduleJob('42 * * * * *',() => SFTPClient.sendDailyTransfers());
+// const job = schedule.scheduleJob('42 * * * * *',() => SFTPClient.sendDailyTransfers());
 
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+  
+    next();
+  });
+
+app.use(checkAuth);
 
 app.use('/api/bank', bankRoutes);
 
