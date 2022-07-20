@@ -19,6 +19,7 @@ node_modules/
 .env.development.local
 .env.test.local
 .env.production.local
+*.postman_environment.json
 
 # React
 /.pnp
@@ -32,3 +33,4 @@ node_modules/
 
 # misc
 .DS_Store
+*.csv
