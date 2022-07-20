@@ -1,106 +1,20 @@
 {
 	"info": {
-		"_postman_id": "f29d3eec-0351-48cc-9065-37ca391735c3",
-		"name": "TransferConnect",
+		"_postman_id": "0e0d55df-d482-40a4-8c19-266429995d43",
+		"name": "New Collection",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "19915053"
+		"_exporter_id": "21589669"
 	},
 	"item": [
 		{
-			"name": "Route for bank server to send transfer information to TC",
+			"name": "UC1_PASS_validProgramId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful POST request\", () => {",
-							"  pm.expect(pm.response.code).to.be.oneOf([201,202]);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"memberId\": \"345679890L\",\n    \"memberFirstName\": \"John\",\n    \"memberLastName\": \"Doe\",\n    \"amount\": 200,\n    \"referenceNumber\": 2020080101,\n    \"partnerCode\": \"DBSSGXXXXX\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3002/api/bank/accrual-req",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3002",
-					"path": [
-						"api",
-						"bank",
-						"accrual-req"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Route for bank server to get information about previously sent transfer from TC",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Failed POST Request\", () => {",
-							"  pm.response.to.have.status(404);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"accrual_refs\": \"62c16bd657cd7abc0d1712a7\",\n    \"partner_code\": \"DBSSG\",\n    \"api_key\": \"To Be Implemented\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:3002/api/bank/accrual-update",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3002",
-					"path": [
-						"api",
-						"bank",
-						"accrual-update"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Route for bank server to get information about loyalty program",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Failed GET Request\", () => {",
-							"  pm.response.to.have.status(404);",
+							"pm.test(\"given valid Program Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -128,14 +42,14 @@
 			"response": []
 		},
 		{
-			"name": "Route for bank server to get information about loyalty program",
+			"name": "UC1_FAIL_invalidProgramId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Failed GET Request\", () => {",
-							"  pm.response.to.have.status(404);",
+							"pm.test(\"given invalid Program Id, getLPIDValidation, should return status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -146,7 +60,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3002/api/program/info/GOPOINTSzx",
+					"raw": "http://localhost:3002/api/program/info/GOPOINTSS",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -156,23 +70,21 @@
 						"api",
 						"program",
 						"info",
-						"GOPOINTSzx"
+						"GOPOINTSS"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Route for bank server to validate loyalty points id, given program",
+			"name": "UC2_PASS_gopoints_validMemberId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful Get Request\", function () {",
-							"    pm.response.to.have.status(200);",
-							"    pm.response.to.be.ok;",
-							"    pm.response.to.be.json;",
+							"pm.test(\"given GOPOINTS Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -201,16 +113,14 @@
 			"response": []
 		},
 		{
-			"name": "Route for bank server to validate loyalty points id, given program",
+			"name": "UC2_PASS_indomiles_validMemberId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful Get Request\", function () {",
-							"    pm.response.to.have.status(200);",
-							"    pm.response.to.be.ok;",
-							"    pm.response.to.be.json;",
+							"pm.test(\"given INDOMILES Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -239,16 +149,14 @@
 			"response": []
 		},
 		{
-			"name": "Route for bank server to validate loyalty points id, given program",
+			"name": "UC2_PASS_eminentguest_validMemberId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful Get Request\", function () {",
-							"    pm.response.to.have.status(200);",
-							"    pm.response.to.be.ok;",
-							"    pm.response.to.be.json;",
+							"pm.test(\"given EMINENTGUEST Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -277,16 +185,14 @@
 			"response": []
 		},
 		{
-			"name": "Route for bank server to validate loyalty points id, given program",
+			"name": "UC2_PASS_qflyer_validMemberId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful Get Request\", function () {",
-							"    pm.response.to.have.status(200);",
-							"    pm.response.to.be.ok;",
-							"    pm.response.to.be.json;",
+							"pm.test(\"given QFLYER Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -315,16 +221,14 @@
 			"response": []
 		},
 		{
-			"name": "Route for bank server to validate loyalty points id, given program",
+			"name": "UC2_PASS_conradclub_validMemberId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful Get Request\", function () {",
-							"    pm.response.to.have.status(200);",
-							"    pm.response.to.be.ok;",
-							"    pm.response.to.be.json;",
+							"pm.test(\"given CONRADCLUB Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -353,16 +257,14 @@
 			"response": []
 		},
 		{
-			"name": "Route for bank server to validate loyalty points id, given program",
+			"name": "UC2_PASS_milleniumrewards_validMemberId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Successful Get Request\", function () {",
-							"    pm.response.to.have.status(200);",
-							"    pm.response.to.be.ok;",
-							"    pm.response.to.be.json;",
+							"pm.test(\"given MILLENIUMREWARDS Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -391,14 +293,14 @@
 			"response": []
 		},
 		{
-			"name": "(Fail due to bad Program ID) route for bank server to validate loyalty points id, given program",
+			"name": "UC2_FAIL_invalidProgramId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Failed GET Request\", () => {",
-							"  pm.response.to.have.status(404);",
+							"pm.test(\"given wrong Program Id, getLPIDValidation, should return status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -427,14 +329,14 @@
 			"response": []
 		},
 		{
-			"name": "(Fail due to bad member ID) route for bank server to validate loyalty points id, given program",
+			"name": "UC2_FAIL_validProgramId_invalidMemberId",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Failed GET Request\", () => {",
-							"  pm.response.to.have.status(404);",
+							"pm.test(\"given correct Program Id and wrong MemberId, getLPIDValidation, should return status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -461,6 +363,252 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "UC3_PASS_validBankToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Bank token, createTransfer, should return status 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"memberId\": \"345679890L\",\r\n    \"memberFirstName\": \"John\",\r\n    \"memberLastName\": \"Doe\",\r\n    \"amount\": 200,\r\n    \"referenceNumber\": 2020080101,\r\n    \"partnerCode\": \"DBSSG99\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-req",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-req"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC3_FAIL_invalidBankToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given invalid Bank token, createTransfer, should return status 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN_INVALID_BANK}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"memberId\": \"345679890L\",\r\n    \"memberFirstName\": \"John\",\r\n    \"memberLastName\": \"Doe\",\r\n    \"amount\": 200,\r\n    \"referenceNumber\": 2020080101,\r\n    \"partnerCode\": \"DBSSG99\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-req",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-req"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC4_PASS_validBankToken_validAccuralref",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Bank token and valid accuralref, getTransferById, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accrual_refs\": \"62c16bd657cd7abc0d1712a7\",\r\n    \"partner_code\": \"DBSSG\",\r\n    \"api_key\": \"To Be Implemented\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC4_FAIL_invalidBankToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given invalid Bank token, getTransferById, should return status 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accrual_refs\": \"62c16bd657cd7abc0d1712a7\",\r\n    \"partner_code\": \"DBSSG\",\r\n    \"api_key\": \"To Be Implemented\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC4_FAIL_validBankToken_invalidAccuralref",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Bank token and invalid accuralref, getTransferById, should return status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-update"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{JWT_TOKEN_SECRET_TEST}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
