@@ -480,7 +480,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"accrual_refs\": \"62c16bd657cd7abc0d1712a7\",\r\n    \"partner_code\": \"DBSSG\",\r\n    \"api_key\": \"To Be Implemented\"\r\n}",
+					"raw": "{\r\n    \"accrual_refs\": \"62d2deae372b6e64b8daf112\",\r\n    \"partner_code\": \"DBSSG\",\r\n    \"api_key\": \"To Be Implemented\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -519,6 +519,16 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN_INVALID_BANK}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
