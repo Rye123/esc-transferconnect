@@ -256,20 +256,15 @@ app.post('/api/loyaltyProgramMemberships', auth_user_service.requireAuthenticati
  */
 app.get('/api/transfers', auth_user_service.requireAuthentication, (request, response, next) => {
     const transferId = request.query["transferId"];
-    const user = request.user;
-    const membershipIds = user.loyaltyProgramMembershipIds;
+    const userId = request.user.userId;
     // get corresponding memberships
     if (typeof transferId === 'undefined') {
         // get all transfers of user
-        const getTransfersForEachMembershipId_promises = [];
-        membershipIds.forEach(membershipId => {
-            getTransfersForEachMembershipId_promises.push(TransferModel.find({loyaltyProgramMembershipId: membershipId}))
-        });
-        Promise.all(getTransfersForEachMembershipId_promises)
+        TransferModel.find({userId: userId})
         .then(transfers => {
             if (transfers.length === 0)
                 return response.status(200).json([]);
-            return response.status(200).json(transfers.flat().map(transfer => transfer.toObject()));
+            return response.status(200).json(transfers.map(transfer => transfer.toObject()));
         })
         .catch(err => {
             return next(new DataAccessError(err));
@@ -280,7 +275,7 @@ app.get('/api/transfers', auth_user_service.requireAuthentication, (request, res
         .then(transfer => {
             if (transfer == null)
                 return next(new DataAccessError());
-            if (!(membershipIds.includes(transfer.loyaltyProgramMembershipId)))
+            if (transfer.userId !== userId)
                 return next(new DataAccessError("Unauthorised access"));
             return response.status(200).json(transfer.toObject());
         })

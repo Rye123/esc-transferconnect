@@ -15,7 +15,8 @@ const TransferSchema = new mongoose.Schema(
             default: ""
         },
         submissionDate: Date,
-        points: Number
+        points: Number,
+        userId: String
     },
     {
         collection: 'transfers'

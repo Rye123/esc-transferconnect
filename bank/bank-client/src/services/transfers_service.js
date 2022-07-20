@@ -37,7 +37,7 @@ const transfer_getAllTransfers = async () => {
 
 const transfer_getTransferById = async (transferId) => {
     return axios
-    .get(`${TRANSFERS_URI}?transferId=${transferId}`)
+    .get(TRANSFERS_URI, {params: {transferId}})
     .then(response => {
         return new Transfer(
             response.data.transferId,
