@@ -27,7 +27,7 @@ const getTransferById = async (req, res, next) => {
         return next( new HttpError('Could not find a transfer for the provided id', 404) );
     }
     console.log("reached line 55")
-    res.status(201).json({transfer});
+    res.status(200).json({transfer});
 }
 
 const createTransfer = async (req, res, next) => {
