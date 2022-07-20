@@ -285,6 +285,59 @@ app.get('/api/transfers', auth_user_service.requireAuthentication, (request, res
     }
 })
 
+app.post('/api/transfers', auth_user_service.requireAuthentication, (request, response, next) => {
+    const loyaltyProgramId = request.body.loyaltyProgramId;
+    const loyaltyProgramMembershipId = request.body.loyaltyProgramMembershipId;
+    let usedPoints = parseInt(request.body.points);
+    const user = request.user;
+    if (
+        typeof loyaltyProgramId === 'undefined' ||
+        typeof loyaltyProgramMembershipId === 'undefined' ||
+        typeof usedPoints === 'undefined'
+    )
+        throw new Error("empty query string");
+    
+    if (!Number.isInteger(usedPoints))
+        throw new Error("invalid points attribute")
+    
+    const updatedUserObj = {
+        ...user,
+        points: user.points - usedPoints
+    }
+    
+    // ensure user's points don't drop below 0
+    if (updatedUserObj.points < 0)
+        throw new Error("not enough points")
+    //TODO: ensure used points above minimum amt
+    //TODO: check if membershipId and loyaltyProgramId are valid
+
+    // Modify points, then make the transfer
+    UserModel.findByIdAndUpdate(user.userId, updatedUserObj, {
+        new: true,
+        runValidators: true,
+        context: 'query'
+    })
+    .then(updatedUser => {
+        const newTransfer = new TransferModel({
+            loyaltyProgramId: loyaltyProgramId,
+            loyaltyProgramMembershipId: loyaltyProgramMembershipId,
+            status: "pending",
+            statusMessage: "",
+            submissionDate: new Date(),
+            points: usedPoints,
+            userId: user.userId
+        })
+        return newTransfer.save();
+    })
+    .then(newTransfer => {
+        return response.json(newTransfer.toObject());
+    })
+    .catch(err => {
+        return next(err);
+    })
+
+})
+
 /* Unknown Endpoint Handling */
 app.use((request, response) => {
     //TODO: Add 404 Not Found page

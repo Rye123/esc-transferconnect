@@ -51,10 +51,20 @@ const transfer_getTransferById = async (transferId) => {
     })
 }
 
-const transfer_postTransfer = async (loyaltyProgramId, membershipId, points) => {
-    const transfer = new Transfer(Utils.getRandomInt(10000, 20000).toString(), loyaltyProgramId, membershipId, 'pending', undefined, new Date(), points);
-    transfers.push(transfer);
-    return Promise.resolve(transfer);
+const transfer_postTransfer = async (loyaltyProgramId, loyaltyProgramMembershipId, points) => {
+    return axios
+    .post(TRANSFERS_URI, {loyaltyProgramId, loyaltyProgramMembershipId, points}, {withCredentials: true})
+    .then(response => {
+        return new Transfer(
+            response.data.transferId,
+            response.data.loyaltyProgramId,
+            response.data.loyaltyProgramMembershipId,
+            response.data.status,
+            response.data.statusMessage,
+            response.data.submissionDate,
+            response.data.points
+        )
+    })
 }
 
 const exports = { transfer_getAllTransfers, transfer_getTransferById, transfer_postTransfer };
