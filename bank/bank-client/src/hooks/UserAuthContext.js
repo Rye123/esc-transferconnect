@@ -4,17 +4,28 @@ import user_auth_service from '../services/user_auth_service';
  * Contains saved user context data for the app.
  */
 const UserAuthContext = createContext();
+const localStorageUserVar = 'user';
+
+const storeUserLocally = (user) => {
+    localStorage.setItem(localStorageUserVar, JSON.stringify(user));
+}
+
+const getUserLocally = () => {
+    return JSON.parse(localStorage.getItem(localStorageUserVar)) || {}
+}
 
 export const UserAuthProvider = ({children }) => {
-    const [user, setUser] = useState([]);
+    const [user, setUser] = useState(getUserLocally());
 
     useEffect(() => {
         user_auth_service.user_getinfo()
         .then(user => {
             setUser(user);
+            storeUserLocally(user);
         })
         .catch(() => {
             setUser({});
+            storeUserLocally({});
         });
     }, []);
 
@@ -25,12 +36,14 @@ export const UserAuthProvider = ({children }) => {
             return user_auth_service.user_login(credentials)
             .then(user => {
                 setUser(user);
+                storeUserLocally(user);
             });
         },
         logout: async() => {
             return user_auth_service.user_logout()
             .finally(() => {
                 setUser({});
+                storeUserLocally({});
             })
         }
     }
