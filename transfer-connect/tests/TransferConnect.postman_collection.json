@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "0e0d55df-d482-40a4-8c19-266429995d43",
-		"name": "New Collection",
+		"name": "TransferConnect",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "21589669"
 	},
@@ -480,7 +480,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"accrual_refs\": \"62d2deae372b6e64b8daf112\",\r\n    \"partner_code\": \"DBSSG\",\r\n    \"api_key\": \"To Be Implemented\"\r\n}",
+					"raw": "{\r\n    \"referenceNumber\": 2022080101,\r\n    \"partnerCode\": \"DBSSG\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -533,7 +533,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"accrual_refs\": \"62c16bd657cd7abc0d1712a7\",\r\n    \"partner_code\": \"DBSSG\",\r\n    \"api_key\": \"To Be Implemented\"\r\n}",
+					"raw": "{\r\n    \"referenceNumber\": 2022080101,\r\n    \"partnerCode\": \"DBSSG\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -574,6 +574,15 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"referenceNumber\": 2050080101,\r\n    \"partnerCode\": \"DBSSG\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://localhost:3002/api/bank/accrual-update",
 					"protocol": "http",
