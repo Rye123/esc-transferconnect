@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 function generateAccessToken(bankName) {
-    return jwt.sign(bankName, process.env.JWT_TOKEN_SECRET_TC, { expiresIn: '1800s' });
+    return jwt.sign(bankName, process.env.JWT_TOKEN_SECRET_TC);
   }
   
 // console.log(process.env.SFTP_PASSWORD);
