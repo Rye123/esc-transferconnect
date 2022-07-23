@@ -22,9 +22,8 @@ Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 Content-Type: application/json
 
 {
-    "accrual_refs": "62c16bd657cd7abc0d1712a7",
-    "partner_code": "DBSSG",
-    "api_key": "To Be Implemented"
+    "referenceNumber": 2022080101,
+    "partnerCode": "DBSSG"
 }
 
 
