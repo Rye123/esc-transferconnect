@@ -1,0 +1,7 @@
+/* CSS code specific to Login.css */
+
+.login-container {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}

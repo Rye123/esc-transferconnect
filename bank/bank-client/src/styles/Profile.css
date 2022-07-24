@@ -1,0 +1,8 @@
+/* CSS code specific to Profile.css */
+/* TODO: See design of other pages and move common style tags out */
+
+.display-container {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
