@@ -1,0 +1,196 @@
+/* REST Endpoints for Loyalty Programs and Memberships */
+
+/* Express */
+const express = require('express');
+const router = express.Router();
+
+/* Services */
+const auth_user_service = require('../services/auth_user_service');
+
+/* Models */
+const UserModel = require('../models/User');
+const LoyaltyProgramModel = require('../models/LoyaltyProgram');
+const LoyaltyProgramMembershipModel = require('../models/LoyaltyProgramMembership');
+
+/* Errors */
+const DataAccessError = require('../errors/DataAccessError');
+
+/**
+ * Route serving loyalty program requests
+ * - If `loyaltyProgramId` is provided as search query, returns a single loyaltyProgram with the same loyaltyProgramId
+ * - Otherwise, returns all loyalty programs available.
+ */
+router.get('/loyaltyPrograms', (request, response, next) => {
+    const loyaltyProgramId = request.query["loyaltyProgramId"];
+    if (typeof loyaltyProgramId === 'undefined') {
+        // get all programs
+        LoyaltyProgramModel.find({})
+        .then(loyaltyPrograms => {
+            if (loyaltyPrograms.length === 0)
+                return response.status(200).json([]);
+            return response.status(200).json(loyaltyPrograms.map(program => program.toObject()));
+        })
+        .catch(err => {
+            return next(new DataAccessError(err));
+        });
+    } else {
+        // get all programs
+        LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
+        .then(loyaltyProgram => {
+            if (loyaltyProgram == null)
+                return next(new DataAccessError());
+            return response.status(200).json(loyaltyProgram.toObject());
+        })
+        .catch(err => {
+            return next(new DataAccessError(err));
+        });
+    }
+});
+
+/**
+ * Route serving loyalty program membership get requests
+ * - If `loyaltyProgramId` is provided as search query, returns a single loyaltyProgramMembership corresponding to the currently authenticated user.
+ * - Otherwise, returns all memberships under the user.
+ */
+router.get('/loyaltyProgramMemberships', auth_user_service.requireAuthentication, (request, response, next) => {
+    const loyaltyProgramId = request.query["loyaltyProgramId"];
+    const userId = request.user.userId;
+    if (typeof loyaltyProgramId === 'undefined') {
+        // get all memberships of the user
+        LoyaltyProgramMembershipModel.find({userId: userId})
+        .then(memberships => {
+            if (memberships.length === 0)
+                return response.status(200).json([]);
+            response.status(200).json(memberships.map(membership => membership.toObject()));
+        })
+        .catch(err => {
+            return next(new DataAccessError(err));
+        })
+    } else {
+        // ensure loyalty program exists, then continue
+        LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
+        .then(loyaltyProgram => {
+            if (loyaltyProgram == null)
+                return next(new DataAccessError());
+            return LoyaltyProgramMembershipModel.findOne({userId: userId, loyaltyProgramId: loyaltyProgramId});
+        })
+        .then(membership => {
+            if (membership == null)
+                return next(new DataAccessError());
+            return response.status(200).json(membership.toObject());
+        })
+        .catch(err => {
+            return next(new DataAccessError(err));
+        })
+    }
+});
+
+/**
+ * Route serving loyalty program membership creation.
+ */
+router.post('/loyaltyProgramMemberships', auth_user_service.requireAuthentication, (request, response, next) => {
+    const loyaltyProgramId = request.body.loyaltyProgramId;
+    const loyaltyProgramMembershipId = request.body.loyaltyProgramMembershipId;
+    const userId = request.user.userId;
+    const membershipIds = request.user.loyaltyProgramMembershipIds;
+    // ensure loyaltyProgram exists
+    LoyaltyProgramModel.findOne({loyaltyProgramId: loyaltyProgramId})
+    .then(loyaltyProgram => {
+        if (loyaltyProgram == null)
+            return next(new DataAccessError("loyalty program does not exist"))
+        return LoyaltyProgramMembershipModel.findOne({userId: userId, loyaltyProgramId: loyaltyProgramId})
+    })
+    .then(membership => {
+        if (!(membership == null))
+            return next(new Error("membership already exists"));
+
+        // validate membershipId
+        const validationRegex = /^[a-zA-Z\d]+$/m;
+        const validMembershipId = loyaltyProgramMembershipId.match(validationRegex);
+        if (validMembershipId == null)
+            return next(new Error("invalid membership"));
+
+        // then update the user's list of memberships
+        membershipIds.push(loyaltyProgramMembershipId)
+        const updatedUser = {
+            ...request.user,
+            loyaltyProgramMembershipIds: membershipIds
+        }
+        return UserModel.findByIdAndUpdate(userId, updatedUser, {
+            new: true,
+            runValidators: true,
+            context: 'query'
+        });
+    })
+    .then(updatedUser => {
+        // then create a new membership
+        const newMembership = new LoyaltyProgramMembershipModel({
+            loyaltyProgramMembershipId: loyaltyProgramMembershipId,
+            userId: userId,
+            loyaltyProgramId: loyaltyProgramId
+        });
+        return newMembership.save();
+    })
+    .then(savedMembership => {
+        return response.json(savedMembership.toObject());
+    })
+    .catch(err => {
+        return next(err);
+    })
+});
+
+/**
+ * Route serving loyalty program membership updates
+ */
+ router.put('/loyaltyProgramMemberships', auth_user_service.requireAuthentication, (request, response, next) => {
+    const loyaltyProgramId = request.body.loyaltyProgramId;
+    const newLoyaltyProgramMembershipId = request.body.loyaltyProgramMembershipId;
+    const userId = request.user.userId;
+    const membershipIds = request.user.loyaltyProgramMembershipIds;
+    let oldMembership = null;
+    
+    LoyaltyProgramMembershipModel.findOne({userId: userId, loyaltyProgramId: loyaltyProgramId})
+    .then(membership => {
+        if (membership == null)
+            return next(new Error("membership does not exist"));
+
+        // validate membershipId
+        const validationRegex = /^[a-zA-Z\d]+$/m;
+        const validMembershipId = newLoyaltyProgramMembershipId.match(validationRegex);
+        if (validMembershipId == null)
+            return next(new Error("invalid membership"));
+        
+        // then update the user's list of memberships
+        membershipIds[membershipIds.indexOf(membership.loyaltyProgramMembershipId)] = newLoyaltyProgramMembershipId;
+        const updatedUser = {
+            ...request.user,
+            loyaltyProgramMembershipIds: membershipIds
+        }
+        oldMembership = membership; // set here to update later
+        return UserModel.findByIdAndUpdate(userId, updatedUser, {
+            new: true,
+            runValidators: true,
+            context: 'query'
+        });
+    })
+    .then(updatedUser => {
+        // then update the membership
+        const newMembershipObj = {
+            ...(oldMembership.toObject()),
+            loyaltyProgramMembershipId: newLoyaltyProgramMembershipId
+        };
+        return LoyaltyProgramMembershipModel.findByIdAndUpdate(oldMembership.id, newMembershipObj, {
+            new: true,
+            runValidators: true,
+            context: 'query'
+        });
+    })
+    .then(updatedMembership => {
+        return response.json(updatedMembership.toObject());
+    })
+    .catch(err => {
+        return next(err);
+    })
+});
+
+module.exports = router;
