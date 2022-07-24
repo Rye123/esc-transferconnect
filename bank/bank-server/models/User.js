@@ -11,6 +11,10 @@ const UserSchema = new mongoose.Schema(
         points: {
             type: Number,
             default: 0
+        },
+        userSettings: {
+            type: Object,
+            default: {}
         }
     },
     {

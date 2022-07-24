@@ -18,7 +18,6 @@ export const UserAuthProvider = ({children }) => {
     const [user, setUser] = useState(getUserLocally());
 
     useEffect(() => {
-        console.log("called");
         user_auth_service.user_getinfo()
         .then(user => {
             setUser(user);
