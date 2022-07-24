@@ -13,21 +13,20 @@ const getTransferById = async (req, res, next) => {
         new HttpError('Invalid inputs passed, please check your data.', 422)
         );
     }
-    const {accrual_refs, partner_code, bank_api_key} = req.body;
-    console.log(accrual_refs);
-    let transfer;
+    const {referenceNumber, partnerCode} = req.body;
+    console.log(referenceNumber);
+    let transfer = {};
     try {
-        transfer = await Transfer.findById(accrual_refs);
+        transfer = await Transfer.find({referenceNumber: referenceNumber, partnerCode: partnerCode});
     } catch (err) {
         return next( new HttpError('Something went wrong, could not find requested transfer.', 500) );
     }
-
-    if (!transfer) {
+    if (!transfer || transfer.length !== 1) {
         //return error
-        return next( new HttpError('Could not find a transfer for the provided id', 404) );
+        return next( new HttpError('Could not find a transfer for the provided id or partner code', 404) );
     }
-    console.log("reached line 55")
-    res.status(201).json({transfer});
+
+    res.status(200).json({status: transfer[0].status});
 }
 
 const createTransfer = async (req, res, next) => {
@@ -47,13 +46,14 @@ const createTransfer = async (req, res, next) => {
         transferDate: moment().toISOString(),
         amount,
         referenceNumber,
-        partnerCode
+        partnerCode,
+        status: "processing"
     })
 
     try {
         await createdTransfer.save();
     } catch (err) {
-        return next( new HttpError('Creating place failed, please try again.', 500) );
+        return next( new HttpError('Creating Transfer failed, please try again.', 500) );
     }
 
     // DUMMY_TRANSFERS.push(createdTransfer);

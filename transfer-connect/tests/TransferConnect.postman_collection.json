@@ -1,0 +1,633 @@
+{
+	"info": {
+		"_postman_id": "0e0d55df-d482-40a4-8c19-266429995d43",
+		"name": "TransferConnect",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21589669"
+	},
+	"item": [
+		{
+			"name": "UC1_PASS_validProgramId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Program Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/info/GOPOINTS",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"info",
+						"GOPOINTS"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC1_FAIL_invalidProgramId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given invalid Program Id, getLPIDValidation, should return status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/info/GOPOINTSS",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"info",
+						"GOPOINTSS"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC2_PASS_gopoints_validMemberId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given GOPOINTS Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/validate/GOPOINTS/1234567890",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"validate",
+						"GOPOINTS",
+						"1234567890"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC2_PASS_indomiles_validMemberId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given INDOMILES Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/validate/INDOMILES/1234567890",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"validate",
+						"INDOMILES",
+						"1234567890"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC2_PASS_eminentguest_validMemberId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given EMINENTGUEST Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/validate/EMINENTGUEST/123456789012",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"validate",
+						"EMINENTGUEST",
+						"123456789012"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC2_PASS_qflyer_validMemberId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given QFLYER Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/validate/QFLYER/1234567890",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"validate",
+						"QFLYER",
+						"1234567890"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC2_PASS_conradclub_validMemberId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given CONRADCLUB Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/validate/CONRADCLUB/123456789",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"validate",
+						"CONRADCLUB",
+						"123456789"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC2_PASS_milleniumrewards_validMemberId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given MILLENIUMREWARDS Id and valid Member Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/validate/MILLENIUMREWARDS/123456789L",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"validate",
+						"MILLENIUMREWARDS",
+						"123456789L"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC2_FAIL_invalidProgramId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given wrong Program Id, getLPIDValidation, should return status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/validate/DOESNTEXIST/123456789",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"validate",
+						"DOESNTEXIST",
+						"123456789"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC2_FAIL_validProgramId_invalidMemberId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given correct Program Id and wrong MemberId, getLPIDValidation, should return status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/validate/CONRADCLUB/1234567891",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"validate",
+						"CONRADCLUB",
+						"1234567891"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC3_PASS_validBankToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Bank token, createTransfer, should return status 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"memberId\": \"345679890L\",\r\n    \"memberFirstName\": \"John\",\r\n    \"memberLastName\": \"Doe\",\r\n    \"amount\": 200,\r\n    \"referenceNumber\": 2020080101,\r\n    \"partnerCode\": \"DBSSG99\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-req",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-req"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC3_FAIL_invalidBankToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given invalid Bank token, createTransfer, should return status 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN_INVALID_BANK}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"memberId\": \"345679890L\",\r\n    \"memberFirstName\": \"John\",\r\n    \"memberLastName\": \"Doe\",\r\n    \"amount\": 200,\r\n    \"referenceNumber\": 2020080101,\r\n    \"partnerCode\": \"DBSSG99\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-req",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-req"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC4_PASS_validBankToken_validAccuralref",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Bank token and valid accuralref, getTransferById, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"referenceNumber\": 2022080101,\r\n    \"partnerCode\": \"DBSSG\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC4_FAIL_invalidBankToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given invalid Bank token, getTransferById, should return status 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{JWT_TOKEN_INVALID_BANK}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"referenceNumber\": 2022080101,\r\n    \"partnerCode\": \"DBSSG\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC4_FAIL_validBankToken_invalidAccuralref",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Bank token and invalid accuralref, getTransferById, should return status 404\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"referenceNumber\": 2050080101,\r\n    \"partnerCode\": \"DBSSG\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-update"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{JWT_TOKEN_SECRET_TEST}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

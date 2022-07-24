@@ -15,10 +15,10 @@ const getLoyaltyByProgramId = async (req, res, next) => {
         loyalty = await Loyalty.find({programId: programId});
         // loyalty = await Loyalty.findById(programId);
         // console.log(Boolean(loyaltyInfo));
-    } catch {
+    } catch (err) {
         return next(new HttpError("Cannot find loyalty program",500));
     }
-    if (!loyalty) {
+    if (loyalty.length === 0) {
         //return error
         return next( new HttpError('Could not find Loyalty Info for the provided id', 404) );
     }
@@ -69,7 +69,13 @@ const getLPIDValidation = (req, res, next) => {
 
     const result = isLPIDValid(pid,lpid);
     
-    res.status(200).json({result});
+    if (result === true){
+        res.status(200).json({result});
+    } else if (result === false) {
+        return next(new HttpError("Member ID does not have the right format",404));
+    } else if (result === null) {
+        return next(new HttpError("Program ID not found", 404));
+    }
 }
 
 exports.getLoyaltyByProgramId = getLoyaltyByProgramId;
