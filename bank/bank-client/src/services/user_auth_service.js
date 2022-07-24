@@ -29,9 +29,7 @@ const user_getinfo = async () => {
                 data.username,
                 data.firstName,
                 data.lastName,
-                data.points,
-                data.loyaltyProgramMembershipIds,
-                data.transferIds
+                data.points
             );
         });
 };

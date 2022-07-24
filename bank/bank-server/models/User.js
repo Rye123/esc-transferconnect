@@ -11,14 +11,6 @@ const UserSchema = new mongoose.Schema(
         points: {
             type: Number,
             default: 0
-        },
-        loyaltyProgramMembershipIds: {
-            type: [String],
-            default: []
-        },
-        transferIds: {
-            type: [String],
-            default: []
         }
     },
     {

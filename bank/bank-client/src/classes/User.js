@@ -2,14 +2,12 @@
  * A bank user.
  */
 class User {
-    constructor(userId, username, firstName, lastName, points, loyaltyProgramMembershipIds, transferIds) {
+    constructor(userId, username, firstName, lastName, points) {
         this.userId = userId;
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.points = points;
-        this.loyaltyProgramMembershipIds = loyaltyProgramMembershipIds;
-        this.transferIds = transferIds;
     }
 }
 

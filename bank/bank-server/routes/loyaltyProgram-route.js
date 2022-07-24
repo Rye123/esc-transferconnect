@@ -8,7 +8,6 @@ const router = express.Router();
 const auth_user_service = require('../services/auth_user_service');
 
 /* Models */
-const UserModel = require('../models/User');
 const LoyaltyProgramModel = require('../models/LoyaltyProgram');
 const LoyaltyProgramMembershipModel = require('../models/LoyaltyProgramMembership');
 
@@ -109,20 +108,7 @@ router.post('/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
         const validMembershipId = loyaltyProgramMembershipId.match(validationRegex);
         if (validMembershipId == null)
             return next(new Error("invalid membership"));
-
-        // then update the user's list of memberships
-        membershipIds.push(loyaltyProgramMembershipId)
-        const updatedUser = {
-            ...request.user,
-            loyaltyProgramMembershipIds: membershipIds
-        }
-        return UserModel.findByIdAndUpdate(userId, updatedUser, {
-            new: true,
-            runValidators: true,
-            context: 'query'
-        });
-    })
-    .then(updatedUser => {
+        
         // then create a new membership
         const newMembership = new LoyaltyProgramMembershipModel({
             loyaltyProgramMembershipId: loyaltyProgramMembershipId,
@@ -160,26 +146,12 @@ router.post('/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
         if (validMembershipId == null)
             return next(new Error("invalid membership"));
         
-        // then update the user's list of memberships
-        membershipIds[membershipIds.indexOf(membership.loyaltyProgramMembershipId)] = newLoyaltyProgramMembershipId;
-        const updatedUser = {
-            ...request.user,
-            loyaltyProgramMembershipIds: membershipIds
-        }
-        oldMembership = membership; // set here to update later
-        return UserModel.findByIdAndUpdate(userId, updatedUser, {
-            new: true,
-            runValidators: true,
-            context: 'query'
-        });
-    })
-    .then(updatedUser => {
         // then update the membership
         const newMembershipObj = {
-            ...(oldMembership.toObject()),
+            ...(membership.toObject()),
             loyaltyProgramMembershipId: newLoyaltyProgramMembershipId
         };
-        return LoyaltyProgramMembershipModel.findByIdAndUpdate(oldMembership.id, newMembershipObj, {
+        return LoyaltyProgramMembershipModel.findByIdAndUpdate(membership.id, newMembershipObj, {
             new: true,
             runValidators: true,
             context: 'query'
