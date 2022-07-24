@@ -6,6 +6,7 @@ const router = express.Router();
 
 /* Services */
 const auth_user_service = require('../services/auth_user_service');
+const user_notify_service = require('../services/user_notify_service');
 
 /* Models */
 const TransferModel = require('../models/Transfer');
@@ -102,5 +103,49 @@ router.post('/transfers', auth_user_service.requireAuthentication, (request, res
     })
 
 });
+
+router.post('/tc/updateTransferStatus', (request, response, next) => {
+    const transferId = request.query["transferId"];
+    const transferStatus = request.query["transferStatus"];
+    const transferStatusMessage = request.query["transferStatusMessage"];
+
+    let newTransfer = undefined;
+    TransferModel.findById(transferId)
+    .then(transfer => {
+        if (transfer == null)
+            return next(new DataAccessError());
+        const newTransferObj = {
+            ...(transfer.toObject()),
+            status: transferStatus,
+            statusMessage: transferStatusMessage || ""
+        }
+        return TransferModel.findByIdAndUpdate(transferId, newTransferObj, {
+            new: true,
+            runValidators: true,
+            context: 'query'
+        });
+    })
+    .catch(transferFindError => {
+        return next(new DataAccessError());
+    })
+    .then(updatedTransfer => {
+        newTransfer = updatedTransfer;
+        return UserModel.findById(updatedTransfer.userId)
+    })
+    .then(user => {
+        console.log(newTransfer);
+        return user_notify_service.notifyUserOfCompletedTransfer(user, newTransfer.toObject());
+    })
+    .then(resp => {
+        if (resp === false)
+            console.log("User not notified");
+        else
+            console.log("Email sent.");
+        return response.status(200).end();
+    })
+    .catch(e => {
+        return next(e);
+    })
+})
 
 module.exports = router;
