@@ -44,7 +44,7 @@ const testLogout = async() => {
     })
 }
 
-(async () => {
+const runTest = async () => {
     try {  
         await testLogin();
         console.log("testLogin Passed");
@@ -54,4 +54,6 @@ const testLogout = async() => {
         console.error(error);
     }
     driver.quit();
-})();
+};
+
+module.exports = runTest;
