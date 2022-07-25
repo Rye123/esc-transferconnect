@@ -5,9 +5,9 @@ const assert = require('assert');
 const target_url = "http://localhost:3000";
 
 // Driver Setup
-const driver = new webdriver.Builder()
-    .forBrowser('firefox')
-    .build();
+const builder = new webdriver.Builder()
+    .forBrowser('firefox');
+let driver = undefined;
 
 const testLogin = async() => {
     const credentials = {
@@ -45,6 +45,7 @@ const testLogout = async() => {
 }
 
 const runTest = async () => {
+    driver = await builder.build();
     try {  
         await testLogin();
         console.log("testLogin Passed");
@@ -52,8 +53,10 @@ const runTest = async () => {
         console.log("testLogout Passed");
     } catch (error) {
         console.error(error);
+    } finally {
+        driver.quit();
+        return;
     }
-    driver.quit();
 };
 
 module.exports = runTest;

@@ -20,12 +20,14 @@ const clientProcess = spawn('npm', ['start'], {
     shell: true
 });
 
-const killAllProcesses = (e="Unknown error") => {
-    console.log("Error encountered, killing all processes.");
-    let clientKilled = clientProcess.kill('SIGKILL');
-    let serverKilled = serverProcess.kill('SIGKILL');
+const killAllProcesses = (e="") => {
+    if (e !== "")
+        console.log("Error encountered, killing all processes.");
+    let clientKilled = clientProcess.kill();
+    let serverKilled = serverProcess.kill();
     console.log(`Client killed: ${clientKilled}`);
     console.log(`Server killed: ${serverKilled}`);
+    process.exit();
     //process.kill('SIGINT');
 }
 
@@ -33,7 +35,7 @@ serverProcess.stdout.on("data", data => {
     if (data.toString().includes("Established connection to MongoDB.")) {
         console.log("BANK SERVER RUNNING");
         serverUp = true;
-        InitTests();
+        Setup();
     }
     if (data.toString().includes("Database Error")) {
         console.log(data.toString());
@@ -62,7 +64,7 @@ serverProcess.on("close", code => {
 clientProcess.stdout.on("data", data => {
     if (data.toString().includes("You can now view bank-client in the browser.")) {
         clientUp = true;
-        InitTests();
+        Setup();
     }
     if (data.toString().includes("Something is already running on port")) {
         console.log(data.toString());
@@ -89,14 +91,50 @@ clientProcess.on("close", code => {
 });
 
 
+// ---------- DATABASE OPERATIONS ----------
+const resetTestDb = require('./reset_test_db');
 
-// ---------- RUN TESTS ----------
+
+// ---------- PREPARE FOR TESTING ----------
 const testLoginLogout = require('./testLoginLogout');
-const InitTests = () => {
+const Setup = () => {
     if (!(clientUp & serverUp))
         return;
     console.log("Both services running.");
 
+    console.log("Setting Test Database to default...");
+    resetTestDb()
+    .then(() => {
+        console.log("Test Database reset.");
+        InitTests();
+    })
+    .catch(() => {
+        console.log("Could not setup test database, exiting.");
+        killAllProcesses("Database error");
+    });
+};
+
+const InitTests = async () => {
+    // Conduct Tests
     console.log("Testing Login/Logout");
-    testLoginLogout();
+    try {
+        await testLoginLogout();
+    } catch (error) {
+        console.log("Error encountered, shutting down.");
+        killAllProcesses();
+    }
+
+    console.log("Test Complete");
+
+    // Restore DB to original state
+    resetTestDb()
+    .then(() => {
+        console.log("Test Database reset.");
+        console.log("Exiting.");
+        killAllProcesses();
+    })
+    .catch(() => {
+        console.log("Could not setup test database, exiting.");
+        killAllProcesses("Database error");
+    });
 }
