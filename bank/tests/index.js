@@ -97,6 +97,8 @@ const resetTestDb = require('./reset_test_db');
 
 // ---------- PREPARE FOR TESTING ----------
 const testLoginLogout = require('./testLoginLogout');
+const testLoyaltyPrograms = require('./testLoyaltyPrograms');
+const testLoadTransfers = require('./testLoadTransfers');
 const Setup = () => {
     if (!(clientUp & serverUp))
         return;
@@ -119,6 +121,8 @@ const InitTests = async () => {
     console.log("Testing Login/Logout");
     try {
         await testLoginLogout();
+        await testLoyaltyPrograms();
+        await testLoadTransfers();
     } catch (error) {
         console.log("Error encountered, shutting down.");
         killAllProcesses();
