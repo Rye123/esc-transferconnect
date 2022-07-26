@@ -9,15 +9,11 @@ const builder = new webdriver.Builder()
     .forBrowser('firefox');
 let driver = undefined;
 
-const testLogin = async() => {
-    const credentials = {
-        user: 'asdf',
-        password: 'fdsa'
-    };
+const testLogin = async(credentials) => {
     return driver.get(`${target_url}`)
     .then(async () => {
         await driver.sleep(1000);
-        await driver.findElement(By.name("username")).sendKeys(credentials.user);
+        await driver.findElement(By.name("username")).sendKeys(credentials.username);
         await driver.findElement(By.name("password")).sendKeys(credentials.password);
         return driver.findElement(By.name("username")).submit();
     })
@@ -47,12 +43,21 @@ const testLogout = async() => {
 const runTest = async () => {
     driver = await builder.build();
     try {  
-        await testLogin();
-        console.log("testLogin Passed");
+        await testLogin({username: 'asdf', password: 'fdsa'});
+        console.log("testLogin for asdf Passed");
+        await testLogout();
+        console.log("testLogout Passed");
+        await testLogin({username: 'michaelmyers123', password: 'halloween'});
+        console.log("testLogin for michaelmyers123 Passed");
+        await testLogout();
+        console.log("testLogout Passed");
+        await testLogin({username: 'johndoe1', password: 'password1'});
+        console.log("testLogin for johndoe1 Passed");
         await testLogout();
         console.log("testLogout Passed");
     } catch (error) {
         console.error(error);
+        throw error;
     } finally {
         driver.quit();
         return;
