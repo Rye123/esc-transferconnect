@@ -27,7 +27,7 @@ const getTransferByRef = async (req, res, next) => {
     } catch (err) {
         return next( new HttpError('Something went wrong, could not find requested transfer.', 500) );
     }
-    if (!transfer) {
+    if (!transfer || transfer.length === 0) {
         //return error
         return next( new HttpError('Could not find a transfer for the provided id or partner code', 404) );
     }
