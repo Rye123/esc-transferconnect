@@ -42,6 +42,41 @@
 			"response": []
 		},
 		{
+			"name": "UC1_PASS_validProgramId_all",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Program Id, getLPIDValidation, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3002/api/program/info/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"program",
+						"info",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "UC1_FAIL_invalidProgramId",
 			"event": [
 				{
@@ -481,6 +516,49 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\r\n    \"referenceNumber\": 2022080101,\r\n    \"partnerCode\": \"DBSSG\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3002/api/bank/accrual-update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3002",
+					"path": [
+						"api",
+						"bank",
+						"accrual-update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UC4_PASS_validBankToken_validAccuralref_all",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"given valid Bank token and valid accuralref, getTransferById, should return status 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"referenceNumber\": \"all\",\r\n    \"partnerCode\": \"DBSSG\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
