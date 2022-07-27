@@ -17,6 +17,7 @@ const ApplicationError = require('./errors/ApplicationError');
 const UserAuthorisationError = require('./errors/UserAuthorisationError');
 const UserAuthenticationError = require('./errors/UserAuthenticationError');
 const DataAccessError = require('./errors/DataAccessError');
+const TransferConnectError = require('./errors/TransferConnectError');
 
 /* Express Setup */
 const app = express();
@@ -80,7 +81,9 @@ app.use((error, request, response, next) => {
             });
         case "DataAccessError":
             return response.status(error.status).json( {error: "not found"} );
-
+        case "TransferConnectError":
+            console.log(`TransferConnect Error: ${error}`);
+            return;
         default:
             console.log(error);
             return response.status(500).json({ error: "internal server error" })
