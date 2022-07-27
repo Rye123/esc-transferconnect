@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const HttpError = require('../models/http-error');
 const Transfer = require("../models/transfer");
 
-const getTransferById = async (req, res, next) => {
+const getTransferByRef = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return next(
@@ -16,17 +16,23 @@ const getTransferById = async (req, res, next) => {
     const {referenceNumber, partnerCode} = req.body;
     console.log(referenceNumber);
     let transfer = {};
+    let projection = { "_id": 0, referenceNumber: 1, status: 1, };
     try {
-        transfer = await Transfer.find({referenceNumber: referenceNumber, partnerCode: partnerCode});
+        if (referenceNumber === "all") {
+            query = {partnerCode: partnerCode}
+        } else {
+            query = {referenceNumber: referenceNumber, partnerCode: partnerCode}
+        }
+        transfer = await Transfer.find(query, projection);
     } catch (err) {
         return next( new HttpError('Something went wrong, could not find requested transfer.', 500) );
     }
-    if (!transfer || transfer.length !== 1) {
+    if (!transfer) {
         //return error
         return next( new HttpError('Could not find a transfer for the provided id or partner code', 404) );
     }
 
-    res.status(200).json({status: transfer[0].status});
+    res.status(200).json({transfer});
 }
 
 const createTransfer = async (req, res, next) => {
@@ -61,5 +67,5 @@ const createTransfer = async (req, res, next) => {
     res.status(201).json({result: "Successfully created transfer"});
 }
 
-exports.getTransferById = getTransferById;
+exports.getTransferByRef = getTransferByRef;
 exports.createTransfer = createTransfer;
