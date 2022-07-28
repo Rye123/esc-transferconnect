@@ -1,4 +1,11 @@
+/**
+ *  
+ * Relies on the environment variables from `index.js`.
+ */
 const axios = require('axios');
+
+/* Services */
+const user_notify_service = require('./user_notify_service');
 
 /* Bank Models */
 const UserModel = require('../models/User');
@@ -19,6 +26,43 @@ const TC_PARTNER_CODE = "MSTB";
 const TransferConnectError = require('../errors/TransferConnectError');
 const ApplicationError = require('../errors/ApplicationError');
 
+/* Programs */
+const getAllPrograms = () => {
+    return axios.get(`${TC_URI}/api/program/info/all`, TC_REQ_CONFIG)
+    .then(response => {
+        const updatedPrograms = response.data?.loyalty;
+        // for each program, add it if its not there, else update
+        const queriesList = [];
+        updatedPrograms.map(program => {
+            // Convert to a LoyaltyProgram class instance
+            const loyaltyProgram = new LoyaltyProgramModel({
+                loyaltyProgramId: program.programId,
+                loyaltyProgramName: program.programName,
+                exchangeRate: 1,
+                currencyName: program.currencyName,
+                minTransfer: 0,
+                processingTime: program.processingTime,
+                description: program.description,
+                enrolmentLink: program.enrollmentLink,
+                tncLink: program.tncLink,
+                imgSrc: undefined
+            });
+            // update if it exists, otherwise add
+            queriesList.push(
+                LoyaltyProgramModel.findOneAndReplace({loyaltyProgramId: program.programId}, loyaltyProgram.toObject(), {
+                    upsert: true, // insert new if doesn't exist
+                })
+            );
+        })
+        return Promise.all(queriesList);
+    })
+    .then(() => {
+        return;
+    })
+    .catch(err => {
+        throw new TransferConnectError(err);
+    })
+}
 
 /* Transfers */
 /**
@@ -62,4 +106,4 @@ const sendTransfer = async (transfer) => {
 }
 
 
-module.exports = {sendTransfer};
+module.exports = {getAllPrograms, sendTransfer};

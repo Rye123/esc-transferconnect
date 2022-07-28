@@ -12,6 +12,7 @@ const cookieParser = require('cookie-parser'); // middleware for cookies
 
 /* Service Imports */
 const auth_user_service = require('./services/auth_user_service');
+const tc_service = require('./services/tc_service');
 
 /* Error Imports */
 const ApplicationError = require('./errors/ApplicationError');
@@ -55,6 +56,21 @@ const UserModel = require('./models/User');
 const LoyaltyProgramModel = require('./models/LoyaltyProgram');
 const LoyaltyProgramMembershipModel = require('./models/LoyaltyProgramMembership');
 const TransferModel = require('./models/Transfer');
+
+/* Scheduling */
+const scheduler = require('node-schedule');
+const CRON_EXPR = (TEST_ENV) ? "0,15,30,45 * * * * *" : "0 0 0 * * *";
+//                Every 15 seconds if in test environment, else daily at 0:00
+const getProgramsJob = scheduler.scheduleJob(CRON_EXPR, () => {
+    console.log("getProgramsJob: Getting programs...")
+    tc_service.getAllPrograms()
+    .then(() => {
+        console.log("getProgramsJob: Programs Updated.");
+    })
+    .catch(err => {
+        console.log(`getProgramsJob Error: ${err}`);
+    })
+})
 
 /* Cookie Parsing */
 app.use(cookieParser()); // now any request with a cookie is sent automatically
