@@ -169,6 +169,41 @@ const retrieveTransactionStatus = async (refname, refID) => {
   await client.disconnect();
 }
 
+const updateTransactionStatus = async () => {
+  // dict for loyalty programs, may be integrated into index.js instead
+  loyaltyPrograms = {GOPOINTS: `111111`, 
+                     INDOMILES: `222222`, 
+                     EMINENTGUEST: `333333`, 
+                     QFLYER: `444444`, 
+                     CONRADCLUB: `555555`, 
+                     MILLENIUMREWARDS: `666666`};
+  
+  // runs through each loyalty program
+  for (var refname in loyaltyPrograms){
+    let transfers;
+
+    // reads every individual row in the CSV of the loyalty program
+    fs.createReadStream(`./${loyaltyPrograms[refname]}.csv`)
+      .pipe(csv())
+      .on("data", (row) => {
+        console.log(row);
+        // searches in database collection for the document with the same information
+        transfers = Transfer.find({
+                      partnerCode: loyaltyPrograms[refname],
+                      referenceNumber: row['referenceNumber']});
+        // updates the status in the identified document
+        await Transfer.updateOne({ referenceNumber: row['referenceNumber'] },
+                                 { $set: {status: row['status']} });
+      })
+      .on("end", () => {
+        console.log("finished");
+      })
+      .on("error", (error) => {
+        console.log(error.message);
+      });
+  }
+}
+
 // test case, will be worked on soon further
 // (async () => {
 //   config = {
