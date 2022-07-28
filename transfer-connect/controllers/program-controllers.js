@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const HttpError = require('../models/http-error');
 const Loyalty = require('../models/loyalty');
 
+const loyaltyPrograms = ['GOPOINTS','INDOMILES','EMINENTGUEST','QFLYER','CONRADCLUB','MILLENIUMREWARDS'];
+
 const getLoyaltyByProgramId = async (req, res, next) => {
     const programId = req.params.pid;
 
@@ -83,5 +85,6 @@ const getLPIDValidation = (req, res, next) => {
     }
 }
 
+exports.loyaltyPrograms = loyaltyPrograms
 exports.getLoyaltyByProgramId = getLoyaltyByProgramId;
 exports.getLPIDValidation = getLPIDValidation;
