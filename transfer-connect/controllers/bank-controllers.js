@@ -43,7 +43,7 @@ const createTransfer = async (req, res, next) => {
         );
     }
     
-    const {memberId, memberFirstName, memberLastName, amount, referenceNumber, partnerCode} = req.body;
+    const {memberId, memberFirstName, memberLastName, amount, referenceNumber, partnerCode, loyaltyProgram} = req.body;
     
     const createdTransfer = new Transfer({
         memberId,
@@ -53,6 +53,7 @@ const createTransfer = async (req, res, next) => {
         amount,
         referenceNumber,
         partnerCode,
+        loyaltyProgram,
         status: "processing"
     })
 
