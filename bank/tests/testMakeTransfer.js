@@ -1,9 +1,8 @@
-require('chromedriver');
 const assert = require('assert');
 const {Builder, By, Key, until} = require('selenium-webdriver');
 
 const testLoyaltyPrograms = async(credentials) => {
-    let driver = await new Builder().forBrowser('chrome').build();
+    let driver = await new Builder().forBrowser('firefox').build();
     return driver.get('http://localhost:3000')
     .then(async () => {
         await driver.sleep(2000);
@@ -46,14 +45,14 @@ const testLoyaltyPrograms = async(credentials) => {
         const URLObj = new URL(url);
         assert.notDeepStrictEqual(URLObj.pathname, "/transfers");
         return;
-    });
+    })
 }
 
 const runTest = async () => {
-    let driver = await new Builder().forBrowser('chrome').build();
+    let driver = await new Builder().forBrowser('firefox').build();
     try {  
         await testLoyaltyPrograms({username: 'asdf', password: 'fdsa'});
-        console.log("Test Passed");
+        console.log("Make a transfer Passed");
     } catch (error) {
         console.error(error);
         throw error;

@@ -1,9 +1,8 @@
-require('chromedriver');
 const assert = require('assert');
 const {Builder, By, Key, until} = require('selenium-webdriver');
 
 const testLoadTransfers = async(credentials) => {
-    let driver = await new Builder().forBrowser('chrome').build();
+    let driver = await new Builder().forBrowser('firefox').build();
     return driver.get('http://localhost:3000')
     .then(async () => {
         await driver.sleep(1000);
@@ -39,10 +38,10 @@ const testLoadTransfers = async(credentials) => {
 }
 
 const runTest = async () => {
-    let driver = await new Builder().forBrowser('chrome').build();
+    let driver = await new Builder().forBrowser('firefox').build();
     try {  
         await testLoadTransfers({username: 'asdf', password: 'fdsa'});
-        console.log("Test Passed");
+        console.log("Load Transfers Passed");
     } catch (error) {
         console.error(error);
         throw error;

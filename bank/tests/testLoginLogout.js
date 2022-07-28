@@ -12,9 +12,10 @@ let driver = undefined;
 const testLogin = async(credentials) => {
     return driver.get(`${target_url}`)
     .then(async () => {
-        await driver.sleep(1000);
+        await driver.sleep(2000);
         await driver.findElement(By.name("username")).sendKeys(credentials.username);
         await driver.findElement(By.name("password")).sendKeys(credentials.password);
+        await driver.sleep(2000);
         return driver.findElement(By.name("username")).submit();
     })
     .then(async () => {
@@ -28,8 +29,9 @@ const testLogin = async(credentials) => {
 
 const testLogout = async() => {
     return driver.get(`${target_url}`)
-    .then(() => {
-        return driver.findElement(By.name("navlink_logout")).click();
+    .then(async() => {
+        await driver.sleep(2000);
+        return driver.findElement(By.linkText("Logout")).click();
     })
     .then(async () => {
         await driver.wait(until.urlContains("/login"));
