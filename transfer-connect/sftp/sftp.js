@@ -9,11 +9,15 @@
 /* Local Module Imports */
 let Client = require('ssh2-sftp-client');
 const { parse } = require('json2csv');
+const csv = require('csv-parser');
 const fs = require('fs');
 
 /* User Defined functions*/
 const HttpError = require('../models/http-error');
 const Transfer = require("../models/transfer");
+const transfer = require('../models/transfer');
+const { connect } = require('http2');
+const { collection } = require('../models/transfer');
 
 require("dotenv").config();
 class SFTPClient {
@@ -147,6 +151,24 @@ const sendDailyTransfers = async () => {
     //* Close the connection
     await client.disconnect();
 }
+
+const retrieveTransactionStatus = async (refname, refID) => {
+  // SFTP section
+  config = {
+    host: process.env.SFTP_HOST,
+    port: process.env.SFTP_PORT,
+    username: process.env.SFTP_USERNAME,
+    password: process.env.SFTP_PASSWORD,
+  }
+  const client = new SFTPClient(config);
+  
+  await client.connect();
+
+  await client.downloadFile(`./${refname}/${refID}`, `./${refID}`);
+
+  await client.disconnect();
+}
+
 // test case, will be worked on soon further
 // (async () => {
 //   config = {
@@ -161,10 +183,10 @@ const sendDailyTransfers = async () => {
 //   await client.connect();
 
 //   //* List working directory files
-//   await client.listFiles(".");
+//   await client.listFiles(`.`);
 
 //   //* Upload local file to remote file
-//   await client.uploadFile("./local.txt", "./remote.txt");
+//   // await client.uploadFile(`./local.txt`, `./remote.txt`);
 
 //   // //* Download remote file to local file
 //   // await client.downloadFile("./remote.txt", "./download.txt");
@@ -176,7 +198,7 @@ const sendDailyTransfers = async () => {
 //   // await client.removeDirectory("./test_dir");
 
 //   // //* Delete remote file
-//   // await client.deleteFile("./remote.txt");
+//   // await client.deleteFile(`./remote.txt`);
 
 //   //* Close the connection
 //   await client.disconnect();
@@ -184,3 +206,5 @@ const sendDailyTransfers = async () => {
 
 exports.SFTPClient = SFTPClient;
 exports.sendDailyTransfers = sendDailyTransfers;
+exports.retrieveTransactionStatus = retrieveTransactionStatus;
+exports.updateTransactionStatus = updateTransactionStatus;
