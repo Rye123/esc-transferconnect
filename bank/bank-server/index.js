@@ -3,6 +3,7 @@
     These variables are accessible in Node with process.env.VARIABLE_NAME.
 */
 require('dotenv').config();
+let TEST_ENV = false;
 
 /* Module Imports */
 const express = require('express');
@@ -31,8 +32,15 @@ const transferRoute = require('./routes/transfer-route');
 
 /* Models */
 const mongoose = require('mongoose');
-const mongoDBurl = process.env.MONGODB_URI;
-mongoose.set('debug', true);
+let mongoDBurl = process.env.MONGODB_URI;
+if (process.argv.length > 2) {
+    console.log("Warning: Running in test environment. Restart with `npm start` to run in main environment.");
+    TEST_ENV = true;
+    mongoDBurl = process.env.MONGODB_TEST_URI;
+    mongoose.set('debug', true);
+} else {
+    console.log("Warning: Running in non-test environment. Restart with `npm run test` to run in test environment.");
+}
 mongoose.connect(mongoDBurl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
