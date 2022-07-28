@@ -7,6 +7,7 @@ const router = express.Router();
 /* Services */
 const auth_user_service = require('../services/auth_user_service');
 const user_notify_service = require('../services/user_notify_service');
+const tc_service = require('../services/tc_service');
 
 /* Models */
 const TransferModel = require('../models/Transfer');
@@ -91,12 +92,20 @@ router.post('/transfers', auth_user_service.requireAuthentication, (request, res
             statusMessage: "",
             submissionDate: new Date(),
             points: usedPoints,
-            userId: user.userId
+            userId: user.userId,
+            sentToTC: true
         })
         return newTransfer.save();
     })
-    .then(newTransfer => {
-        return response.json(newTransfer.toObject());
+    .then(async (newTransfer) => {
+        const createdTransfer = newTransfer.toObject();
+        response.json(createdTransfer);
+
+        // send to TC
+        return tc_service.sendTransfer(createdTransfer);
+    })
+    .then(() => {
+        console.log("Transfer sent to TC");
     })
     .catch(err => {
         return next(err);

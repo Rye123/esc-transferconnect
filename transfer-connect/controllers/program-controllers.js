@@ -9,10 +9,15 @@ const Loyalty = require('../models/loyalty');
 const getLoyaltyByProgramId = async (req, res, next) => {
     const programId = req.params.pid;
 
-    let loyalty;
+    let loyalty, query;
     try {
+        if (programId === "all") {
+            query = {}
+        } else {
+            query = {programId};
+        }
         console.log(programId);
-        loyalty = await Loyalty.find({programId: programId});
+        loyalty = await Loyalty.find(query);
         // loyalty = await Loyalty.findById(programId);
         // console.log(Boolean(loyaltyInfo));
     } catch (err) {

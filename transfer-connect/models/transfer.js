@@ -9,7 +9,8 @@ const transferSchema = new Schema({
     transferDate : { type: String, required: true },
     amount : { type: String, required: true },
     referenceNumber : { type: String, required: true },
-    partnerCode : { type: String, required: true },    
+    partnerCode : { type: String, required: true }, 
+    loyaltyProgram: { type: String, required: true },  
     status : { type: String, required: true}
 });
 
