@@ -79,6 +79,7 @@ const sendTransfer = async (transfer) => {
             memberLastName: user.lastName,
             amount: transfer.points,
             referenceNumber: transfer.transferId,
+            loyaltyProgram: transfer.loyaltyProgramId,
             partnerCode: TC_PARTNER_CODE
         }
         return axios.post(`${TC_URI}/api/bank/accrual-req`, formattedTransfer, TC_REQ_CONFIG)

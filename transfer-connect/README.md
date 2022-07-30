@@ -102,6 +102,7 @@ The status can be:
 - `memberLastName`
 - `amount`: Amount in points to transfer
 - `referenceNumber`: Bank reference number for the transfer
+- `loyaltyProgram`: The loyalty program ID for the given request.
 - `partnerCode`: Bank ID
 
 Creates a transfer request, with the given membership.
