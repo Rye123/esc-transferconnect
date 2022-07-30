@@ -45,12 +45,12 @@ mongoose.connect(mongoDBurl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(result => {
-    console.log("Established connection to MongoDB.");
-})
-.catch(error => {
-    console.error("Database Error: ", error);
-});
+    .then(result => {
+        console.log("Established connection to MongoDB.");
+    })
+    .catch(error => {
+        console.error("Database Error: ", error);
+    });
 const UserModel = require('./models/User');
 const LoyaltyProgramModel = require('./models/LoyaltyProgram');
 const LoyaltyProgramMembershipModel = require('./models/LoyaltyProgramMembership');
@@ -65,34 +65,34 @@ const CRON_EXPR = (TEST_ENV) ? "0,30 * * * * *" : "0 0 0 * * *";
 const getProgramsJob = scheduler.scheduleJob(CRON_EXPR, () => {
     console.log("getProgramsJob: Getting programs...")
     tc_service.getAllPrograms()
-    .then(() => {
-        console.log("getProgramsJob: Programs Updated.");
-    })
-    .catch(err => {
-        console.log(`getProgramsJob Error: ${err}`);
-    })
+        .then(() => {
+            console.log("getProgramsJob: Programs Updated.");
+        })
+        .catch(err => {
+            console.log(`getProgramsJob Error: ${err}`);
+        })
 });
 
 /* Polls the TC server for updates to transfer statuses */
 const updateTransfersJob = scheduler.scheduleJob(CRON_EXPR, () => {
-    TransferModel.find({status: 'pending', sentToTC: true})
-    .then(transfers => {
-        if (transfers == undefined || transfers === null || transfers.length == 0)
-            return;
-        const queriesList = [];
-        transfers.map(transfer => {
-            queriesList.push(
-                tc_service.updateTransfer(transfer.toObject())
-            );
+    TransferModel.find({ status: 'pending', sentToTC: true })
+        .then(transfers => {
+            if (transfers == undefined || transfers === null || transfers.length == 0)
+                return;
+            const queriesList = [];
+            transfers.map(transfer => {
+                queriesList.push(
+                    tc_service.updateTransfer(transfer.toObject())
+                );
+            });
+            return Promise.all(queriesList);
+        })
+        .then(() => {
+            console.log("updateTransfersJob: Transfers updated");
+        })
+        .catch(err => {
+            console.log(`updateTransfersJob Error: ${err}`);
         });
-        return Promise.all(queriesList);
-    })
-    .then(() => {
-        console.log("updateTransfersJob: Transfers updated");
-    })
-    .catch(err => {
-        console.log(`updateTransfersJob Error: ${err}`);
-    });
 })
 
 /* Cookie Parsing */
@@ -127,14 +127,14 @@ app.use((error, request, response, next) => {
                 return response.status(error.status).json({ error: "forbidden" });
             });
         case "DataAccessError":
-            return response.status(error.status).json( {error: "not found"} );
+            return response.status(error.status).json({ error: "not found" });
         case "TransferConnectError":
             console.log(`TransferConnect Error: ${error}`);
             return;
         case "InvalidTransferError":
-            return response.status(error.status).json({ error: "invalid transfer status."} );
+            return response.status(error.status).json({ error: "invalid transfer status." });
         case "ExternalAuthenticationError":
-            return response.status(error.status).json({ error: "invalid authentication token."});
+            return response.status(error.status).json({ error: "invalid authentication token." });
         default:
             console.log(error);
             return response.status(500).json({ error: "internal server error" })

@@ -16,11 +16,11 @@ const serverProcess = spawn('npm', ['run', 'test'], {
 
 const clientProcess = spawn('npm', ['start'], {
     cwd: `${bankDir}/bank-client`,
-    env: {...process.env, BROWSER: "none"},
+    env: { ...process.env, BROWSER: "none" },
     shell: true
 });
 
-const killAllProcesses = (e="") => {
+const killAllProcesses = (e = "") => {
     if (e !== "")
         console.log("Error encountered, killing all processes.");
     else
@@ -111,17 +111,17 @@ const Setup = () => {
 
     console.log("Setting Test Database to default...");
     resetTestDb()
-    .then(() => {
-        console.log("Test Database reset.");
-        InitTests();
-    })
-    .catch(() => {
-        console.log("Could not setup test database, exiting.");
-        killAllProcesses("Database error");
-    });
+        .then(() => {
+            console.log("Test Database reset.");
+            InitTests();
+        })
+        .catch(() => {
+            console.log("Could not setup test database, exiting.");
+            killAllProcesses("Database error");
+        });
 };
 
-const runTest = async(testFn, testPurpose) => {
+const runTest = async (testFn, testPurpose) => {
     console.log("Testing " + testPurpose);
     await testFn();
     console.log(`${testPurpose} Test Completed!`)
@@ -145,13 +145,13 @@ const InitTests = async () => {
 
     // Restore DB to original state
     resetTestDb()
-    .then(() => {
-        console.log("Test Database reset.");
-        console.log("Exiting.");
-        killAllProcesses();
-    })
-    .catch(() => {
-        console.log("Could not setup test database, exiting.");
-        killAllProcesses("Database error");
-    });
+        .then(() => {
+            console.log("Test Database reset.");
+            console.log("Exiting.");
+            killAllProcesses();
+        })
+        .catch(() => {
+            console.log("Could not setup test database, exiting.");
+            killAllProcesses("Database error");
+        });
 }

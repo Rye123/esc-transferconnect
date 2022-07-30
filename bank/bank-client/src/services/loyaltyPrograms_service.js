@@ -21,23 +21,23 @@ const MEMBERSHIPS_URI = SERVER_URI + "loyaltyProgramMemberships";
  */
 const programs_getAllPrograms = async () => {
     return axios
-    .get(PROGRAMS_URI)
-    .then(response => {
-        return response.data.map(data => 
-            new LoyaltyProgram(
-                data.loyaltyProgramId,
-                data.loyaltyProgramName,
-                data.exchangeRate,
-                data.currencyName,
-                data.minTransfer,
-                data.processingTime,
-                data.description,
-                data.enrolmentLink,
-                data.tncLink,
-                data.imgSrc
-            )
-        );
-    });
+        .get(PROGRAMS_URI)
+        .then(response => {
+            return response.data.map(data =>
+                new LoyaltyProgram(
+                    data.loyaltyProgramId,
+                    data.loyaltyProgramName,
+                    data.exchangeRate,
+                    data.currencyName,
+                    data.minTransfer,
+                    data.processingTime,
+                    data.description,
+                    data.enrolmentLink,
+                    data.tncLink,
+                    data.imgSrc
+                )
+            );
+        });
 }
 
 /**
@@ -47,21 +47,21 @@ const programs_getAllPrograms = async () => {
  */
 const programs_getProgramById = async (loyaltyProgramId) => {
     return axios
-    .get(PROGRAMS_URI, {params: {loyaltyProgramId}})
-    .then(response => {
-        return new LoyaltyProgram(
-            response.data.loyaltyProgramId,
-            response.data.loyaltyProgramName,
-            response.data.exchangeRate,
-            response.data.currencyName,
-            response.data.minTransfers,
-            response.data.processingTime,
-            response.data.description,
-            response.data.enrolmentLink,
-            response.data.tncLink,
-            response.data.imgSrc
-        );
-    })
+        .get(PROGRAMS_URI, { params: { loyaltyProgramId } })
+        .then(response => {
+            return new LoyaltyProgram(
+                response.data.loyaltyProgramId,
+                response.data.loyaltyProgramName,
+                response.data.exchangeRate,
+                response.data.currencyName,
+                response.data.minTransfers,
+                response.data.processingTime,
+                response.data.description,
+                response.data.enrolmentLink,
+                response.data.tncLink,
+                response.data.imgSrc
+            );
+        })
 }
 
 /**
@@ -71,14 +71,14 @@ const programs_getProgramById = async (loyaltyProgramId) => {
  */
 const programs_getMembershipForProgram = async (loyaltyProgramId) => {
     return axios
-    .get(MEMBERSHIPS_URI, {params: {loyaltyProgramId}, withCredentials: true})
-    .then(response => {
-        return new LoyaltyProgramMembership(
-            response.data.loyaltyProgramMembershipId,
-            response.data.userId,
-            response.data.loyaltyProgramId
-        )
-    });
+        .get(MEMBERSHIPS_URI, { params: { loyaltyProgramId }, withCredentials: true })
+        .then(response => {
+            return new LoyaltyProgramMembership(
+                response.data.loyaltyProgramMembershipId,
+                response.data.userId,
+                response.data.loyaltyProgramId
+            )
+        });
 }
 
 /**
@@ -89,14 +89,14 @@ const programs_getMembershipForProgram = async (loyaltyProgramId) => {
  */
 const programs_postMembershipForProgram = async (loyaltyProgramId, loyaltyProgramMembershipId) => {
     return axios
-    .post(MEMBERSHIPS_URI, {loyaltyProgramId, loyaltyProgramMembershipId}, {withCredentials: true})
-    .then(response => {
-        return new LoyaltyProgramMembership(
-            response.data.loyaltyProgramMembershipId,
-            response.data.userId,
-            response.data.loyaltyProgramId
-        )
-    })
+        .post(MEMBERSHIPS_URI, { loyaltyProgramId, loyaltyProgramMembershipId }, { withCredentials: true })
+        .then(response => {
+            return new LoyaltyProgramMembership(
+                response.data.loyaltyProgramMembershipId,
+                response.data.userId,
+                response.data.loyaltyProgramId
+            )
+        })
 }
 
 /**
@@ -107,14 +107,14 @@ const programs_postMembershipForProgram = async (loyaltyProgramId, loyaltyProgra
  */
 const programs_updateMembershipForProgram = async (loyaltyProgramId, loyaltyProgramMembershipId) => {
     return axios
-    .put(MEMBERSHIPS_URI, {loyaltyProgramId, loyaltyProgramMembershipId}, {withCredentials: true})
-    .then(response => {
-        return new LoyaltyProgramMembership(
-            response.data.loyaltyProgramMembershipId,
-            response.data.userId,
-            response.data.loyaltyProgramId
-        )
-    })
+        .put(MEMBERSHIPS_URI, { loyaltyProgramId, loyaltyProgramMembershipId }, { withCredentials: true })
+        .then(response => {
+            return new LoyaltyProgramMembership(
+                response.data.loyaltyProgramMembershipId,
+                response.data.userId,
+                response.data.loyaltyProgramId
+            )
+        })
 }
 
 const exports = { programs_getAllPrograms, programs_getProgramById, programs_getMembershipForProgram, programs_postMembershipForProgram, programs_updateMembershipForProgram }
