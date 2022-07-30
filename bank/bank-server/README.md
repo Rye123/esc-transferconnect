@@ -37,5 +37,10 @@ In the project directory, you can run:
 npm start
 ```
 
-This runs the app in development mode. The page will reload when you make changes.\
-Open [http://localhost:3001](http://localhost:3001) to view it in your browser.
+This runs the app in development mode. The server will reload when you make changes.\
+
+Alternatively, to run in testing mode and use the **test** database, run:
+
+```bash
+npm run test
+```
