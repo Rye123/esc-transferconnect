@@ -4,6 +4,14 @@ This contains the code for end-to-end testing of the Bank system.
 
 The purpose of this is to automatically set up the bank system for any testing to occur, instead of manually running both instances. Any future tests can also be easily added and run at once.
 
+## Existing Tests
+- `testLoginLogout`: Tests the ability to log in and log out into the application.
+- `testLoadLoyaltyPrograms`: Tests the ability to load the loyalty programs and display them.
+- `testMakeTransfer`: Tests the ability to make a transfer from the `bank-client`.
+- `testLoyaltyProgramInfo`: Tests the ability to load loyalty program information on the page.
+- `testLoadTransfers`: Tests the ability to load all transfers for a user.
+- `testEditMembership`: Tests the ability to edit a user's membership.
+
 ## Installation
 
 ```bash

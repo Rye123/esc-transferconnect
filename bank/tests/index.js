@@ -21,8 +21,10 @@ const clientProcess = spawn('npm', ['start'], {
 });
 
 const killAllProcesses = (e="") => {
-    if (e !== "")
+    if (e === "")
         console.log("Error encountered, killing all processes.");
+    else
+        console.log(`${e}\nKilling all processes.`)
     let clientKilled = clientProcess.kill();
     let serverKilled = serverProcess.kill();
     console.log(`Client killed: ${clientKilled}`);
@@ -119,16 +121,21 @@ const Setup = () => {
     });
 };
 
+const runTest = async(testFn, testPurpose) => {
+    console.log("Testing " + testPurpose);
+    await testFn();
+    console.log(`${testPurpose} Test Completed!`)
+}
+
 const InitTests = async () => {
     // Conduct Tests
-    console.log("Testing Login/Logout");
     try {
-        await testLoginLogout();
-        await testLoadLoyaltyPrograms();
-        await testMakeTransfer();
-        await testLoadTransfers();
-        await testLoyaltyProgramInfo();
-        await testEditMembership();
+        await runTest(testLoginLogout, "login/logout");
+        await runTest(testLoadLoyaltyPrograms, "loyalty program loading");
+        await runTest(testMakeTransfer, "transfer creation");
+        await runTest(testLoadTransfers, "transfer loading");
+        await runTest(testLoyaltyProgramInfo, "loyalty program info loading");
+        await runTest(testEditMembership, "membership editing");
     } catch (error) {
         console.log("Error encountered, shutting down.");
         killAllProcesses();
