@@ -38,10 +38,8 @@ const TransfersListPage = () => {
             });
     }, [])
 
-    if (loyaltyProgramMapping === 'undefined')
+    if (typeof loyaltyProgramMapping === 'undefined')
         return (<h1>Loading...</h1>);
-    if (Utils.isEmptyObject(loyaltyProgramMapping)) // TODO: allow it to load even if some loyalty programs don't
-        return (<h1>Could not load Transfer History</h1>); // TODO: decide routing for this
     return (
         <main>
             <h1>Transfer History</h1><br />
