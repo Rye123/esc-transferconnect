@@ -9,11 +9,16 @@
 /* Local Module Imports */
 let Client = require('ssh2-sftp-client');
 const { parse } = require('json2csv');
+const csv = require('csv-parser');
 const fs = require('fs');
+const { writeFile } = require('node:fs/promises');
 
 /* User Defined functions*/
 const HttpError = require('../models/http-error');
 const Transfer = require("../models/transfer");
+const transfer = require('../models/transfer');
+const { connect } = require('http2');
+const { collection } = require('../models/transfer');
 
 require("dotenv").config();
 class SFTPClient {
@@ -65,11 +70,7 @@ class SFTPClient {
   // upload files from local directory to remote directory
   async uploadFile(localFile, remoteFile) {
     console.log(`Uploading ${localFile} to ${remoteFile} ...`);
-    try {
-      await this.client.put(localFile, remoteFile);
-    } catch (err) {
-      console.error('Uploading failed:', err);
-    }
+    return this.client.put(localFile, remoteFile);
   }
 
   // download files from remote directory to local directory
@@ -113,40 +114,76 @@ class SFTPClient {
   }
 }
 
-const sendDailyTransfers = async () => {
+const sendDailyTransfers = async (loyaltyPrograms) => {
     let transfers;
     let transferCSV;
-    const opts = {fields: ['memberId','amount','referenceNumber','partnerCode']};
+    const opts = {fields: ['memberId','amount','referenceNumber','partnerCode','status']};
 
-    // get all documents from mongodb
-    transfers = await Transfer.find({status: "processing"});
-    // console.log(transfers);
-    transferCSV = parse(transfers, opts);
-    console.log(transferCSV);
-
-    // save csv file
-    fs.writeFile("transfers.csv", transferCSV, function(error) {
-        if (error) throw error;
-        console.log("Write to transfers.csv successfully!")
-    })
-    
-    // SFTP section
+    // SFTP setup
     config = {
-        host: process.env.SFTP_HOST,
-        port: process.env.SFTP_PORT,
-        username: process.env.SFTP_USERNAME,
-        password: process.env.SFTP_PASSWORD,
-      }
+      host: process.env.SFTP_HOST,
+      port: process.env.SFTP_PORT,
+      username: process.env.SFTP_USERNAME,
+      password: process.env.SFTP_PASSWORD,
+    }
     const client = new SFTPClient(config);
+
+    // for each program, get all processing documents from mongodb
+    await Promise.all(loyaltyPrograms.map(async program => {
+      
+      try {
+        console.log(`Getting ${program} data from mongo...`);
+        transfers = await Transfer.find({status: "processing", loyaltyProgram: program});
+        transferCSV = parse(transfers, opts);
+        
+        // save csv file
+        console.log(`Writing ${program} data from local file...`);
+        const response = await writeFile(`${program}.csv`, transferCSV);
+        console.log(`Write to ${program}.csv successfully!`);
+        return response;
+      } catch (error) {
+        console.log(`Error ${error.message}`);
+      }
+      
+    }));
+
     //* Open the connection
     await client.connect();
-    
-    //* Upload local file to remote file
-    await client.uploadFile("./transfers.csv", "./remoteTransfer.csv");
-    
+    for (const program of loyaltyPrograms) {
+      try {
+        await client.uploadFile(`./${program}.csv`, `./${program}/${program}.csv`);
+        console.log(`uploaded ${program} file!`);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
     //* Close the connection
+    // await client.uploadFile(`./transfers.csv`, `./transfers.csv`);
+    console.log("closing now");
     await client.disconnect();
+    
+    // await client.uploadFile("./transfers.csv", "./remoteTransfer.csv");
+    
 }
+
+const retrieveTransactionStatus = async (refname, refID) => {
+  // SFTP section
+  config = {
+    host: process.env.SFTP_HOST,
+    port: process.env.SFTP_PORT,
+    username: process.env.SFTP_USERNAME,
+    password: process.env.SFTP_PASSWORD,
+  }
+  const client = new SFTPClient(config);
+  
+  await client.connect();
+
+  await client.downloadFile(`./${refname}/${refID}`, `./${refID}`);
+
+  await client.disconnect();
+}
+
 // test case, will be worked on soon further
 // (async () => {
 //   config = {
@@ -161,10 +198,10 @@ const sendDailyTransfers = async () => {
 //   await client.connect();
 
 //   //* List working directory files
-//   await client.listFiles(".");
+//   await client.listFiles(`.`);
 
 //   //* Upload local file to remote file
-//   await client.uploadFile("./local.txt", "./remote.txt");
+//   // await client.uploadFile(`./local.txt`, `./remote.txt`);
 
 //   // //* Download remote file to local file
 //   // await client.downloadFile("./remote.txt", "./download.txt");
@@ -176,7 +213,7 @@ const sendDailyTransfers = async () => {
 //   // await client.removeDirectory("./test_dir");
 
 //   // //* Delete remote file
-//   // await client.deleteFile("./remote.txt");
+//   // await client.deleteFile(`./remote.txt`);
 
 //   //* Close the connection
 //   await client.disconnect();
@@ -184,3 +221,5 @@ const sendDailyTransfers = async () => {
 
 exports.SFTPClient = SFTPClient;
 exports.sendDailyTransfers = sendDailyTransfers;
+exports.retrieveTransactionStatus = retrieveTransactionStatus;
+// exports.updateTransactionStatus = updateTransactionStatus;

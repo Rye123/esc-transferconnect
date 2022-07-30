@@ -11,8 +11,6 @@ import Utils from '../utils/utils';
 import Transfer from '../classes/Transfer';
 
 /* Constants */
-const transfers = [];
-// future endpoints for transfer data
 const SERVER_URI = "/api/";
 const TRANSFERS_URI = SERVER_URI + "transfers";
 

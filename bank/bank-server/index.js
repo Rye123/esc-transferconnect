@@ -3,6 +3,7 @@
     These variables are accessible in Node with process.env.VARIABLE_NAME.
 */
 require('dotenv').config();
+let TEST_ENV = false;
 
 /* Module Imports */
 const express = require('express');
@@ -11,12 +12,14 @@ const cookieParser = require('cookie-parser'); // middleware for cookies
 
 /* Service Imports */
 const auth_user_service = require('./services/auth_user_service');
+const tc_service = require('./services/tc_service');
 
 /* Error Imports */
 const ApplicationError = require('./errors/ApplicationError');
 const UserAuthorisationError = require('./errors/UserAuthorisationError');
 const UserAuthenticationError = require('./errors/UserAuthenticationError');
 const DataAccessError = require('./errors/DataAccessError');
+const TransferConnectError = require('./errors/TransferConnectError');
 
 /* Express Setup */
 const app = express();
@@ -53,6 +56,45 @@ const LoyaltyProgramModel = require('./models/LoyaltyProgram');
 const LoyaltyProgramMembershipModel = require('./models/LoyaltyProgramMembership');
 const TransferModel = require('./models/Transfer');
 
+/* Scheduling */
+const scheduler = require('node-schedule');
+const CRON_EXPR = (TEST_ENV) ? "0,30 * * * * *" : "0 0 0 * * *";
+//                Every 30 seconds if in test environment, else daily at 0:00
+
+/* Polls the TC server for program info */
+const getProgramsJob = scheduler.scheduleJob(CRON_EXPR, () => {
+    console.log("getProgramsJob: Getting programs...")
+    tc_service.getAllPrograms()
+    .then(() => {
+        console.log("getProgramsJob: Programs Updated.");
+    })
+    .catch(err => {
+        console.log(`getProgramsJob Error: ${err}`);
+    })
+});
+
+/* Polls the TC server for updates to transfer statuses */
+const updateTransfersJob = scheduler.scheduleJob(CRON_EXPR, () => {
+    TransferModel.find({status: 'pending', sentToTC: true})
+    .then(transfers => {
+        if (transfers == undefined || transfers === null || transfers.length == 0)
+            return;
+        const queriesList = [];
+        transfers.map(transfer => {
+            queriesList.push(
+                tc_service.updateTransfer(transfer.toObject())
+            );
+        });
+        return Promise.all(queriesList);
+    })
+    .then(() => {
+        console.log("updateTransfersJob: Transfers updated");
+    })
+    .catch(err => {
+        console.log(`updateTransfersJob Error: ${err}`);
+    });
+})
+
 /* Cookie Parsing */
 app.use(cookieParser()); // now any request with a cookie is sent automatically
 
@@ -86,7 +128,13 @@ app.use((error, request, response, next) => {
             });
         case "DataAccessError":
             return response.status(error.status).json( {error: "not found"} );
-
+        case "TransferConnectError":
+            console.log(`TransferConnect Error: ${error}`);
+            return;
+        case "InvalidTransferError":
+            return response.status(error.status).json({ error: "invalid transfer status."} );
+        case "ExternalAuthenticationError":
+            return response.status(error.status).json({ error: "invalid authentication token."});
         default:
             console.log(error);
             return response.status(500).json({ error: "internal server error" })

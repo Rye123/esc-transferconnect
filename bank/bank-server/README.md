@@ -18,24 +18,16 @@ This will install the development dependencies like `nodemon`.
 
 ### Environment File Setup
 
-`bank-server` relies on a `.env` file for secrets. **For project submission, the `.env` file is already provided in the report.**
+`bank-server` relies on a `.env` file for secrets. 
 
-Otherwise, the following are instructions to generate a custom `.env` file.
-
-#### `JWT_TOKEN_SECRET`
-
-The secret private key for the generation of a unique JWT token.
-
-Run `node`, and in the given shell, generate a $64$-byte secret key for the JSON Web Token:
-
-```js
-> require('crypto').randomBytes(64).toString('hex')
 ```
-
-Save that token in a `.env` file in this directory as `JWT_TOKEN_SECRET`. 
-
-#### `MONGODB_URI`
-The URL for the MongoDB Atlas instance.
+JWT_TOKEN_SECRET={Secret private key for generation of a unique JWT token}
+MONGODB_URI={URL to MongoDB Atlas Instance, to the bank server database}
+MONGODB_TEST_URI={URL to MongoDB Atlas Instance, to the TEST bank server database}
+EMAIL_PASSWORD={Password for nodemailer email}
+TC_TOKEN_SECRET={Token to be used for sending requests to the TransferConnect server}
+TC_WEBHOOK_AUTH={Authorisation token to be used by TransferConnect when sending data to the webhook}
+```
 
 ## Usage
 
@@ -45,5 +37,10 @@ In the project directory, you can run:
 npm start
 ```
 
-This runs the app in development mode. The page will reload when you make changes.\
-Open [http://localhost:3001](http://localhost:3001) to view it in your browser.
+This runs the app in development mode. The server will reload when you make changes.\
+
+Alternatively, to run in testing mode and use the **test** database, run:
+
+```bash
+npm run test
+```

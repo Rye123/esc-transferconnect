@@ -38,3 +38,13 @@ GET http://localhost:3001/api/loyaltyPrograms
 
 ### Loyalty Programs API: Get single program
 GET http://localhost:3001/api/loyaltyPrograms?loyaltyProgramId=BRITISHAIRWAYS
+
+### Test update webhook
+POST http://localhost:3001/api/tc/updateTransferStatus
+Authorization: Bearer {insert token here}
+Content-Type: application/json
+
+{
+    "transferId": "{insert ID here}",
+    "transferStatus": "error"
+}

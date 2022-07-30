@@ -11,7 +11,8 @@ Content-Type: application/json
     "memberLastName": "Doe",
     "amount": 200,
     "referenceNumber": 2020080101,
-    "partnerCode": "DBSSG3"
+    "partnerCode": "DBSSG4",
+    "loyaltyProgram": "GOPOINTS"
 }
 
 ### Testing: route for bank server to get information about previously sent transfer from TC
@@ -26,11 +27,28 @@ Content-Type: application/json
     "partnerCode": "DBSSG"
 }
 
+### Testing: route for bank server to get information about previously sent transfer from TC
+### Input: JSON file containing transfer id (id of collection in MongoDB)
+### Output: JSON file with transfer information
+POST http://localhost:3002/api/bank/accrual-update
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
+Content-Type: application/json
+
+{
+    "referenceNumber": "all",
+    "partnerCode": "DBSSG"
+}
 
 ### Testing: route for bank server to get information about loyalty program
 ### Input: loyalty program id in the url
 ### Output: JSON file with loyalty program information
 GET http://localhost:3002/api/program/info/GOPOINTS
+Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
+
+### Testing: route for bank server to get information about loyalty program
+### Input: loyalty program id in the url
+### Output: JSON file with loyalty program information
+GET http://localhost:3002/api/program/info/all
 Authorization: {{$dotenv JWT_TOKEN_SECRET_TEST}}
 
 ### Testing: route for bank server to get information about loyalty program

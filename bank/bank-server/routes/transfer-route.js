@@ -7,6 +7,7 @@ const router = express.Router();
 /* Services */
 const auth_user_service = require('../services/auth_user_service');
 const user_notify_service = require('../services/user_notify_service');
+const tc_service = require('../services/tc_service');
 
 /* Models */
 const TransferModel = require('../models/Transfer');
@@ -14,6 +15,8 @@ const UserModel = require('../models/User');
 
 /* Errors */
 const DataAccessError = require('../errors/DataAccessError');
+const ExternalAuthenticationError = require('../errors/ExternalAuthenticationError');
+const InvalidTransferError = require('../errors/InvalidTransferError');
 
 /**
  * Route serving transfer get requests
@@ -91,12 +94,20 @@ router.post('/transfers', auth_user_service.requireAuthentication, (request, res
             statusMessage: "",
             submissionDate: new Date(),
             points: usedPoints,
-            userId: user.userId
+            userId: user.userId,
+            sentToTC: true
         })
         return newTransfer.save();
     })
-    .then(newTransfer => {
-        return response.json(newTransfer.toObject());
+    .then(async (newTransfer) => {
+        const createdTransfer = newTransfer.toObject();
+        response.json(createdTransfer);
+
+        // send to TC
+        return tc_service.sendTransfer(createdTransfer);
+    })
+    .then(() => {
+        console.log("Transfer sent to TC");
     })
     .catch(err => {
         return next(err);
@@ -105,10 +116,34 @@ router.post('/transfers', auth_user_service.requireAuthentication, (request, res
 });
 
 router.post('/tc/updateTransferStatus', (request, response, next) => {
-    const transferId = request.query["transferId"];
-    const transferStatus = request.query["transferStatus"];
-    const transferStatusMessage = request.query["transferStatusMessage"];
+    const webhook_auth = request.get("Authorization");
+    const transferId = request.body?.transferId || "";
+    let transferStatus = request.body?.transferStatus || "";
+    let transferStatusMessage = request.query?.transferStatusMessage || "Unknown error.";
 
+    const possibleStatuses = ["completed", "processing", "error"];
+
+    // Authentication Check
+    if (webhook_auth !== `Bearer ${process.env.TC_WEBHOOK_AUTH}`)
+        return next(new ExternalAuthenticationError());
+    // Input Checks
+    if (transferId === "" || !possibleStatuses.includes(transferStatus))
+        return next(new InvalidTransferError());
+
+    // map transfer status of TC to bank's
+    switch (transferStatus) {
+        case "completed":
+            transferStatus = "fulfilled";
+            break;
+        case "processing":
+            transferStatus = "pending";
+            break;
+        case "error":
+            transferStatus = "error";
+            if (transferStatusMessage === "")
+                transferStatusMessage = "Unknown Error.";
+            break;
+    }
     let newTransfer = undefined;
     TransferModel.findById(transferId)
     .then(transfer => {
@@ -133,7 +168,6 @@ router.post('/tc/updateTransferStatus', (request, response, next) => {
         return UserModel.findById(updatedTransfer.userId)
     })
     .then(user => {
-        console.log(newTransfer);
         return user_notify_service.notifyUserOfCompletedTransfer(user, newTransfer.toObject());
     })
     .then(resp => {
