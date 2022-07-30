@@ -21,7 +21,7 @@ const clientProcess = spawn('npm', ['start'], {
 });
 
 const killAllProcesses = (e="") => {
-    if (e === "")
+    if (e !== "")
         console.log("Error encountered, killing all processes.");
     else
         console.log(`${e}\nKilling all processes.`)
