@@ -38,7 +38,7 @@ if (process.argv.length > 2) {
     console.log("Warning: Running in test environment. Restart with `npm start` to run in main environment.");
     TEST_ENV = true;
     mongoDBurl = process.env.MONGODB_TEST_URI;
-    mongoose.set('debug', true);
+    // mongoose.set('debug', true);
 } else {
     console.log("Warning: Running in non-test environment. Restart with `npm run test` to run in test environment.");
 }
@@ -59,8 +59,10 @@ const TransferModel = require('./models/Transfer');
 
 /* Scheduling */
 const scheduler = require('node-schedule');
-const CRON_EXPR = (TEST_ENV) ? "0,15,30,45 * * * * *" : "0 0 0 * * *";
-//                Every 15 seconds if in test environment, else daily at 0:00
+const CRON_EXPR = (TEST_ENV) ? "0,30 * * * * *" : "0 0 0 * * *";
+//                Every 30 seconds if in test environment, else daily at 0:00
+
+/* Polls the TC server for program info */
 const getProgramsJob = scheduler.scheduleJob(CRON_EXPR, () => {
     console.log("getProgramsJob: Getting programs...")
     tc_service.getAllPrograms()
@@ -70,6 +72,28 @@ const getProgramsJob = scheduler.scheduleJob(CRON_EXPR, () => {
     .catch(err => {
         console.log(`getProgramsJob Error: ${err}`);
     })
+});
+
+/* Polls the TC server for updates to transfer statuses */
+const updateTransfersJob = scheduler.scheduleJob(CRON_EXPR, () => {
+    TransferModel.find({status: 'pending', sentToTC: true})
+    .then(transfers => {
+        if (transfers == undefined || transfers === null || transfers.length == 0)
+            return;
+        const queriesList = [];
+        transfers.map(transfer => {
+            queriesList.push(
+                tc_service.updateTransfer(transfer.toObject())
+            );
+        });
+        return Promise.all(queriesList);
+    })
+    .then(() => {
+        console.log("updateTransfersJob: Transfers updated");
+    })
+    .catch(err => {
+        console.log(`updateTransfersJob Error: ${err}`);
+    });
 })
 
 /* Cookie Parsing */
