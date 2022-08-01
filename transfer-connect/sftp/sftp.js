@@ -257,4 +257,4 @@ const updateTransactionStatus = async () => {
 exports.SFTPClient = SFTPClient;
 exports.sendDailyTransfers = sendDailyTransfers;
 exports.retrieveTransactionStatus = retrieveTransactionStatus;
-// exports.updateTransactionStatus = updateTransactionStatus;
+exports.updateTransactionStatus = updateTransactionStatus;
