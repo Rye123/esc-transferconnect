@@ -202,13 +202,17 @@ const updateTransactionStatus = async () => {
       .pipe(csv())
       .on("data", (row) => {
         console.log(row);
-        // searches in database collection for the document with the same information
-        transfers = Transfer.find({
-                      partnerCode: loyaltyPrograms[refname],
-                      referenceNumber: row['referenceNumber']});
-        // updates the status in the identified document
-        await Transfer.updateOne({ referenceNumber: row['referenceNumber'] },
-                                 { $set: {status: row['status']} });
+        try {
+          // searches in database collection for the document with the same information
+          transfers = await Transfer.find({
+                        partnerCode: loyaltyPrograms[refname],
+                        referenceNumber: row['referenceNumber']});
+          // updates the status in the identified document
+          await Transfer.updateOne({ referenceNumber: row['referenceNumber'] },
+                                  { $set: {status: row['status']} });
+        } catch (error) {
+          console.log(`Error ${error.message}`);
+        }
       })
       .on("end", () => {
         console.log("finished");
