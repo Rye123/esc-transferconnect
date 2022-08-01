@@ -17,13 +17,14 @@ const programRoutes = require('./routes/program-routes');
 const HttpError = require('./models/http-error');
 const SFTPClient = require('./sftp/sftp');
 const checkAuth = require('./middleware/check-auth');
+const { loyaltyPrograms } = require('./controllers/program-controllers');
 
 /* Express Setup */
 const app = express();
 const PORT = process.env.PORT || 3002;
 
 /* schedule sending data to SFTP in the background (currently every min at 42nd second)*/
-// const job = schedule.scheduleJob('42 * * * * *',() => SFTPClient.sendDailyTransfers());
+const job = schedule.scheduleJob('0,10,20,30,40,50 * * * * *',() => SFTPClient.sendDailyTransfers(loyaltyPrograms));
 
 app.use(bodyParser.json());
 

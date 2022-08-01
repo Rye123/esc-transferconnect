@@ -1,8 +1,8 @@
 const ApplicationError = require('./ApplicationError');
 
 /**
- * UserAuthenticationError: User has not been authenticated.
- * Status: 401 Unauthorised
+ * DataAccessError: Given data could not be accessed.
+ * Status: 404 Not Found.
  */
 class DataAccessError extends ApplicationError {
     constructor(message) {

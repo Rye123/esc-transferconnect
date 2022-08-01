@@ -55,15 +55,18 @@ const user_notify_service = {
                 if (transfer.statusMessage !== "")
                     contentText += `\nThere was the following error message: ${transfer.statusMessage}`;
                 break;
-        
+
             default:
                 throw new InvalidTransferError;
         }
 
         const userEmail = user.userSettings?.email || "";
         if (userEmail !== "") {
-            // TODO: account for invalid emails
-            return sendEmail(userEmail, subjectText, contentText);
+            return sendEmail(userEmail, subjectText, contentText)
+                .catch(err => {
+                    console.log(`Could not send email due to following error: ${err.message}`);
+                    return Promise.resolve(false);
+                })
         }
         return Promise.resolve(false);
 

@@ -11,7 +11,8 @@ Content-Type: application/json
     "memberLastName": "Doe",
     "amount": 200,
     "referenceNumber": 2020080101,
-    "partnerCode": "DBSSG3"
+    "partnerCode": "DBSSG4",
+    "loyaltyProgram": "GOPOINTS"
 }
 
 ### Testing: route for bank server to get information about previously sent transfer from TC

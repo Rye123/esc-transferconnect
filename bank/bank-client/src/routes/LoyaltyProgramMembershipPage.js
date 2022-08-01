@@ -113,7 +113,7 @@ const LoyaltyProgramMembershipPage = () => {
                                 <i className='material-icons'>card_membership</i>
                             </div>
                             <div>
-                                <input className='input' type='text' value={membershipIdInput} onChange={(event) => setMembershipIdInput(event.target.value)} placeholder='Membership ID' /><br />
+                                <input className='input' name='membershipIdInput' type='text' value={membershipIdInput} onChange={(event) => setMembershipIdInput(event.target.value)} placeholder='Membership ID' /><br />
                             </div>
                         </div>
                         <button className='btn' type='submit'>Save Membership</button>
