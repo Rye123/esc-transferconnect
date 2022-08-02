@@ -37,11 +37,11 @@ router.get('/loyaltyPrograms', (request, response, next) => {
         LoyaltyProgramModel.findOne({ loyaltyProgramId: loyaltyProgramId })
             .then(loyaltyProgram => {
                 if (loyaltyProgram == null)
-                    return next(new DataAccessError());
+                    throw new DataAccessError();
                 return response.status(200).json(loyaltyProgram.toObject());
             })
             .catch(err => {
-                return next(new DataAccessError(err));
+                return next(err);
             });
     }
 });
@@ -70,12 +70,12 @@ router.get('/loyaltyProgramMemberships', auth_user_service.requireAuthentication
         LoyaltyProgramModel.findOne({ loyaltyProgramId: loyaltyProgramId })
             .then(loyaltyProgram => {
                 if (loyaltyProgram == null)
-                    return next(new DataAccessError());
+                    throw new DataAccessError();
                 return LoyaltyProgramMembershipModel.findOne({ userId: userId, loyaltyProgramId: loyaltyProgramId });
             })
             .then(membership => {
                 if (membership == null)
-                    return next(new DataAccessError());
+                    throw new DataAccessError();
                 return response.status(200).json(membership.toObject());
             })
             .catch(err => {
@@ -96,12 +96,12 @@ router.post('/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
     LoyaltyProgramModel.findOne({ loyaltyProgramId: loyaltyProgramId })
         .then(loyaltyProgram => {
             if (loyaltyProgram == null)
-                return next(new DataAccessError("loyalty program does not exist"))
+                throw new DataAccessError("loyalty program does not exist");
             return LoyaltyProgramMembershipModel.findOne({ userId: userId, loyaltyProgramId: loyaltyProgramId })
         })
         .then(membership => {
             if (!(membership == null))
-                return next(new Error("membership already exists"));
+                throw new Error("membership already exists");
 
             // validate membershipId
             const validationRegex = /^[a-zA-Z\d]+$/m;
@@ -138,13 +138,13 @@ router.put('/loyaltyProgramMemberships', auth_user_service.requireAuthentication
     LoyaltyProgramMembershipModel.findOne({ userId: userId, loyaltyProgramId: loyaltyProgramId })
         .then(membership => {
             if (membership == null)
-                return next(new Error("membership does not exist"));
+                throw new Error("membership does not exist");
 
             // validate membershipId
             const validationRegex = /^[a-zA-Z\d]+$/m;
             const validMembershipId = newLoyaltyProgramMembershipId.match(validationRegex);
             if (validMembershipId == null)
-                return next(new Error("invalid membership"));
+                throw new Error("invalid membership");
 
             // then update the membership
             const newMembershipObj = {
