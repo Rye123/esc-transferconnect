@@ -1,11 +1,3 @@
-// 1) Paste this code into a new file (sftp.js)
-//
-// 2) Install dependencies
-//   npm install ssh2-sftp-client@^8.0.0
-//
-// 3) Run the script
-//   node sftp.js
-
 /* Local Module Imports */
 let Client = require('ssh2-sftp-client');
 const { parse } = require('json2csv');
