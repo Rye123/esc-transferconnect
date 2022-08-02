@@ -13,6 +13,12 @@ const LoyaltyProgramMembershipModel = require('../models/LoyaltyProgramMembershi
 
 /* Errors */
 const DataAccessError = require('../errors/DataAccessError');
+class InvalidMembershipError extends Error {
+    constructor() {
+        super();
+        this.name = this.constructor.name;
+    }
+}
 
 /**
  * Route serving loyalty program requests
@@ -101,14 +107,13 @@ router.post('/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
         })
         .then(membership => {
             if (!(membership == null))
-                throw new Error("membership already exists");
+                throw new InvalidMembershipError();
 
             // validate membershipId
             const validationRegex = /^[a-zA-Z\d]+$/m;
             const validMembershipId = loyaltyProgramMembershipId.match(validationRegex);
             if (validMembershipId == null)
-                return next(new Error("invalid membership"));
-
+                throw new InvalidMembershipError();
             // then create a new membership
             const newMembership = new LoyaltyProgramMembershipModel({
                 loyaltyProgramMembershipId: loyaltyProgramMembershipId,
@@ -132,20 +137,18 @@ router.put('/loyaltyProgramMemberships', auth_user_service.requireAuthentication
     const loyaltyProgramId = request.body.loyaltyProgramId;
     const newLoyaltyProgramMembershipId = request.body.loyaltyProgramMembershipId;
     const userId = request.user.userId;
-    const membershipIds = request.user.loyaltyProgramMembershipIds;
     let oldMembership = null;
 
     LoyaltyProgramMembershipModel.findOne({ userId: userId, loyaltyProgramId: loyaltyProgramId })
         .then(membership => {
             if (membership == null)
-                throw new Error("membership does not exist");
-
+                throw new InvalidMembershipError();
+            
             // validate membershipId
             const validationRegex = /^[a-zA-Z\d]+$/m;
             const validMembershipId = newLoyaltyProgramMembershipId.match(validationRegex);
             if (validMembershipId == null)
-                throw new Error("invalid membership");
-
+                throw new InvalidMembershipError();
             // then update the membership
             const newMembershipObj = {
                 ...(membership.toObject()),

@@ -136,6 +136,8 @@ app.use((error, request, response, next) => {
             return response.status(error.status).json({ error: "invalid transfer status." });
         case "ExternalAuthenticationError":
             return response.status(error.status).json({ error: "invalid authentication token." });
+        case "InvalidMembershipError":
+            return response.status(400).json( { error: "invalid membership entered" });
         default:
             console.log(error);
             return response.status(500).json({ error: "internal server error" })
