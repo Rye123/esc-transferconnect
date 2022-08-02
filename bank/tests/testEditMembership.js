@@ -48,7 +48,7 @@ const testLoyaltyPrograms = async (credentials) => {
             await driver.sleep(3000);
             await driver.findElement(By.name("membershipIdInput")).clear();
             await driver.sleep(1000);
-            await driver.findElement(By.name("membershipIdInput")).sendKeys("456789891L");
+            await driver.findElement(By.name("membershipIdInput")).sendKeys("2345678901"); //TODO: test for invalid inputs
             await driver.sleep(2000);
             await driver.findElement(By.className("btn")).click();
             await driver.wait(until.urlContains("make_transfer"));
