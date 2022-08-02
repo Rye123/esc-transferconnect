@@ -37,7 +37,8 @@ let mongoDBurl = process.env.MONGODB_URI;
 if (process.argv.length > 2) {
     console.log("Warning: Running in test environment. Restart with `npm start` to run in main environment.");
     mongoDBurl = process.env.MONGODB_TEST_URI;
-    mongoose.set('debug', true);
+    // mongoose.set('debug', true);
+    TEST_ENV = true;
 } else {
     console.log("Warning: Running in non-test environment. Restart with `npm run test` to run in test environment.");
 }
