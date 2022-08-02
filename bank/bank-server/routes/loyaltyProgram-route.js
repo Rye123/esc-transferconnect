@@ -6,6 +6,7 @@ const router = express.Router();
 
 /* Services */
 const auth_user_service = require('../services/auth_user_service');
+const tc_service = require('../services/tc_service');
 
 /* Models */
 const LoyaltyProgramModel = require('../models/LoyaltyProgram');
@@ -114,6 +115,11 @@ router.post('/loyaltyProgramMemberships', auth_user_service.requireAuthenticatio
             const validMembershipId = loyaltyProgramMembershipId.match(validationRegex);
             if (validMembershipId == null)
                 throw new InvalidMembershipError();
+            return tc_service.isValidMembership(loyaltyProgramId, loyaltyProgramMembershipId)
+        })
+        .then(membershipIsValid => {
+            if(!membershipIsValid)
+                throw new InvalidMembershipError();
             // then create a new membership
             const newMembership = new LoyaltyProgramMembershipModel({
                 loyaltyProgramMembershipId: loyaltyProgramMembershipId,
@@ -149,12 +155,18 @@ router.put('/loyaltyProgramMemberships', auth_user_service.requireAuthentication
             const validMembershipId = newLoyaltyProgramMembershipId.match(validationRegex);
             if (validMembershipId == null)
                 throw new InvalidMembershipError();
+            oldMembership = membership.toObject();
+            return tc_service.isValidMembership(loyaltyProgramId, newLoyaltyProgramMembershipId);
+        })
+        .then(membershipIsValid => {
+            if (!membershipIsValid)
+                throw new InvalidMembershipError();
             // then update the membership
             const newMembershipObj = {
-                ...(membership.toObject()),
+                ...oldMembership,
                 loyaltyProgramMembershipId: newLoyaltyProgramMembershipId
             };
-            return LoyaltyProgramMembershipModel.findByIdAndUpdate(membership.id, newMembershipObj, {
+            return LoyaltyProgramMembershipModel.findOneAndUpdate({ userId: userId, loyaltyProgramId: loyaltyProgramId }, newMembershipObj, {
                 new: true,
                 runValidators: true,
                 context: 'query'
