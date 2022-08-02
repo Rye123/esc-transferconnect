@@ -176,28 +176,20 @@ const retrieveTransactionStatus = async (refname, refID) => {
   await client.disconnect();
 }
 
-const updateTransactionStatus = async () => {
-  // dict for loyalty programs, may be integrated into index.js instead
-  loyaltyPrograms = {GOPOINTS: `111111`, 
-                     INDOMILES: `222222`, 
-                     EMINENTGUEST: `333333`, 
-                     QFLYER: `444444`, 
-                     CONRADCLUB: `555555`, 
-                     MILLENIUMREWARDS: `666666`};
-  
+const updateTransactionStatus = async (loyaltyPrograms) => {
   // runs through each loyalty program
-  for (var refname in loyaltyPrograms){
+  for (var i=0; i<loyaltyPrograms.length; i++){
     let transfers;
 
     // reads every individual row in the CSV of the loyalty program
-    fs.createReadStream(`./${loyaltyPrograms[refname]}.csv`)
+    fs.createReadStream(`./${loyaltyPrograms[i]}.csv`)
       .pipe(csv())
-      .on("data", (row) => {
+      .on("data", async (row) => {
         console.log(row);
         try {
           // searches in database collection for the document with the same information
           transfers = await Transfer.find({
-                        partnerCode: loyaltyPrograms[refname],
+                        partnerCode: loyaltyPrograms[i],
                         referenceNumber: row['referenceNumber']});
           // updates the status in the identified document
           await Transfer.updateOne({ referenceNumber: row['referenceNumber'] },
