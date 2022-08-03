@@ -11,7 +11,8 @@ const transferSchema = new Schema({
     referenceNumber : { type: String, required: true },
     partnerCode : { type: String, required: true }, 
     loyaltyProgram: { type: String, required: true },  
-    status : { type: String, required: true}
+    status : { type: String, required: true},
+    outcomeDetails: { type: String, required: true}
 });
 
 module.exports = mongoose.model('Transfer', transferSchema);

@@ -54,7 +54,8 @@ const createTransfer = async (req, res, next) => {
         referenceNumber,
         partnerCode,
         loyaltyProgram,
-        status: "processing"
+        status: "processing",
+        outcomeDetails: "TBC"
     })
 
     try {
