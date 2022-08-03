@@ -51,13 +51,6 @@ const testLoyaltyPrograms = async (credentials) => {
             await driver.findElement(By.name("membershipIdInput")).sendKeys("2345678901"); //TODO: test for invalid inputs
             await driver.sleep(2000);
             await driver.findElement(By.className("btn")).click();
-            await driver.wait(until.urlContains("make_transfer"));
-            const url = await driver.getCurrentUrl();
-            const URLObj = new URL(url);
-            assert.notDeepStrictEqual(URLObj.pathname, "/make_transfer");
-            return;
-        })
-        .then(async () => {
             await driver.sleep(2000);
             return driver.findElement(By.linkText("Logout")).click();
         });
