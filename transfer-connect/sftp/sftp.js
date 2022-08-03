@@ -4,6 +4,9 @@ const { parse } = require('json2csv');
 const csv = require('csv-parser');
 const fs = require('fs');
 const { writeFile } = require('node:fs/promises');
+const { open } = require('node:fs/promises'); 
+const axios = require('axios');
+// const { createReadStream } = require('node:fs');
 
 /* User Defined functions*/
 const HttpError = require('../models/http-error');
@@ -32,6 +35,7 @@ class SFTPClient {
   // disconnect from SFTP server
   async disconnect() {
     await this.client.end();
+    console.log(`Disconnected from sftp server`);
   }
 
   // list available files in the remote directory
@@ -159,52 +163,95 @@ const sendDailyTransfers = async (loyaltyPrograms) => {
     
 }
 
-const retrieveTransactionStatus = async (refname, refID) => {
-  // SFTP section
+const postTransferStatus = async(transferId, transferStatus, transferStatusMessage) => {
+    const UPDATE_URI = "http://localhost:3001/api/tc/updateTransferStatus";
+    try {
+        const info = await axios.post(UPDATE_URI, {
+            transferId: `${transferId}`,
+            transferStatus: `${transferStatus}`,
+            transferStatusMessage: `${transferStatusMessage}`
+        }, { headers: {
+            "Authorization": `${process.env.JWT_TOKEN_SECRET_TC_TO_BANK}`
+        }});
+        // console.log(info.data);
+    } catch (err) {
+        console.error(err.response.status);
+    }
+}
+
+const updateTransactionStatus = async (loyaltyPrograms) => {
+  const codeToMessage = {'0000': "success",
+                       '0001': "member not found",
+                       '0002' : "member name mismatch",
+                       '0003' : "member account closed",
+                       '0004' : "member account suspended",
+                       '0005' : "member ineligible for accrual",
+                       '0099' : "unable to process, please contact support for more information"};
+
+  const codeToStatus = {'0000': "completed",
+                        '0001': "error",
+                        '0002' : "error",
+                        '0003' : "error",
+                        '0004' : "error",
+                        '0005' : "error",
+                        '0099' : "error"};
+                        
+  await Promise.all(loyaltyPrograms.map(async program => {
+    const fd = await open(`./${program}_HANDBACK.csv`);
+    fd.createReadStream(`./${program}_HANDBACK.csv`)
+    .pipe(csv())
+    .on("data", async ( row) => {
+      console.log(`start reading a row in ${program} file`);
+      try {
+        console.log(`sending details for ${row['ReferenceNumber']}`)
+        //update Mongo Document
+        await Transfer.updateOne({
+                      loyaltyProgram: program,
+                      referenceNumber: row['ReferenceNumber']},
+                      { $set: {
+                        status: codeToStatus[row['OutcomeCode']],
+                        outcomeDetails: codeToMessage[row['OutcomeCode']]} });
+        
+        //send postRequest to Bank
+        await postTransferStatus(row['ReferenceNumber'],
+                                 codeToStatus[row['OutcomeCode']],
+                                 codeToMessage[row['OutcomeCode']]);
+
+         console.log(`updated and sent notif for ${row['ReferenceNumber']}!`);
+                        
+      } catch (error) {
+        console.log(`Error ${error.message}`);
+      }});
+    return fd;
+  }));
+}
+
+const updateDailyTransfers = async (loyaltyPrograms) => {
+  // SFTP setup
   config = {
     host: process.env.SFTP_HOST,
     port: process.env.SFTP_PORT,
     username: process.env.SFTP_USERNAME,
     password: process.env.SFTP_PASSWORD,
-  }
+  };
   const client = new SFTPClient(config);
-  
+
   await client.connect();
 
-  await client.downloadFile(`./${refname}/${refID}`, `./${refID}`);
+  //theoretically, for each bank
+  //assume that all sftp server folders have updated by now as well
+  for (program of loyaltyPrograms) {
+    console.log(`pulling ${program} file from sftp...`)
+    await client.downloadFile(`./${program}/${program}_HANDBACK.csv`, `./${program}_HANDBACK.csv`);
+    console.log(`pulling ${program} file from sftp COMPLETE`)
+  }
+
+  await updateTransactionStatus(loyaltyPrograms);
 
   await client.disconnect();
-}
 
-const updateTransactionStatus = async (loyaltyPrograms) => {
-  // runs through each loyalty program
-  for (var i=0; i<loyaltyPrograms.length; i++){
-    let transfers;
-
-    // reads every individual row in the CSV of the loyalty program
-    fs.createReadStream(`./${loyaltyPrograms[i]}.csv`)
-      .pipe(csv())
-      .on("data", async (row) => {
-        console.log(row);
-        try {
-          // searches in database collection for the document with the same information
-          transfers = await Transfer.find({
-                        partnerCode: loyaltyPrograms[i],
-                        referenceNumber: row['referenceNumber']});
-          // updates the status in the identified document
-          await Transfer.updateOne({ referenceNumber: row['referenceNumber'] },
-                                  { $set: {status: row['status']} });
-        } catch (error) {
-          console.log(`Error ${error.message}`);
-        }
-      })
-      .on("end", () => {
-        console.log("finished");
-      })
-      .on("error", (error) => {
-        console.log(error.message);
-      });
-  }
+  //for each entry in the excel:
+  //send it into the update function (above is done within updateTransactionStatus)
 }
 
 // test case, will be worked on soon further
@@ -244,5 +291,4 @@ const updateTransactionStatus = async (loyaltyPrograms) => {
 
 exports.SFTPClient = SFTPClient;
 exports.sendDailyTransfers = sendDailyTransfers;
-exports.retrieveTransactionStatus = retrieveTransactionStatus;
-exports.updateTransactionStatus = updateTransactionStatus;
+exports.updateDailyTransfers = updateDailyTransfers;
