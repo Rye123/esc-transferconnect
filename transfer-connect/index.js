@@ -24,7 +24,8 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 
 /* schedule sending data to SFTP in the background (currently every min at 42nd second)*/
-const job = schedule.scheduleJob('0,10,20,30,40,50 * * * * *',() => SFTPClient.sendDailyTransfers(loyaltyPrograms));
+const job_send = schedule.scheduleJob('0,30 * * * * *',() => SFTPClient.sendDailyTransfers(loyaltyPrograms));
+const job_update = schedule.scheduleJob('15, 45 * * * * *',() => SFTPClient.sendDailyTransfers(loyaltyPrograms));
 
 app.use(bodyParser.json());
 
