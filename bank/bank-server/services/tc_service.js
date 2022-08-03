@@ -71,6 +71,19 @@ const getAllPrograms = () => {
         })
 }
 
+
+/* Memberships */
+const isValidMembership = async(programId, membershipId) => {
+    return axios.get(`${TC_URI}/api/program/validate/${programId}/${membershipId}`, TC_REQ_CONFIG)
+    .then(response => {
+        return response.data?.result === true;
+    })
+    .catch(err => {
+        return false;
+    })
+}
+
+
 /* Transfers */
 /**
  * 
@@ -174,4 +187,4 @@ const updateTransfer = (transfer) => {
         })
 }
 
-module.exports = { getAllPrograms, sendTransfer, updateTransfer };
+module.exports = { isValidMembership, getAllPrograms, sendTransfer, updateTransfer };

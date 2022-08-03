@@ -31,21 +31,21 @@ router.get('/transfers', auth_user_service.requireAuthentication, (request, resp
         // get all transfers of user
         TransferModel.find({ userId: userId })
             .then(transfers => {
-                if (transfers.length === 0)
+                if (transfers == null || transfers.length === 0)
                     return response.status(200).json([]);
                 return response.status(200).json(transfers.map(transfer => transfer.toObject()));
             })
             .catch(err => {
-                return next(new DataAccessError(err));
+                return err;
             });
     } else {
         // get single transfer
         TransferModel.findById(transferId)
             .then(transfer => {
                 if (transfer == null)
-                    return next(new DataAccessError());
+                    throw new DataAccessError();
                 if (transfer.userId !== userId)
-                    return next(new DataAccessError("Unauthorised access"));
+                    throw new DataAccessError("Unauthorised access");
                 return response.status(200).json(transfer.toObject());
             })
             .catch(err => {
@@ -148,7 +148,7 @@ router.post('/tc/updateTransferStatus', (request, response, next) => {
     TransferModel.findById(transferId)
         .then(transfer => {
             if (transfer == null)
-                return next(new DataAccessError());
+                throw new DataAccessError();
             const newTransferObj = {
                 ...(transfer.toObject()),
                 status: transferStatus,
@@ -160,8 +160,8 @@ router.post('/tc/updateTransferStatus', (request, response, next) => {
                 context: 'query'
             });
         })
-        .catch(transferFindError => {
-            return next(new DataAccessError());
+        .catch(err => {
+            return err;
         })
         .then(updatedTransfer => {
             newTransfer = updatedTransfer;
