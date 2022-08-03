@@ -173,7 +173,6 @@ const sendDailyTransfers = async (loyaltyPrograms) => {
                                           sentToSFTP: "true"} });
 
         console.log(`Updated for ${program} in MongoDB successfully!`);
-        return response;
       } catch (error) {
         console.log(`Error ${error.message}`);
       }
