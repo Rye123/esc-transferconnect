@@ -12,7 +12,7 @@ const transferSchema = new Schema({
     partnerCode : { type: String, required: true }, 
     loyaltyProgram: { type: String, required: true },  
     status : { type: String, required: true},
-    outcomeDetails: { type: String, required: true}
+    sentToSFTP: { type: String, required: true}
 });
 
 module.exports = mongoose.model('Transfer', transferSchema);

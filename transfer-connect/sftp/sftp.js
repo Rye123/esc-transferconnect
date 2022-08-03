@@ -129,7 +129,9 @@ const sendDailyTransfers = async (loyaltyPrograms) => {
       
       try {
         console.log(`Getting ${program} data from mongo...`);
-        transfers = await Transfer.find({status: "processing", loyaltyProgram: program});
+        transfers = await Transfer.find({status: "processing", 
+                                        loyaltyProgram: program,
+                                        sentToSFTP: "false"});
         transferCSV = parse(transfers, opts);
         
         // save csv file
@@ -154,11 +156,29 @@ const sendDailyTransfers = async (loyaltyPrograms) => {
       }
     }
 
+    
     //* Close the connection
     // await client.uploadFile(`./transfers.csv`, `./transfers.csv`);
     console.log("closing now");
     await client.disconnect();
     
+    await Promise.all(loyaltyPrograms.map(async program => {
+      
+      try {
+        console.log(`Getting ${program} data from mongo...`);
+        transfers = await Transfer.updateMany({status: "processing", 
+                                        loyaltyProgram: program,
+                                        sentToSFTP: "false"},
+                                        { $set: {
+                                          sentToSFTP: "true"} });
+
+        console.log(`Updated for ${program} in MongoDB successfully!`);
+        return response;
+      } catch (error) {
+        console.log(`Error ${error.message}`);
+      }
+      
+    }));
     // await client.uploadFile("./transfers.csv", "./remoteTransfer.csv");
     
 }
