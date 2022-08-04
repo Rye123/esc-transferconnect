@@ -59,7 +59,7 @@ const TransferModel = require('./models/Transfer');
 
 /* Scheduling */
 const scheduler = require('node-schedule');
-const CRON_EXPR = (TEST_ENV) ? "0,30 * * * * *" : "0 0 0 * * *";
+const CRON_EXPR = (TEST_ENV) ? "0,30 * * * * *" : "0,30 * * * * *";
 //                Every 30 seconds if in test environment, else daily at 0:00
 
 /* Polls the TC server for program info */
