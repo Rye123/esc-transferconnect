@@ -7,6 +7,8 @@ const { writeFile } = require('node:fs/promises');
 const { open } = require('node:fs/promises'); 
 const axios = require('axios');
 // const { createReadStream } = require('node:fs');
+// const fs = require('fs').promises;
+const createReadStream = require('fs').createReadStream;
 
 /* User Defined functions*/
 const HttpError = require('../models/http-error');
@@ -214,35 +216,47 @@ const updateTransactionStatus = async (loyaltyPrograms) => {
                         '0004' : "error",
                         '0005' : "error",
                         '0099' : "error"};
-                        
-  await Promise.all(loyaltyPrograms.map(async program => {
-    const fd = await open(`./${program}_HANDBACK.csv`);
-    fd.createReadStream(`./${program}_HANDBACK.csv`)
-    .pipe(csv())
-    .on("data", async ( row) => {
-      console.log(`start reading a row in ${program} file`);
-      try {
-        console.log(`sending details for ${row['ReferenceNumber']}`)
-        //update Mongo Document
-        await Transfer.updateOne({
-                      loyaltyProgram: program,
-                      referenceNumber: row['ReferenceNumber']},
-                      { $set: {
-                        status: codeToStatus[row['OutcomeCode']],
-                        outcomeDetails: codeToMessage[row['OutcomeCode']]} });
-        
-        //send postRequest to Bank
-        await postTransferStatus(row['ReferenceNumber'],
-                                 codeToStatus[row['OutcomeCode']],
-                                 codeToMessage[row['OutcomeCode']]);
 
-         console.log(`updated and sent notif for ${row['ReferenceNumber']}!`);
-                        
-      } catch (error) {
-        console.log(`Error ${error.message}`);
-      }});
-    return fd;
+  const promise = Promise.all(loyaltyPrograms.map(async program => {
+    console.log(`inside map function of ${program}`);
+    try {
+      const fd = await open(`./${program}_HANDBACK.csv`);
+      fd.createReadStream(`./${program}_HANDBACK.csv`).pipe(csv())
+      .on("data", async (row) => {
+        console.log(`start reading a row in ${program} file`);
+        try {
+          console.log(`sending details for ${row['ReferenceNumber']}`)
+          
+          //update Mongo Document
+          const filter = {loyaltyProgram: program, referenceNumber: row['ReferenceNumber']};
+          const updateDoc = { $set: {status: codeToStatus[row['OutcomeCode']],
+                                     outcomeDetails: codeToMessage[row['OutcomeCode']],
+                                     memberFirstName: "WHY DONT YOU TAKE OUTCOME DETAILS"} };
+          // console.log(`${program}`,filter);
+          // console.log(`${program}`,updateDoc);
+          const aTransfer = await Transfer.find(filter);
+          console.log(aTransfer);
+          const mongoUpdate = Transfer.updateOne(filter, updateDoc);
+    
+          //send postRequest to Bank
+          const sendEmail = postTransferStatus(row['ReferenceNumber'],
+                                   codeToStatus[row['OutcomeCode']],
+                                   codeToMessage[row['OutcomeCode']]);
+          
+          const promise = Promise.all([mongoUpdate,sendEmail]);
+          console.log(`updated and sent notif for ${row['ReferenceNumber']}!`);
+          return promise;
+    
+        } catch (error) {
+          console.log(`Error ${error.message}`);
+        }  
+      });
+      return fd;
+    } catch (error) {
+      console.log(`Error ${error.message}`);
+    }  
   }));
+  return promise;
 }
 
 const updateDailyTransfers = async (loyaltyPrograms) => {
@@ -264,7 +278,8 @@ const updateDailyTransfers = async (loyaltyPrograms) => {
     await client.downloadFile(`./${program}/${program}_HANDBACK.csv`, `./${program}_HANDBACK.csv`);
     console.log(`pulling ${program} file from sftp COMPLETE`)
   }
-
+  // (async () => await getResult())()
+  // async () => await updateTransactionStatus(loyaltyPrograms)();
   await updateTransactionStatus(loyaltyPrograms);
 
   await client.disconnect();
