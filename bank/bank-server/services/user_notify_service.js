@@ -61,7 +61,7 @@ const user_notify_service = {
         }
 
         const userEmail = user.userSettings?.email || "";
-        if (userEmail !== "") {
+        if (userEmail !== "" && user.userSettings.sendTo.email === true) {
             return sendEmail(userEmail, subjectText, contentText)
                 .catch(err => {
                     console.log(`Could not send email due to following error: ${err.message}`);
