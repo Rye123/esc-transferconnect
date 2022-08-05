@@ -24,7 +24,7 @@ const Navbar = () => {
     if (Utils.isEmptyObject(userAuth.user))
         return (
             <nav>
-                <a href='/' className='site-title'>Digibank</a>
+                <a href='/' className='site-title'>My Super Trustworthy Bank</a>
                 <NavbarLink to='/login' content='Login' />
             </nav>
         )
@@ -33,7 +33,7 @@ const Navbar = () => {
 
     return (
         <nav>
-            <a href='/' className='site-title'>Digibank</a>
+            <a href='/' className='site-title'>My Super Trustworthy Bank</a>
             <NavbarLink to='/profile' content='Profile' />
             <NavbarLink to='/loyalty_programs' content='Loyalty Programs' />
             <NavbarLink to='/transfers' content='Transfers' />

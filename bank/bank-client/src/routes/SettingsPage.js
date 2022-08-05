@@ -55,7 +55,7 @@ const SettingsPage = () => {
     }
     
     return (
-        <>
+        <main>
             <img className='wave' src='/images/wave.png' />
             <div className='container'>
                 <div className='img'>
@@ -139,7 +139,7 @@ const SettingsPage = () => {
                     </form>
                 </div>
             </div>
-        </>
+        </main>
     )
 }
 

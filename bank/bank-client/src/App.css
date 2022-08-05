@@ -2,11 +2,14 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #316855cc #a0a1a42a;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 a {
