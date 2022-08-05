@@ -8,15 +8,15 @@ import { useUserAuth } from '../hooks/UserAuthContext';
  * Modify user settings
  */
 const SettingsPage = () => {
-    const [sendTo, setSendTo] = useState({
-        email: false,
-        phoneNumber: false,
-        notification: false
-    });
-    const [emailInputValue, setEmailInputValue] = useState("");
-    const [phoneNumberInputValue, setPhoneNumberInputValue] = useState("");
     const userAuth = useUserAuth();
     const user = userAuth.user;
+    const [sendTo, setSendTo] = useState({
+        email: (typeof user.userSettings.email !== 'undefined' && user.userSettings.email !== null) || false,
+        phoneNumber: (typeof user.userSettings.phoneNumber !== 'undefined' && user.userSettings.phoneNumber !== null) || false,
+        pushNotif: user.userSettings.pushNotif || false
+    });
+    const [emailInputValue, setEmailInputValue] = useState(user.userSettings.email || "");
+    const [phoneNumberInputValue, setPhoneNumberInputValue] = useState(user.userSettings.phoneNumber?.toString() || "");
 
     // Handle sendTo input change
     const handleSendToChange = (event) => {
@@ -72,12 +72,12 @@ const SettingsPage = () => {
                                 <input 
                                     type='checkbox' 
                                     name='sendTo' 
-                                    value='notification' 
-                                    id='sendToNotification'
-                                    checked={sendTo.notification}
+                                    value='pushNotif' 
+                                    id='sendToPushNotif'
+                                    checked={sendTo.pushNotif}
                                     onChange={handleSendToChange}
                                 />
-                                <label htmlFor='sendToNotification'>Notification</label>
+                                <label htmlFor='sendToPushNotif'>Push Notifications</label>
                             </div>
                         </div>
 
