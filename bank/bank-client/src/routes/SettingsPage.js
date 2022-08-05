@@ -1,4 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+/* Classes */
+import UserSettings from '../classes/UserSettings';
+
+/* Services */
+import user_settings_service from '../services/user_settings_service';
 
 /* Hooks */
 import { useUserAuth } from '../hooks/UserAuthContext';
@@ -10,13 +17,11 @@ import { useUserAuth } from '../hooks/UserAuthContext';
 const SettingsPage = () => {
     const userAuth = useUserAuth();
     const user = userAuth.user;
-    const [sendTo, setSendTo] = useState({
-        email: (typeof user.userSettings.email !== 'undefined' && user.userSettings.email !== null) || false,
-        phoneNumber: (typeof user.userSettings.phoneNumber !== 'undefined' && user.userSettings.phoneNumber !== null) || false,
-        pushNotif: user.userSettings.pushNotif || false
-    });
+    const [sendTo, setSendTo] = useState(user.userSettings.sendTo);
     const [emailInputValue, setEmailInputValue] = useState(user.userSettings.email || "");
     const [phoneNumberInputValue, setPhoneNumberInputValue] = useState(user.userSettings.phoneNumber?.toString() || "");
+
+    const navigate = useNavigate();
 
     // Handle sendTo input change
     const handleSendToChange = (event) => {
