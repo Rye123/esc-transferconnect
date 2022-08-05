@@ -230,8 +230,7 @@ const updateTransactionStatus = async (loyaltyPrograms) => {
           //update Mongo Document
           const filter = {loyaltyProgram: program, referenceNumber: row['ReferenceNumber']};
           const updateDoc = { $set: {status: codeToStatus[row['OutcomeCode']],
-                                     outcomeDetails: codeToMessage[row['OutcomeCode']],
-                                     memberFirstName: "WHY DONT YOU TAKE OUTCOME DETAILS"} };
+                                     outcomeDetails: codeToMessage[row['OutcomeCode']]} };
           // console.log(`${program}`,filter);
           // console.log(`${program}`,updateDoc);
           const aTransfer = await Transfer.find(filter);
