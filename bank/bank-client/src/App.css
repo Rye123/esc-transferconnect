@@ -248,3 +248,11 @@ form h2 {
 .input:disabled {
     color: #c7c7c7;
 }
+
+input[type='checkbox'] {
+    margin-right: 5px;
+}
+
+input[type='checkbox']:checked {
+    accent-color: #25916d;
+}

@@ -37,6 +37,7 @@ const Navbar = () => {
             <NavbarLink to='/profile' content='Profile' />
             <NavbarLink to='/loyalty_programs' content='Loyalty Programs' />
             <NavbarLink to='/transfers' content='Transfers' />
+            <NavbarLink to='/settings' content='Settings' />
             <NavbarLink to='/logout' content='Logout' />
         </nav>
     )

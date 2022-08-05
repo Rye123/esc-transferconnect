@@ -20,6 +20,7 @@ import LoyaltyProgramMembershipPage from './routes/LoyaltyProgramMembershipPage'
 import LoyaltyProgramMakeTransferPage from './routes/LoyaltyProgramMakeTransferPage';
 import TransfersListPage from './routes/TransfersListPage';
 import TransferPage from './routes/TransferPage';
+import SettingsPage from './routes/SettingsPage';
 import NotFoundPage from './routes/NotFoundPage';
 // Routes
 import RequireAuthRoute from './routes/RequireAuthRoute';
@@ -41,6 +42,8 @@ root.render(
         <Route path='transfers' element={<RequireAuthRoute><TransfersListPage /></RequireAuthRoute>} />
         <Route path='transfers/transfer' element={<RequireAuthRoute><TransferPage /></RequireAuthRoute>} />
         <Route path='transfers/make_transfer' element={<RequireAuthRoute><LoyaltyProgramMakeTransferPage /></RequireAuthRoute>} />
+
+        <Route path='settings' element={<RequireAuthRoute><SettingsPage /></RequireAuthRoute>} /> 
 
         <Route path='logout' element={<RequireAuthRoute><LogoutRoute /></RequireAuthRoute>} />
         <Route
