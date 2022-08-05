@@ -33,6 +33,25 @@ const SettingsPage = () => {
     // Handle Settings Form Submission
     const handleFormSubmission = (event) => {
         event.preventDefault();
+        const newSettings = new UserSettings({
+            email: emailInputValue,
+            phoneNumber: phoneNumberInputValue,
+            sendTo: sendTo
+        });
+        // TODO: validation of newSettings
+
+        // Send the update
+        user_settings_service.user_postsettings(newSettings)
+        .then(() => {
+            return userAuth.update()
+        })
+        .then(() => {
+            navigate({ pathname: `/profile`});
+        })
+        .catch(err => {
+            console.error("SettingsPageError:", err);
+            alert("Error in Settings Update");
+        })
     }
     
     return (
