@@ -9,6 +9,7 @@ const auth_user_service = require('../services/auth_user_service');
 
 /* Models */
 const UserModel = require('../models/User');
+const user_notify_service = require('../services/user_notify_service');
 
 /**
  * Route serving user token resolution.
@@ -31,6 +32,7 @@ router.post('/user-settings', auth_user_service.requireAuthentication, (request,
     const newSettings = {
         email: request.body.email || null,
         phoneNumber: parseInt(request.body.phoneNumber) || null,
+        pushNotifSub: request.body.pushNotifSub || null,
         sendTo: {
             email: request.body.sendTo?.email || false,
             phoneNumber: request.body.sendTo?.phoneNumber || false,
@@ -38,6 +40,11 @@ router.post('/user-settings', auth_user_service.requireAuthentication, (request,
         }
     };
     // TODO: validation
+
+    // Give notif if user requested notifications
+    if (newSettings.pushNotifSub !== null) {
+        user_notify_service.subscribePushNotifs(newSettings.pushNotifSub);
+    }
 
     // Create new user
     const user = request.user;
