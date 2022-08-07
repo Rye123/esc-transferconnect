@@ -55,8 +55,23 @@ const LoyaltyProgramMembershipPage = () => {
                 navigate({ pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}` });
             })
             .catch(err => {
+                const inputShake = [
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(-4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                ];
+
+                const inputShakeTiming = {
+                    duration: 250,
+                    iterations: 1
+                };
+                Array.prototype.forEach.call(document.getElementsByClassName('input'), elem => {
+                    elem.animate(inputShake, inputShakeTiming);
+                });
                 console.error("LoyaltyProgramMembershipPage Error:", err);
-            })
+            });
     }
     const handleFormSubmission_modify = (event) => {
         event.preventDefault();
@@ -67,8 +82,23 @@ const LoyaltyProgramMembershipPage = () => {
                 navigate({ pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}` });
             })
             .catch(err => {
+                const inputShake = [
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(-4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                ];
+
+                const inputShakeTiming = {
+                    duration: 250,
+                    iterations: 1
+                };
+                Array.prototype.forEach.call(document.getElementsByClassName('input'), elem => {
+                    elem.animate(inputShake, inputShakeTiming);
+                });
                 console.error("LoyaltyProgramMembershipPage Error:", err);
-            })
+            });
     }
 
     // Return HTML

@@ -14,7 +14,15 @@ const UserSchema = new mongoose.Schema(
         },
         userSettings: {
             type: Object,
-            default: {}
+            default: {
+                email: null,
+                phoneNumber: null,
+                sendTo: {
+                    email: false,
+                    phoneNumber: false,
+                    pushNotif: false
+                }
+            }
         }
     },
     {
