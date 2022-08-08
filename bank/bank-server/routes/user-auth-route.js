@@ -31,7 +31,7 @@ router.post('/user-token-auth', auth_user_service.authenticateUser, (request, re
 router.post('/user-settings', auth_user_service.requireAuthentication, (request, response) => {
     const newSettings = {
         email: request.body.email || null,
-        phoneNumber: parseInt(request.body.phoneNumber) || null,
+        phoneNumber: request.body.phoneNumber || null,
         pushNotifSub: request.body.pushNotifSub || null,
         sendTo: {
             email: request.body.sendTo?.email || false,
