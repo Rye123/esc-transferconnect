@@ -9,7 +9,8 @@ const loyaltySchema = new Schema({
     processingTime : { type: String, required: true },
     description : { type: String, required: true },
     enrollmentLink : { type: String, required: true },
-    tncLink : { type: String, required: true }
+    tncLink : { type: String, required: true },
+    imgSrc: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Loyalty', loyaltySchema);
