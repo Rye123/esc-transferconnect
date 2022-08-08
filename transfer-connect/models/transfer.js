@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const numericValidator = input => {
-    return /^(\d*)$/.test(input);
+const floatValidator = input => {
+    return /^[1-9]\d*(\.\d+)?$/.test(input);
 }
 
 const alphaNumericValidator = input => {
@@ -32,7 +32,7 @@ const transferSchema = new Schema({
     memberFirstName : { type: String, validate: alphaNumericValidator, required: true },
     memberLastName : { type: String, validate: alphaNumericValidator, required: true },
     transferDate : { type: String, required: true },
-    amount : { type: String, validate: numericValidator,  required: true },
+    amount : { type: String, validate: floatValidator,  required: true },
     referenceNumber : { type: String, validate: alphaNumericValidator, required: true },
     partnerCode : { type: String, validate: alphaNumericValidator, required: true }, 
     loyaltyProgram: { type: String, validate: alphaNumericValidator, required: true },  
