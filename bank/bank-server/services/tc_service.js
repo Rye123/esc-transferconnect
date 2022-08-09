@@ -139,6 +139,7 @@ const updateTransfer = (transfer) => {
     let updatedTransferObject = undefined;
     return axios.post(`${TC_URI}/api/bank/accrual-update`, reqBody, TC_REQ_CONFIG)
         .then(response => {
+            //TODO: merge this section with the webhook interaction in transfer-route.js since it's the same.
             const tc_transfer = response.data;
             let new_status = "pending";
             let new_status_message = tc_transfer.outcomeDetails || "";
@@ -172,7 +173,19 @@ const updateTransfer = (transfer) => {
         })
         .then(transferUpdate => {
             updatedTransferObject = transferUpdate.toObject();
-            return UserModel.findById(updatedTransferObject.userId);
+            // Update user's points if it was an error, else just find by id
+            if (transferUpdate.status === "error") {
+                const update = {
+                    $inc: { points: transferUpdate.points }
+                };
+                return UserModel.findByIdAndUpdate(updatedTransfer.userId, update, {
+                    new: true,
+                    runValidators: true,
+                    context: 'query'
+                });
+            } else {
+                return UserModel.findById(updatedTransferObject.userId);
+            }
         })
         .then(user => {
             return user_notify_service.notifyUserOfCompletedTransfer(user, updatedTransferObject);

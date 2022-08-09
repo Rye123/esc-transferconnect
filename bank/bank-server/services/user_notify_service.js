@@ -111,7 +111,7 @@ const user_notify_service = {
         const userPushNotifSub = user.userSettings?.pushNotifSub || "";
         const userPhoneNumber = user.userSettings?.phoneNumber || "";
         const promiseChain = [];
-        if (userEmail !== "" && user.userSettings.sendTo.email === true) {
+        if (userEmail !== "" && user.userSettings?.sendTo?.email === true) {
             promiseChain.push(sendEmail(userEmail, subjectText, contentText)
                 .catch(err => {
                     console.log(`Could not send email due to following error: ${err.message}`);
@@ -119,7 +119,7 @@ const user_notify_service = {
                 })
             );
         }
-        if (userPushNotifSub !== "" && user.userSettings.sendTo.pushNotif === true) {
+        if (userPushNotifSub !== "" && user.userSettings?.sendTo?.pushNotif === true) {
             const payload = JSON.stringify({
                 title: subjectText,
                 body: contentText
@@ -132,7 +132,7 @@ const user_notify_service = {
                 })
             )
         }
-        if (userPhoneNumber !== "" && user.userSettings.sendTo.phoneNumber === true) {
+        if (userPhoneNumber !== "" && user.userSettings?.sendTo?.phoneNumber === true) {
             const body = `${subjectText}\n${contentText}`;
             promiseChain.push(
                 sendSMS(body, userPhoneNumber)

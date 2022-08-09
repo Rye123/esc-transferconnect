@@ -165,7 +165,19 @@ router.post('/tc/updateTransferStatus', (request, response, next) => {
         })
         .then(updatedTransfer => {
             newTransfer = updatedTransfer;
-            return UserModel.findById(updatedTransfer.userId)
+            // Update the user's points if it was an error, else just find by id
+            if (newTransfer.status === "error") {
+                const update = {
+                    $inc: { points: updatedTransfer.points }
+                };
+                return UserModel.findByIdAndUpdate(updatedTransfer.userId, update, {
+                    new: true,
+                    runValidators: true,
+                    context: 'query'
+                });
+            } else {
+                return UserModel.findById(updatedTransfer.userId)
+            }
         })
         .then(user => {
             return user_notify_service.notifyUserOfCompletedTransfer(user, newTransfer.toObject());
