@@ -16,6 +16,7 @@ const bankRoutes = require('./routes/bank-routes');
 const programRoutes = require('./routes/program-routes');
 const HttpError = require('./models/http-error');
 const SFTPClient = require('./sftp/sftp');
+const { sendHandbackFiles } = require('./sftp/dummy_sftp');
 const checkAuth = require('./middleware/check-auth');
 const { loyaltyPrograms } = require('./controllers/program-controllers');
 
@@ -25,7 +26,9 @@ const PORT = process.env.PORT || 3002;
 
 /* schedule sending data to SFTP in the background (currently every min at 42nd second)*/
 const job_send = schedule.scheduleJob('0 * * * * *',() => SFTPClient.sendDailyTransfers(loyaltyPrograms));
-const job_update = schedule.scheduleJob('30 * * * * *',() => SFTPClient.updateDailyTransfers(loyaltyPrograms));
+const job_handback = schedule.scheduleJob('20 * * * * *',() => sendHandbackFiles(loyaltyPrograms));
+
+const job_update = schedule.scheduleJob('40 * * * * *',() => SFTPClient.updateDailyTransfers(loyaltyPrograms));
 
 app.use(bodyParser.json());
 
