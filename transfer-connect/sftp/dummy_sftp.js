@@ -23,7 +23,7 @@ const createHandbackFile = async (filename, transfersJSON) => {
     handbackJSON = [];
     // console.log("in create handback, json file is:", transfersJSON)
     for (const transfer of transfersJSON) {
-        console.log(transfer);
+        // console.log(transfer);
         newRow = {
             Bank: transfer['"partnerCode"'].replace(/(^"|"$)/g, ''),
             Amount: transfer['"amount"'].replace(/(^"|"$)/g, ''),
@@ -34,11 +34,11 @@ const createHandbackFile = async (filename, transfersJSON) => {
         handbackJSON.push(newRow)
     }
 
-    console.log("handbackJSON is",handbackJSON);
+    // console.log("handbackJSON is",handbackJSON);
     transferCSV = json2csvParser.parse(handbackJSON, opts);
 
     try {
-        console.log(`output location is ${filename}`)
+        // console.log(`output location is ${filename}`)
         const response = await writeFile(filename, transferCSV);
         return response;
     } catch (error) {
@@ -59,7 +59,7 @@ const sendHandbackFiles = async (loyaltyPrograms) => {
     // read file for each Loyalty Program    
     // for each file, createa handback csv file (save it in the sftp folder)
     // send the handback file to sftp
-
+    console.log("Begin CRON JOB 2: Upload Handback file onto SFTP on Loyalty Program's behalf\n")
     config = {
         host: process.env.SFTP_HOST,
         port: process.env.SFTP_PORT,
@@ -70,25 +70,29 @@ const sendHandbackFiles = async (loyaltyPrograms) => {
     await client.connect();
 
     try {
+        console.log("START creating all handback files...")
         await Promise.all(loyaltyPrograms.map(async program => {
             transfersJSON = await readCSVfile(`./${program}.csv`);
-            console.log("made it past the read csv");
+            // console.log("made it past the read csv");
             // console.log(`./${program}.csv`,transfersJSON);
             await createHandbackFile(`./sftp/${program}_HANDBACK.csv`, transfersJSON);
-            // console.log("made it past the create handback")
+            console.log(`Created ${program}_HANDBACK.csv`)
             // return message;
         }));
+        console.log("FINISH creating all handback files\n")
     } catch (error) {
         console.log(`Error ${error.message}`);
     }
 
+    console.log("START sending handback files to SFTP...")
     for (program of loyaltyPrograms) {
         await sendToSFTP(client, program);
-        message = `done creating ${program} handback!`
-        console.log(message);
+        // message = `done uploading ${program} handback!`
+        // console.log(message);
     }
     await client.disconnect();
-      
+    console.log("FINISH sending handback files to SFTP\n")
+    console.log("Done with CRON JOB 2: Upload Handback file onto SFTP on Loyalty Program's behalf\n")
 }
 
 exports.sendHandbackFiles = sendHandbackFiles;

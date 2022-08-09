@@ -67,13 +67,13 @@ class SFTPClient {
 
   // upload files from local directory to remote directory
   async uploadFile(localFile, remoteFile) {
-    console.log(`Uploading ${localFile} to ${remoteFile} ...`);
+    // console.log(`Uploading ${localFile} to ${remoteFile} ...`);
     return this.client.put(localFile, remoteFile);
   }
 
   // download files from remote directory to local directory
   async downloadFile(remoteFile, localFile) {
-    console.log(`Downloading ${remoteFile} to ${localFile} ...`);
+    // console.log(`Downloading ${remoteFile} to ${localFile} ...`);
     try {
       await this.client.get(remoteFile, localFile);
     } catch (err) {
@@ -113,6 +113,7 @@ class SFTPClient {
 }
 
 const sendDailyTransfers = async (loyaltyPrograms) => {
+    console.log("Begin CRON JOB 1: Send Daily Transfers to SFTP server\n")
     let transfers;
     let transferCSV;
     const opts = {fields: ['memberId','amount','referenceNumber','partnerCode','status']};
@@ -127,17 +128,18 @@ const sendDailyTransfers = async (loyaltyPrograms) => {
     const client = new SFTPClient(config);
 
     // for each program, get all processing documents from mongodb
+    console.log(`START getting program data from MongoDB and writing to CSV...`)
     await Promise.all(loyaltyPrograms.map(async program => {
       
       try {
-        console.log(`Getting ${program} data from mongo...`);
+        // console.log(`Getting ${program} data from mongo...`);
         transfers = await Transfer.find({status: "processing", 
                                         loyaltyProgram: program,
                                         sentToSFTP: "false"});
         transferCSV = parse(transfers, opts);
         
         // save csv file
-        console.log(`Writing ${program} data from local file...`);
+        // console.log(`Writing ${program} data from local file...`);
         const response = await writeFile(`${program}.csv`, transferCSV);
         console.log(`Write to ${program}.csv successfully!`);
         return response;
@@ -146,7 +148,8 @@ const sendDailyTransfers = async (loyaltyPrograms) => {
       }
       
     }));
-
+    console.log(`FINISH getting program data from mongo and writing to CSV\n`)
+    console.log(`START uploading all CSV to SFTP server...`)
     //* Open the connection
     await client.connect();
     for (const program of loyaltyPrograms) {
@@ -157,17 +160,18 @@ const sendDailyTransfers = async (loyaltyPrograms) => {
         console.log(err);
       }
     }
-
+    console.log(`FINISH uploading all CSV to SFTP server\n`)
     
     //* Close the connection
     // await client.uploadFile(`./transfers.csv`, `./transfers.csv`);
-    console.log("closing now");
+    // console.log("closing now");
     await client.disconnect();
-    
+
+    console.log(`\nSTART updating program data in MongoDB...`)
     await Promise.all(loyaltyPrograms.map(async program => {
       
       try {
-        console.log(`Getting ${program} data from mongo...`);
+        // console.log(`Getting ${program} data from mongo...`);
         transfers = await Transfer.updateMany({status: "processing", 
                                         loyaltyProgram: program,
                                         sentToSFTP: "false"},
@@ -181,7 +185,8 @@ const sendDailyTransfers = async (loyaltyPrograms) => {
       
     }));
     // await client.uploadFile("./transfers.csv", "./remoteTransfer.csv");
-    
+    console.log(`FINISH updating program data in MongoDB\n`)
+    console.log(`Done with CRON JOB 1: Send Daily Transfers to SFTP server\n`)
 }
 
 const postTransferStatus = async(transferId, transferStatus, transferStatusMessage) => {
@@ -217,15 +222,16 @@ const updateTransactionStatus = async (loyaltyPrograms) => {
                         '0005' : "error",
                         '0099' : "error"};
 
+  console.log(`START update Mongo Document & send post request to bank for each transfer in Handback...`)
   const promise = Promise.all(loyaltyPrograms.map(async program => {
-    console.log(`inside map function of ${program}`);
+    // console.log(`inside map function of ${program}`);
     try {
       const fd = await open(`./${program}_HANDBACK.csv`);
       fd.createReadStream(`./${program}_HANDBACK.csv`).pipe(csv())
       .on("data", async (row) => {
-        console.log(`start reading a row in ${program} file`);
+        // console.log(`start reading a row in ${program} file`);
         try {
-          console.log(`sending details for ${row['ReferenceNumber']}`)
+          // console.log(`sending details for ${row['ReferenceNumber']}`)
           
           //update Mongo Document
           const filter = {loyaltyProgram: program, referenceNumber: row['ReferenceNumber']};
@@ -233,8 +239,8 @@ const updateTransactionStatus = async (loyaltyPrograms) => {
                                      outcomeDetails: codeToMessage[row['OutcomeCode']]} };
           // console.log(`${program}`,filter);
           // console.log(`${program}`,updateDoc);
-          const aTransfer = await Transfer.find(filter);
-          console.log(aTransfer);
+          // const aTransfer = await Transfer.find(filter);
+          // console.log(aTransfer);
           const mongoUpdate = Transfer.updateOne(filter, updateDoc);
     
           //send postRequest to Bank
@@ -243,7 +249,7 @@ const updateTransactionStatus = async (loyaltyPrograms) => {
                                    codeToMessage[row['OutcomeCode']]);
           
           const promise = Promise.all([mongoUpdate,sendEmail]);
-          console.log(`updated and sent notif for ${row['ReferenceNumber']}!`);
+          console.log(`updated and sent notif for ${row['ReferenceNumber']} in ${program}!`);
           return promise;
     
         } catch (error) {
@@ -272,16 +278,19 @@ const updateDailyTransfers = async (loyaltyPrograms) => {
 
   //theoretically, for each bank
   //assume that all sftp server folders have updated by now as well
+  console.log('\nSTART download Handback file for each loyalty Program...')
   for (program of loyaltyPrograms) {
-    console.log(`pulling ${program} file from sftp...`)
+    // console.log(`pulling ${program} file from sftp...`)
     await client.downloadFile(`./${program}/${program}_HANDBACK.csv`, `./${program}_HANDBACK.csv`);
     console.log(`pulling ${program} file from sftp COMPLETE`)
   }
+  console.log('FINISH download Handback file for each loyalty Program\n')
   // (async () => await getResult())()
   // async () => await updateTransactionStatus(loyaltyPrograms)();
   await updateTransactionStatus(loyaltyPrograms);
 
   await client.disconnect();
+  console.log(`FINISH update Mongo Document & send post request to bank for each transfer in Handback\n`)
 
   //for each entry in the excel:
   //send it into the update function (above is done within updateTransactionStatus)
