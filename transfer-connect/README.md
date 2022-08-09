@@ -87,7 +87,9 @@ Returns if the given loyalty program membership ID is a valid membership ID for 
 Returns the status of a given transfer.
 ```json
 {
-    "status": "(current status)"
+    "referenceNumber": "(referenceNumber)", 
+    "status": "(current status)",
+    "outcomeDetails": "(current message)"
 }
 ```
 The status can be:
@@ -95,6 +97,14 @@ The status can be:
 - `completed`
 - `error`
 
+The outcomeDetails can be:
+- `success`
+- `member not found`
+- `member name mismatch`
+- `member account closed`
+- `member account suspended`
+- `member ineligible for accrual`
+- `unable to process, please contact support for more information`
 
 ### Accrual Request 
 `POST /api/bank/accrual-req`
