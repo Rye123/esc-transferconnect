@@ -119,7 +119,7 @@ router.post('/tc/updateTransferStatus', (request, response, next) => {
     const webhook_auth = request.get("Authorization");
     const transferId = request.body?.transferId || "";
     let transferStatus = request.body?.transferStatus || "";
-    let transferStatusMessage = request.query?.transferStatusMessage || "Unknown error.";
+    let transferStatusMessage = request.body?.transferStatusMessage || "Unknown error.";
 
     const possibleStatuses = ["completed", "processing", "error"];
 

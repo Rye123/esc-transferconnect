@@ -64,6 +64,7 @@ Returns the loyalty program information in JSON format:
     "description": "",
     "enrollmentLink": "",
     "tncLink": "",
+    "imgSrc": ""
 }
 ```
 
