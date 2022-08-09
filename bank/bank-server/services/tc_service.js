@@ -139,11 +139,12 @@ const updateTransfer = (transfer) => {
     let updatedTransferObject = undefined;
     return axios.post(`${TC_URI}/api/bank/accrual-update`, reqBody, TC_REQ_CONFIG)
         .then(response => {
-            const tc_transfer_status = response.data.transfer[0].status; // WHY. IS. THIS. SO. ENCAPSULATED???
+            const tc_transfer = response.data;
             let new_status = "pending";
-            if (typeof tc_transfer_status === 'undefined')
-                throw new Error("Unknown TC error"); // TODO: fix
-            switch (tc_transfer_status) {
+            let new_status_message = tc_transfer.outcomeDetails || "";
+            if (typeof tc_transfer === 'undefined')
+                throw new Error("Erroneous TC response.");
+            switch (tc_transfer.status) {
                 case "processing":
                     throw new NoUpdateException();
                     break;
@@ -152,13 +153,16 @@ const updateTransfer = (transfer) => {
                     break;
                 case "error":
                     new_status = "error";
+                    if (new_status_message === "")
+                        new_status_message = "Unknown error.";
                     break;
                 default:
                     throw new Error(`Unknown transfer status from TC: ${status}`); // TODO: create TC-specific error 
             }
             const updatedTransfer = {
                 ...transfer,
-                status: new_status
+                status: new_status,
+                statusMessage: new_status_message
             };
             return TransferModel.findByIdAndUpdate(transfer.transferId, updatedTransfer, {
                 new: true,
