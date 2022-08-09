@@ -19,20 +19,22 @@ const getTransferByRef = async (req, res, next) => {
     let projection = { "_id": 0, referenceNumber: 1, status: 1, outcomeDetails: 1};
     try {
         if (referenceNumber === "all") {
-            query = {partnerCode: partnerCode}
+            query = {partnerCode: partnerCode}            
+            transfer = await Transfer.find(query, projection);
         } else {
             query = {referenceNumber: referenceNumber, partnerCode: partnerCode}
+            transfer = await Transfer.findOne(query, projection);
+            if (!transfer || transfer.length === 0) {
+                //return error
+                return next( new HttpError('Could not find any transfer for given ref no and/or partner code', 404) );
+            }
         }
-        transfer = await Transfer.find(query, projection);
     } catch (err) {
         return next( new HttpError('Something went wrong, could not find requested transfer.', 500) );
     }
-    if (!transfer || transfer.length === 0) {
-        //return error
-        return next( new HttpError('Could not find a transfer for the provided id or partner code', 404) );
-    }
+    
 
-    res.status(200).json({transfer});
+    res.status(200).json(transfer);
 }
 
 const createTransfer = async (req, res, next) => {
