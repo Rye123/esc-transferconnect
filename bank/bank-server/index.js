@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser'); // middleware for cookies
 /* Service Imports */
 const auth_user_service = require('./services/auth_user_service');
 const tc_service = require('./services/tc_service');
+const user_notify_service = require('./services/user_notify_service');
 
 /* Error Imports */
 const ApplicationError = require('./errors/ApplicationError');

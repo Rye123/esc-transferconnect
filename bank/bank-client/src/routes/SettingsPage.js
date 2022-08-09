@@ -23,15 +23,69 @@ const SettingsPage = () => {
 
     const navigate = useNavigate();
 
+    const vapid_public_key = "BHKoC7aRDE7DBHTUgB9wdJQXYwtzp7Ztx55Glr5BhdTqQCSOo3U0TVj526AvWuxgSFrZmMA2-GB9tQSjGpKxtnA";
+
+    const urlBase64ToUint8Array = b64str => {
+        const padding = '='.repeat((4 - b64str.length %4) %4 );
+        const b64 = (b64str + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+        const rawData = window.atob(b64);
+        const outputArr = new Uint8Array(rawData.length);
+        
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArr[i] = rawData.charCodeAt(i);
+        }
+        return outputArr;
+    }
+
     // Handle sendTo input change
     const handleSendToChange = (event) => {
         let newSendTo = Object.assign({}, sendTo); // shallow copy
         newSendTo[event.target.value] = !(newSendTo[event.target.value]);
-        setSendTo(newSendTo);
+
+        if (event.target.value === "pushNotif" && newSendTo[event.target.value]) {
+            const handlePermission = permission => {
+                if (permission === 'granted') {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            // Check if notifications are supported
+            if (!('Notification' in window)) {
+                alert("Browser doesn't support push notifications.");
+                return;
+            }
+            // Request permissions if not given
+            if (Notification.permission !== "granted") {
+                try {
+                    Notification.requestPermission()
+                    .then(permission => handlePermission(permission))
+                    .then(granted => {
+                        if (!granted)
+                            alert("You need to allow notifications to receive notifications.");
+                        else
+                            setSendTo(newSendTo);
+                    })
+                } catch (e) {
+                    // requestPermission Promises not supported
+                    const granted = Notification.requestPermission(permission => handlePermission(permission));
+                    if (!granted)
+                        alert("You need to allow notifications to receive notifications");
+                    else
+                        setSendTo(newSendTo);
+                }
+            } else {
+                setSendTo(newSendTo);
+            }
+        } else {
+            setSendTo(newSendTo);
+        }
     }
 
     // Handle Settings Form Submission
-    const handleFormSubmission = (event) => {
+    const handleFormSubmission = async (event) => {
         event.preventDefault();
         const newSettings = new UserSettings({
             email: emailInputValue,
@@ -39,6 +93,22 @@ const SettingsPage = () => {
             sendTo: sendTo
         });
         // TODO: validation of newSettings
+        if (newSettings.sendTo.pushNotif) {
+            // Ensure push notifications are set first
+            // Register service worker
+            const register = await navigator.serviceWorker.register('notif-service-worker.js', {
+                scope: './'
+            });
+
+            // Register Push Notifications
+            const subscription = await register.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(vapid_public_key)
+            });
+
+            // Append Subscription to UserSettings object
+            newSettings.pushNotifSub = subscription;
+        }
 
         // Send the update
         user_settings_service.user_postsettings(newSettings)
