@@ -15,14 +15,14 @@ Newman maintains feature parity with Postman and allows you to run collections t
 
 Artillery is a modern, powerful & easy-to-use performance testing toolkit. Specifically, we used the Artillery Fuzzer plugin. This plugin made it easy to run fuzz testing on our HTTP API with Artillery.
 
-The plugin uses Artillery to send a lot of junk (unexpected and weird payloads) to your API endpoints. We can then monitor our backend for exceptions, errors or crashes, and improve the security and reliability of our system by fixing any issues uncovered.
+The plugin uses Artillery to send a lot of junk (unexpected and weird payloads) to our API endpoints. We can then monitor our backend for exceptions, errors or crashes, and improve the security and reliability of our system by fixing any issues uncovered.
 
 
 ## To run the tests
 
 - Split the terminal. 
 - cd to the transfer-connect folder and run npm start. This is to ensure that the TransferConnect server is running.
-- On the other half of the terminal, cd to the tests folder (inside transfer-connect) and type the command
+- On the other half of the terminal, cd to the tests folder and type the command
 DEBUG=plugin:fuzzer artillery run \
     --variables '{ "token": <JWT_TOKEN_SECRET_TEST> }' \
     fuzzingTestTC.yaml
