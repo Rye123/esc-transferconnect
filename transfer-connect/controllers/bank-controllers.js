@@ -16,7 +16,7 @@ const getTransferByRef = async (req, res, next) => {
     const {referenceNumber, partnerCode} = req.body;
     console.log(referenceNumber);
     let transfer = {};
-    let projection = { "_id": 0, referenceNumber: 1, status: 1, };
+    let projection = { "_id": 0, referenceNumber: 1, status: 1, outcomeDetails: 1};
     try {
         if (referenceNumber === "all") {
             query = {partnerCode: partnerCode}
