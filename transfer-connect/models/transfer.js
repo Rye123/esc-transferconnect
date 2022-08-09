@@ -21,8 +21,10 @@ const transferSchema = new Schema({
                 return /^(\d{12})$/.test(v)
             } else if (this.loyaltyProgram === "CONRADCLUB") {
                 return /^(\d{9})$/.test(v)
+            } else if (this.loyaltyProgram === "QFLYER") {
+                return /^(\d{10})$/.test(v);
             } else if (this.loyaltyProgram === "MILLENIUMREWARDS") {
-                return /^(\d{10}[A-Za-z]{1})$/.test(v)
+                return /^(\d{9}[A-Za-z]{1})$/.test(v)
             } else {
                 return false;
             }
