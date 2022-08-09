@@ -7,7 +7,11 @@ class UserSettings {
     constructor(userSettings) {
         this.email = userSettings.email || null;
         this.phoneNumber = userSettings.phoneNumber || null;
-        this.pushNotif = userSettings.pushNotif || false;
+        this.sendTo = {
+            email: userSettings.sendTo?.email || false,
+            phoneNumber: userSettings.sendTo?.phoneNumber || false,
+            pushNotif: userSettings.sendTo?.pushNotif || false
+        }
     }
 }
 

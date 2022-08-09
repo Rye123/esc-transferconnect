@@ -55,8 +55,23 @@ const LoyaltyProgramMembershipPage = () => {
                 navigate({ pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}` });
             })
             .catch(err => {
+                const inputShake = [
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(-4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                ];
+
+                const inputShakeTiming = {
+                    duration: 250,
+                    iterations: 1
+                };
+                Array.prototype.forEach.call(document.getElementsByClassName('input'), elem => {
+                    elem.animate(inputShake, inputShakeTiming);
+                });
                 console.error("LoyaltyProgramMembershipPage Error:", err);
-            })
+            });
     }
     const handleFormSubmission_modify = (event) => {
         event.preventDefault();
@@ -67,8 +82,23 @@ const LoyaltyProgramMembershipPage = () => {
                 navigate({ pathname: `/transfers/make_transfer`, search: `?loyaltyProgramId=${loyaltyProgram.loyaltyProgramId}` });
             })
             .catch(err => {
+                const inputShake = [
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(-4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                    { transform: 'translate(4px, 0px)' },
+                    { transform: 'translate(0px, 0px)' },
+                ];
+
+                const inputShakeTiming = {
+                    duration: 250,
+                    iterations: 1
+                };
+                Array.prototype.forEach.call(document.getElementsByClassName('input'), elem => {
+                    elem.animate(inputShake, inputShakeTiming);
+                });
                 console.error("LoyaltyProgramMembershipPage Error:", err);
-            })
+            });
     }
 
     // Return HTML
@@ -113,7 +143,7 @@ const LoyaltyProgramMembershipPage = () => {
                                 <i className='material-icons'>card_membership</i>
                             </div>
                             <div>
-                                <input className='input' type='text' value={membershipIdInput} onChange={(event) => setMembershipIdInput(event.target.value)} placeholder='Membership ID' /><br />
+                                <input className='input' name='membershipIdInput' type='text' value={membershipIdInput} onChange={(event) => setMembershipIdInput(event.target.value)} placeholder='Membership ID' /><br />
                             </div>
                         </div>
                         <button className='btn' type='submit'>Save Membership</button>

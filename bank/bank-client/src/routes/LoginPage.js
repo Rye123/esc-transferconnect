@@ -77,13 +77,13 @@ const LoginPage = () => {
                 <div className="login-container">
                     <form onSubmit={handleFormSubmission}>
                         <img className="avatar" src='/images/profile.svg' alt="Profile"></img>
-                        <h2>Digibank</h2>
+                        <h2>My Super Trustworthy Bank</h2>
                         <div className="input-div one">
                             <div className="i">
                                 <i className="material-icons">person</i>
                             </div>
                             <div>
-                                <input className="input" type="text" placeholder='Username' value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
+                                <input className="input" name="username" type="text" placeholder='Username' value={usernameValue} onChange={(event) => setUsernameValue(event.target.value)} /><br />
                             </div>
                         </div>
                         <div className="input-div two">
@@ -91,7 +91,7 @@ const LoginPage = () => {
                                 <i className="material-icons">lock</i>
                             </div>
                             <div>
-                                <input className="input" type="password" placeholder='Password' value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
+                                <input className="input" name="password" type="password" placeholder='Password' value={passwordValue} onChange={(event) => setPasswordValue(event.target.value)} /><br />
                             </div>
                         </div>
                         <button className="btn" type="submit">Login</button>

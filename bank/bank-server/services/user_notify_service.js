@@ -1,12 +1,39 @@
 const nodemailer = require('nodemailer');
+const webpush = require('web-push');
+const twilio = require('twilio');
 
 /* Errors */
 const InvalidTransferError = require('../errors/InvalidTransferError');
 
+/* Constants */
 const sourceEmailUser = {
     user: "esctransferconnectc4g10@gmail.com",
     pass: process.env.EMAIL_PASSWORD
 }
+const vapidKeys = {
+    publicKey: process.env.VAPID_PUB_KEY,
+    privateKey: process.env.VAPID_PRIV_KEY
+}
+const twilioDetails = {
+    accountSid: process.env.TWILIO_ACCOUNT_SID,
+    authToken: process.env.TWILIO_AUTH_TOKEN,
+    number: process.env.TWILIO_NUMBER
+}
+
+// Initialise Web Push Notifications
+webpush.setVapidDetails(
+    "mailto:esctransferconnectc4g10@gmail.com",
+    vapidKeys.publicKey,
+    vapidKeys.privateKey
+);
+// Initialise Twilio
+const twilioClient = new twilio(
+    twilioDetails.accountSid,
+    twilioDetails.authToken
+);
+
+
+
 
 /**
  * Sends an email to `email`, with the given `subject` and content `text`.
@@ -40,7 +67,27 @@ function sendEmail(email, subject, text) {
     });
 }
 
+function sendSMS(body, to) {
+    return twilioClient.messages
+    .create({
+        body: body,
+        to: to,
+        from: twilioDetails.number
+    });
+}
+
 const user_notify_service = {
+    subscribePushNotifs: (subscription) => {
+        const payload = JSON.stringify({
+            title: "MSTB: Subscribed to notifications!",
+            body: "You have successfully subscribed to notifications from our bank!"
+        });
+        webpush.sendNotification(subscription, payload)
+        .catch(err => {
+            console.error("PushNotif Error: ", err);
+        })
+    },
+
     notifyUserOfCompletedTransfer: (user, transfer) => {
         let subjectText = "";
         let contentText = "";
@@ -55,17 +102,52 @@ const user_notify_service = {
                 if (transfer.statusMessage !== "")
                     contentText += `\nThere was the following error message: ${transfer.statusMessage}`;
                 break;
-        
+
             default:
                 throw new InvalidTransferError;
         }
 
         const userEmail = user.userSettings?.email || "";
-        if (userEmail !== "") {
-            // TODO: account for invalid emails
-            return sendEmail(userEmail, subjectText, contentText);
+        const userPushNotifSub = user.userSettings?.pushNotifSub || "";
+        const userPhoneNumber = user.userSettings?.phoneNumber || "";
+        const promiseChain = [];
+        if (userEmail !== "" && user.userSettings?.sendTo?.email === true) {
+            promiseChain.push(sendEmail(userEmail, subjectText, contentText)
+                .catch(err => {
+                    console.log(`Could not send email due to following error: ${err.message}`);
+                    return Promise.resolve(false);
+                })
+            );
         }
-        return Promise.resolve(false);
+        if (userPushNotifSub !== "" && user.userSettings?.sendTo?.pushNotif === true) {
+            const payload = JSON.stringify({
+                title: subjectText,
+                body: contentText
+            })
+            promiseChain.push(
+                webpush.sendNotification(userPushNotifSub, payload)
+                .catch(err => {
+                    console.log(`Could not send push notification due to following error: ${err.message}`);
+                    return Promise.resolve(false);
+                })
+            )
+        }
+        if (userPhoneNumber !== "" && user.userSettings?.sendTo?.phoneNumber === true) {
+            const body = `${subjectText}\n${contentText}`;
+            promiseChain.push(
+                sendSMS(body, userPhoneNumber)
+                .catch(err => {
+                    console.log(`Could not send SMS due to following error: ${err.message}`);
+                    return Promise.resolve(false);
+                })
+            )
+        }
+        return Promise.allSettled(promiseChain)
+        .then(results => {
+            if (results.includes(false))
+                return false;
+            return true;
+        });
 
     }
 }

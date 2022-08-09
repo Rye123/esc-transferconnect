@@ -14,40 +14,11 @@ const getUserLocally = () => {
     return JSON.parse(localStorage.getItem(localStorageUserVar)) || {}
 }
 
-export const UserAuthProvider = ({children }) => {
+export const UserAuthProvider = ({ children }) => {
     const [user, setUser] = useState(getUserLocally());
 
     useEffect(() => {
         user_auth_service.user_getinfo()
-        .then(user => {
-            setUser(user);
-            storeUserLocally(user);
-        })
-        .catch(() => {
-            setUser({});
-            storeUserLocally({});
-        });
-    }, []);
-
-
-    const value = {
-        user: user,
-        login: async (credentials) => {
-            return user_auth_service.user_login(credentials)
-            .then(user => {
-                setUser(user);
-                storeUserLocally(user);
-            });
-        },
-        logout: async() => {
-            return user_auth_service.user_logout()
-            .finally(() => {
-                setUser({});
-                storeUserLocally({});
-            })
-        },
-        update: async () => {
-            user_auth_service.user_getinfo()
             .then(user => {
                 setUser(user);
                 storeUserLocally(user);
@@ -56,6 +27,35 @@ export const UserAuthProvider = ({children }) => {
                 setUser({});
                 storeUserLocally({});
             });
+    }, []);
+
+
+    const value = {
+        user: user,
+        login: async (credentials) => {
+            return user_auth_service.user_login(credentials)
+                .then(user => {
+                    setUser(user);
+                    storeUserLocally(user);
+                });
+        },
+        logout: async () => {
+            return user_auth_service.user_logout()
+                .finally(() => {
+                    setUser({});
+                    storeUserLocally({});
+                })
+        },
+        update: async () => {
+            user_auth_service.user_getinfo()
+                .then(user => {
+                    setUser(user);
+                    storeUserLocally(user);
+                })
+                .catch(() => {
+                    setUser({});
+                    storeUserLocally({});
+                });
         }
     }
 

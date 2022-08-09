@@ -2,11 +2,14 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
-    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #316855cc #a0a1a42a;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 a {
@@ -247,4 +250,12 @@ form h2 {
 
 .input:disabled {
     color: #c7c7c7;
+}
+
+input[type='checkbox'] {
+    margin-right: 5px;
+}
+
+input[type='checkbox']:checked {
+    accent-color: #25916d;
 }

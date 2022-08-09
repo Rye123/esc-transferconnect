@@ -43,3 +43,78 @@ For more details on how to access these functionalities, look at examples at `te
 - Use Case 5
     - Poll SFTP server for data
     - Return webhook to bank when transfer completed
+
+## API Reference
+
+All API calls expect the token to be set in the `Authorization` header, in the form `Bearer ${token}`.
+
+### Loyalty Program Information
+
+`GET /api/program/info/:pid`
+- `pid`: Loyalty Program ID
+
+Returns the loyalty program information in JSON format:
+
+```json
+{
+    "programId": "",
+    "programName": "",
+    "currencyName": "",
+    "processingTime": "",
+    "description": "",
+    "enrollmentLink": "",
+    "tncLink": "",
+    "imgSrc": ""
+}
+```
+
+### Loyalty Program ID Validation
+
+`GET /api/program/:pid/:lpid`
+- `pid`: Loyalty Program ID
+- `lpid`: Loyalty Program Membership ID to validate
+
+Returns if the given loyalty program membership ID is a valid membership ID for the given loyalty program.
+- If it is valid, returns `true`.
+- Otherwise, a 404 error is returned.
+
+### Accrual Request Update
+
+`POST /api/bank/accrual-update`
+- `referenceNumber`: Bank reference number for the transfer
+- `partnerCode`: Bank ID
+
+Returns the status of a given transfer.
+```json
+{
+    "referenceNumber": "(referenceNumber)", 
+    "status": "(current status)",
+    "outcomeDetails": "(current message)"
+}
+```
+The status can be:
+- `processing`
+- `completed`
+- `error`
+
+The outcomeDetails can be:
+- `success`
+- `member not found`
+- `member name mismatch`
+- `member account closed`
+- `member account suspended`
+- `member ineligible for accrual`
+- `unable to process, please contact support for more information`
+
+### Accrual Request 
+`POST /api/bank/accrual-req`
+- `memberId`: Loyalty Program Membership ID
+- `memberFirstName`
+- `memberLastName`
+- `amount`: Amount in points to transfer
+- `referenceNumber`: Bank reference number for the transfer
+- `loyaltyProgram`: The loyalty program ID for the given request.
+- `partnerCode`: Bank ID
+
+Creates a transfer request, with the given membership.
+Returns a 201 success response if successful.
