@@ -161,7 +161,7 @@ router.post('/tc/updateTransferStatus', (request, response, next) => {
             });
         })
         .catch(err => {
-            return err;
+            return next(err);
         })
         .then(updatedTransfer => {
             newTransfer = updatedTransfer;
