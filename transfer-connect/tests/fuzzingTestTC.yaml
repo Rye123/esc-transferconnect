@@ -1,0 +1,48 @@
+config:
+  target: "http://localhost:3002"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+  plugins:
+    fuzzer: {}
+scenarios:
+  - name: "Bank server interaction with loyalty program"
+    flow:
+    - get:
+          url: "/api/program/info/{{ naughtyString }}" # Get information about a loyalty program (Should fail since Program dosen't exist)
+          headers:
+            authorization: "{{token}}"
+    - get:
+          url: "/api/program/validate/{{ naughtyString }}/123456789" # Validate loyalty points id, given program (Should fail since Program dosen't exist)
+          headers:
+            authorization: "{{token}}"
+    - get:
+          url: "/api/program/validate/CONRADCLUB/{{ naughtyString }}" # Validate loyalty points id, given program (Should fail loyalty points id dosen't exist)
+          headers:
+            authorization: "{{token}}"
+    - post:
+          url: "/api/bank/accrual-req" # Bank server sending information to TransferConnect (Should fail since partnerCode dosen't exist)
+          headers:
+            authorization: "{{token}}"
+          json:
+            memberId: "345679890L"
+            memberFirstName: "John"
+            memberLastName: "Doe"
+            amount: "{{ naughtyString }}"
+            referenceNumber: 2020080101
+            partnerCode: "{{ naughtyString }}"
+            loyaltyProgram: "GOPOINTS"
+    - post:
+          url: "/api/bank/accrual-update" # Bank server to get information about previously sent transfer from TC (Should fail since partnerCode is invalid)
+          headers:
+            authorization: "{{token}}"
+          json:
+            referenceNumber: 2022080101
+            partnerCode: "{{ naughtyString }}"
+    - post:
+            url: "/api/bank/accrual-update" # Bank server to get information about previously sent transfer from TC (Should fail since referenceNumber and partnerCode is invalid)
+            headers:
+              authorization: "{{token}}"
+            json:
+              referenceNumber: "{{ naughtyString }}"
+              partnerCode: "{{ naughtyString }}"
