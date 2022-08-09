@@ -25,12 +25,13 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 
 /* schedule sending data to SFTP in the background (currently every min at 42nd second)*/
-const job_send = schedule.scheduleJob('0 * * * * *',() => SFTPClient.sendDailyTransfers(loyaltyPrograms));
-const job_handback = schedule.scheduleJob('20 * * * * *',() => sendHandbackFiles(loyaltyPrograms));
-
-const job_update = schedule.scheduleJob('40 * * * * *',() => SFTPClient.updateDailyTransfers(loyaltyPrograms));
+// const job_send = schedule.scheduleJob('0 * * * * *',() => SFTPClient.sendDailyTransfers(loyaltyPrograms));
+// const job_handback = schedule.scheduleJob('20 * * * * *',() => sendHandbackFiles(loyaltyPrograms));
+// const job_update = schedule.scheduleJob('40 * * * * *',() => SFTPClient.updateDailyTransfers(loyaltyPrograms));
 
 app.use(bodyParser.json());
+
+app.use(morgan('dev'));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
