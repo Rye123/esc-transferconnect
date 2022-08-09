@@ -30,19 +30,10 @@ This will specifically install ssh2 dependencies for the SFTP client into the `n
 - Can request for transfer request information (**Use Case #4:** Return status of transaction until its completion.)
 - Use authentication for requesting transfer request information by bank (**Use Case #1, #2, #3, #4**)
 - Implement connection from backend to SFTP server mimicking the Loyalty Program server (**Use Case 5**)
-
-For more details on how to access these functionalities, look at examples at `tests/test.rest`
-
-## Future Functionality
-- Use Case 3
-    - Send transfer data into bank-specific folder in sftp
-- Use Case 4
-    - Update accrual Request Route
-        - Take in accrual Request ID and search accordingly, instead of document ID
-        - Ensure uniqueness of accrual Request IDs
-- Use Case 5
     - Poll SFTP server for data
     - Return webhook to bank when transfer completed
+
+For more details on how to access these functionalities, look at examples at `tests/test.rest`
 
 ## API Reference
 
