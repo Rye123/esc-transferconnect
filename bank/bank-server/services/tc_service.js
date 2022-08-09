@@ -52,7 +52,7 @@ const getAllPrograms = () => {
                     description: program.description,
                     enrolmentLink: program.enrollmentLink,
                     tncLink: program.tncLink,
-                    imgSrc: undefined
+                    imgSrc: program.imgSrc
                 });
                 // update if it exists, otherwise add
                 queriesList.push(
