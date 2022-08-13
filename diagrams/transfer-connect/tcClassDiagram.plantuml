@@ -1,0 +1,48 @@
+@startuml Class Diagram for TC
+
+class TC {
+    - Array<String> pointsIDValidationFormat    
+    + getinfo(String programID)
+    + getTransfer(String transferID)
+    + setTransfer(Document transfer)
+    + validatePointsID(String pointsID)
+    + sendAccrual(Documents transfers)
+    + notifyBank(URL webhook, JSON transferData)
+
+}
+
+class Transfer {
+    - String _id
+    - String memberId
+    - String memberFirstName
+    - String MemberLastName
+    - String transferDate
+    - String amount
+    - String referenceNumber
+    - String partnerCode
+    - String status
+}
+
+class Loyalty_Program {
+    - String _id
+    - String programId
+    - String programName
+    - String currencyName
+    - String processingTime
+    - String description
+    - String enrollmentLink
+    - String tncLink
+}
+
+class Bank_Partner {
+    - String _id
+    - String bankId
+    - String bankName
+    - String bankCredentials
+}
+
+TC "0..1" --- "0..*" Transfer
+TC "0..1" --- "0..*" Loyalty_Program
+TC "0..1" --- "0..*" Bank_Partner
+
+@enduml
