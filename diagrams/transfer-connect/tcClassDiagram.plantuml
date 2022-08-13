@@ -1,14 +1,14 @@
 @startuml Class Diagram for TC
 
 class TC {
-    - Array<String> pointsIDValidationFormat    
-    + getinfo(String programID)
-    + getTransfer(String transferID)
-    + setTransfer(Document transfer)
-    + validatePointsID(String pointsID)
-    + sendAccrual(Documents transfers)
-    + notifyBank(URL webhook, JSON transferData)
-
+    - Array<String> pointsIDValidationFormat
+    - Array<String> loyaltyPrograms    
+    + getTransferByRef(String referenceNumber, String partnerCode)
+    + createTransfer(Document transfer)
+    + getLoyaltyByProgramId(String programID)
+    + getLPIDValidation(String pointsID, String ProgramID)
+    + sendDailyTransfers(CSV transfers)
+    + updateDailyTransfers(URL webhook, JSON transferData)
 }
 
 class Transfer {
@@ -20,10 +20,13 @@ class Transfer {
     - String amount
     - String referenceNumber
     - String partnerCode
+    - String loyaltyProgram
     - String status
+    - String outcomeDetails
+    - String sentToSFTP
 }
 
-class Loyalty_Program {
+class Loyalties {
     - String _id
     - String programId
     - String programName
@@ -32,8 +35,8 @@ class Loyalty_Program {
     - String description
     - String enrollmentLink
     - String tncLink
+    - String imgSrc
 }
-
 class Bank_Partner {
     - String _id
     - String bankId
@@ -44,5 +47,4 @@ class Bank_Partner {
 TC "0..1" --- "0..*" Transfer
 TC "0..1" --- "0..*" Loyalty_Program
 TC "0..1" --- "0..*" Bank_Partner
-
 @enduml
