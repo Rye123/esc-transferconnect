@@ -1,116 +1,83 @@
 @startuml TransferConnect: Accrual Request
 skinparam ParticipantPadding 10
 skinparam BoxPadding 5
-
 hide footbox
-title **TransferConnect: Accrual Request Sequence**
-
 
 participant BankClient as "Bank Client"
 
 box "Bank Server Service" #LightYellow
-  participant BankServer as "Bank Server"
-  participant BankRequestsDB as "Bank Database:\nAccrual Requests"
+  participant BankServer as "**Bank Server**" #white
+  participant BankDB as "Bank Database"
 end box
 
 box "TransferConnect" #LightBlue
-  participant TransferConnect as "TransferConnect"
-  participant TCBanksDB as "TC Database: Partners"
-  participant TCBankAccrualsDB as "TC Database: Accruals"
+  participant TransferConnect as "**TransferConnect**" #white
+  participant TCDB as "TC Database"
 end box
 
 participant LoyaltyProgram as "Loyalty Program"
 
-note over BankServer: Possesses:\n\t- Unique code ""partner_code"" representing the bank.\n\t- API key ""bank_api_key"" for authentication.\n\t- TransferConnect key ""tc_sig"" for authenticating inbound requests from TransferConnect.
-/ note over TransferConnect: Possesses:\n\t- ""tc_api_key"". Used to generate a unique signature for each partner.
+note over BankServer: Possesses:\n\t- Unique code ""partner_code"" representing the bank.
+note over BankServer,TransferConnect
+Both BankServer and TransferConnect possess 2 shared keys:
+\t- ""tc_api_key"": API Key to authenticate bank server requests to TransferConnect
+\t- ""bank_webhook_key"": Key to authenticate TransferConnect requests to a bank's webhook.
+The bank's webhook URL is preshared with TransferConnect.
+endnote
 
-group Client making Accrual Request
-    BankClient -> BankServer: ""POST {bank server URL}/api/user-points-transfer""\n""{accrual_request}""
+group User making Accrual Request
+    BankClient -> BankServer: User makes accrual request:\n""POST {bank server URL}/api/transfers""
     BankServer ->> BankServer: Server conducts necessary authorisation checks
     BankServer ->> BankServer: Verify Client has enough points.
     alt not enough points
         BankClient <<-- BankServer: HTTP 402 Payment Required, ""{error: 'insufficient points'}""
     else enough points
-        BankServer ->> BankRequestsDB: ""STORE""\n""{""\n\t""accrual_request""\n\t""...""\n\t""status: 'pending'""\n""}""
-        BankServer <-- BankRequestsDB: Request stored, with reference number ""{ref_id}""
+        BankServer ->> BankDB: Store the accrual request, with:\n\t- ""status: pending""\n\t- ""sentToTC: true""
+        BankServer <-- BankDB: Request stored, with reference number ""{ref_id}""
         BankClient <<-- BankServer: HTTP 202 Accepted
-        BankServer -> BankServer: Generate webhook: ""{bank server URL}/api/tc-accrual-update/:{ref_id}""
-        BankServer ->> TransferConnect: ""POST {transferconnect URL}/api/bank/accrual-req ""\n{\n\t""accrual_request""\n\t""...""\n\t""partner_code: {partner_code},""\n\t""api_key: {bank_api_key}""\n\t""ref: {ref_id},""\n\t""completion_hook: {webhook when request complete}""\n""}""
-
-        TransferConnect ->> TCBanksDB: ""QUERY {partner_code: {partner_code}, api_key: {bank_api_key}}""
-        TCBanksDB -> TCBanksDB: Check if partner exists\nwith correct credentials
-        alt credentials valid
-            TransferConnect <-- TCBanksDB: Partner exists
-            TransferConnect ->> TCBankAccrualsDB: Store POSTed data with ""{status: 'unsent'}""
-            BankServer <<-- TransferConnect: HTTP 201 Created
-        else credentials invalid
-            TransferConnect <-- TCBanksDB: Partner doesn't exist
-            BankServer <<-- TransferConnect: HTTP 401 Unauthorised
-            BankServer ->> BankRequestsDB: Update status with error
-            hnote over BankServer: Notify user of erroneous accrual\ne.g. Email, notification.
+        BankServer ->> TransferConnect: Forward the accrual request, along with ""partner_code""\nand ""tc_api_key"".
+        alt TC is up
+            TransferConnect ->> TCDB: Query for ""{partner_code: {partner_code}, api_key: {tc_api_key}}""
+            TCDB -> TCDB: Check if partner exists\nwith correct credentials
+            alt credentials valid
+                TransferConnect <-- TCDB: Partner exists
+                TransferConnect -> TransferConnect: Verify accrual request
+                alt valid accrual request
+                    TransferConnect ->> TCDB: Store POSTed data with ""{status: 'unsent'}""
+                    BankServer <<-- TransferConnect: HTTP 201 Created
+                else invalid accrual request
+                    BankServer <<-- TransferConnect: HTTP 400 Bad Request
+                    BankServer ->> BankDB: Update status with error
+                    hnote over BankServer: Notify user of erroneous accrual\ne.g. Email, notification.
+            end
+            else credentials invalid
+                TransferConnect <-- TCDB: Partner doesn't exist
+                BankServer <<-- TransferConnect: HTTP 401 Unauthorised
+                BankServer ->> BankDB: Update accrual request with ""sentToTC: false"".
+                BankServer -> BankServer: Log error -- this has to be resolved manually.
+            end
+        else no response from TC (TC down)
+            BankServer -> BankServer: Timeout on waiting for response.
+            BankServer ->> BankDB: Update accrual request with ""sentToTC: false"".
         end
+    end
+end
+
+group Bank making daily checks of unsent requests
+    BankServer ->> BankDB: Query all data with ""{ sentToTC: false }""
+    BankServer <-- BankDB: (response)
+    group for each unsent accrual:
+        BankServer ->> TransferConnect: (Retry request forwarding)
+        note over BankServer,TransferConnect: (Refer to the above for Server-TC interactions.)
     end
 end
 
 group TransferConnect making daily Accrual Request to LoyaltyProgram
-    TransferConnect ->> TCBankAccrualsDB: Query all data with ""{status: 'unsent'}""
-    TransferConnect <-- TCBankAccrualsDB: (data with ""{status: 'unsent'}"")
+    TransferConnect ->> TCDB: Query all data with ""{status: 'unsent'}""
+    TransferConnect <-- TCDB: (data with ""{status: 'unsent'}"")
     TransferConnect ->> TransferConnect: Collate into single accrual file with CSV format
     TransferConnect ->> LoyaltyProgram: SFTP_POST single accrual file
-    TransferConnect ->> TCBankAccrualsDB: Set all data with ""{status: 'unsent'}"" to ""{status: 'pending'}""
-end
-
-group TransferConnect polling for Handback File from LoyaltyProgram
-    TransferConnect ->> LoyaltyProgram: SFTP_GET new Handback File
-    hnote over TransferConnect: If no handback file is found, transaction ends here
-    TransferConnect <<-- LoyaltyProgram: Single handback file with CSV format
-    TransferConnect ->> TransferConnect: Parse handback file into JSON format
-    TransferConnect ->> TCBankAccrualsDB: Match all accruals with ""{status: 'pending'}"" with their\nupdated values, and GET them
-    TransferConnect <<-- TCBankAccrualsDB: List of updated accruals
-    group (for each accrual)
-        TransferConnect --> TCBankAccrualsDB: Update relevant accrual (with reference number)\nwith ""{status: 'fulfilled'}""
-        TransferConnect -> TransferConnect: Generate signature ""tc_sig = HMAC(bank_api_key, tc_api_key)""\nbased on the corresponding ""partner_code""
-        BankServer <<- TransferConnect: POST to assigned webhook for the given reference number, with ""tc_sig"".
-        alt webhook exists and authentication was successful (with ""tc_sig"")
-            BankServer ->> BankRequestsDB: Update given accrual with relevant status (e.g. fulfilled, error)
-            hnote over BankServer: Notify user of updated accrual\ne.g. Email, notification.
-            BankServer --> TransferConnect: HTTP 202 Accepted
-        else webhook doesn't exist or authentication unsuccessful
-            BankServer --> TransferConnect: HTTP 404 Not Found, ""{error: 'bad webhook'}""
-        end
-    end
-end
-
-
-
-group Bank Server polling for update (i.e. no webhook)
-    BankServer ->> BankRequestsDB: Query for all data with ""{status: 'pending'}""
-    BankServer <-- BankRequestsDB: Data
-    BankServer -> BankServer: Store reference numbers as an array ""{accrual_refs}""
-    BankServer ->> TransferConnect: ""POST {transferconnect URL}/api/bank/accrual-update ""\n{\n\t""accrual_refs: {accrual_refs}""\n\t""partner_code: {partner_code},""\n\t""api_key: {bank_api_key}""\n""}""
-    TransferConnect ->> TCBanksDB: ""QUERY {partner_code: {partner_code}, api_key: {bank_api_key}}""
-    TCBanksDB -> TCBanksDB: Check if partner exists\nwith correct credentials
-    alt credentials valid
-        TransferConnect <-- TCBanksDB: Partner exists
-        TransferConnect ->> TCBankAccrualsDB: Query for all data with ""{partner_code: {partner_code}, ref: {accrual_refs[i]}}""
-        TransferConnect <-- TCBankAccrualsDB: Data
-        BankServer <<-- TransferConnect: HTTP 200 OK, Data
-        group (for each updated accrual)
-            BankServer ->> BankRequestsDB: Update given accrual with relevant status (e.g. fulfilled, error)
-            hnote over BankServer: Notify user of updated accrual\ne.g. Email, notification.
-        end
-    else credentials invalid
-        TransferConnect <-- TCBanksDB: Partner doesn't exist
-        BankServer <<-- TransferConnect: HTTP 401 Unauthorised
-    end
-end
-
-group Client-Server Request Interaction
-    BankClient -> BankServer: ""GET {bank server URL}/api/user-get-history/:id""
-    BankServer ->> BankServer: Server conducts necessary authorisation checks
-    BankServer ->> BankRequestsDB: Query for all requests of the current user
-    BankServer <-- BankRequestsDB: All relevant requests
-    BankClient <<-- BankServer: HTTP 200 OK, ""{requests with {ref_id}}""
+    TransferConnect ->> TCDB: Set all data with ""{status: 'unsent'}"" to ""{status: 'pending'}""
 end
 
 @enduml

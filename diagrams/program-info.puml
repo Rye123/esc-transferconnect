@@ -8,45 +8,44 @@ title **Program Information**
 participant BankClient as "Bank Client"
 
 box "Bank Server Service" #LightYellow
-  participant BankCache as "Bank Server Cache"
-  participant BankServer as "Bank Server"
+  participant BankDB as "Bank Database"
+  participant BankServer as "**Bank Server**" #white
 end box
 
 box "TransferConnect" #LightBlue
-  participant TransferConnect as "TransferConnect"
-  participant TCInfoDB as "TC Database: Program Information"
+  participant TransferConnect as "**TransferConnect**" #white
+  participant TCDB as "TC Database"
 end box
 
-participant LoyaltyProgram as "Loyalty Program"
-
-group Daily polling for information
+group TransferConnect Daily Polling for Information
   TransferConnect ->> LoyaltyProgram: ""SFTP_GET"" program info for ""{id}""
   TransferConnect <<-- LoyaltyProgram: ""SFTP_RESPONSE {content: {program-info for {id}}}""
-  TransferConnect ->> TCInfoDB: ""DB_STORE/DB_UPDATE {id: {id}, content: {program-info for {id}}}""
+  TransferConnect ->> TCDB: ""DB_STORE/DB_UPDATE {id: {id}, content: {program-info for {id}}}""
+end
+
+group Bank Daily Polling for Information
+  BankServer ->> TransferConnect: ""GET /api/program/info/:id""
+    TransferConnect ->> TCDB: Query for ""program-info for {id}""
+    TCDB -> TCDB: Search for {id}
+    alt {id} in TC Database
+      TransferConnect <-- TCDB: ""{id: {id}, content: {program-info for {id}}}""
+      BankServer <<-- TransferConnect: HTTP 200 OK, ""{id: {id}, content: {program-info for {id}}}""
+      BankDB <<- BankServer: ""{id: {id}, content: {program-info for {id}}}""
+    else {id} NOT in TC Database
+      TransferConnect <-- TCDB: ""DB MISS""
+      BankServer <<-- TransferConnect: HTTP 404 Not Found
+    end
 end
 
 group User wants to view program with ID {id}.
-  BankClient ->> BankServer: ""GET /api/program-info/:id""
+  BankClient ->> BankServer: ""GET /api/loyaltyPrograms?loyaltyProgramId=:id""
 
-  BankCache <<- BankServer: CACHE_REQUEST ""program-info for {id}""
-  alt {id} in cache
-    BankCache --> BankServer: ""{id: {id}, content: {program-info for {id}}}""
+  BankDB <<- BankServer: Query for ""program-info for {id}""
+  alt {id} in DB
+    BankDB --> BankServer: ""{id: {id}, content: {program-info for {id}}}""
     BankClient <<-- BankServer: HTTP 200 OK, ""{id: {id}, content: {program-info for {id}}}""
-  else {id} is NOT in cache OR info is outdated
-    BankCache --> BankServer: CACHE MISS
-    BankServer ->> TransferConnect: ""GET /api/program-info/:id""
-    TransferConnect ->> TCInfoDB: ""DB_REQUEST program-info for {id}""
-    TCInfoDB -> TCInfoDB: Search for {id}
-    alt {id} in TC Database
-      TransferConnect <-- TCInfoDB: ""{id: {id}, content: {program-info for {id}}}""
-      BankServer <<-- TransferConnect: HTTP 200 OK, ""{id: {id}, content: {program-info for {id}}}""
-      BankCache <<- BankServer: ""{id: {id}, content: {program-info for {id}}}""
-      BankClient <<-- BankServer: HTTP 200 OK, ""{id: {id}, content: {program-info for {id}}}""
-    else {id} NOT in TC Database
-      TransferConnect <-- TCInfoDB: ""DB MISS""
-      BankServer <<-- TransferConnect: HTTP 404 Not Found
-      BankClient <<-- BankServer: HTTP 404 Not Found.
-    end
+  else {id} is not in DB
+    BankClient <<-- BankServer: HTTP 404 Not Found.
   end
 end
 @enduml

@@ -1,0 +1,71 @@
+@startuml TransferConnect: Accrual Request
+skinparam ParticipantPadding 10
+skinparam BoxPadding 5
+hide footbox
+
+box "Bank Server Service" #LightYellow
+  participant BankDB as "Bank Database"
+  participant BankServer as "**Bank Server**" #white
+end box
+
+box "TransferConnect" #LightBlue
+  participant TransferConnect as "**TransferConnect**" #white
+  participant TCDB as "TC Database"
+end box
+
+participant LoyaltyProgram as "Loyalty Program"
+
+note over BankServer: Possesses:\n\t- Unique code ""partner_code"" representing the bank.
+note over BankServer,TransferConnect
+Both BankServer and TransferConnect possess 2 shared keys:
+\t- ""tc_api_key"": API Key to authenticate bank server requests to TransferConnect
+\t- ""bank_webhook_key"": Key to authenticate TransferConnect requests to a bank's webhook.
+The bank's webhook URL is preshared with TransferConnect.
+endnote
+
+
+group TransferConnect polling for Handback File from LoyaltyProgram
+    TransferConnect ->> LoyaltyProgram: SFTP_GET new Handback File
+    hnote over TransferConnect: If no handback file is found, transaction ends here
+    TransferConnect <<-- LoyaltyProgram: Single handback file with CSV format
+    TransferConnect ->> TransferConnect: Parse handback file into JSON format
+    TransferConnect ->> TCDB: GET all accruals with updated values.
+    TransferConnect <<-- TCDB: List of updated accruals
+    group (for each accrual)
+        TransferConnect --> TCDB: Update relevant accrual (with reference number)\nwith ""{status: 'completed'}""
+        BankServer <<- TransferConnect: POST to assigned webhook for the given reference number, with ""bank_webhook_key"".
+        alt webhook exists and authentication was successful
+            BankServer ->> BankDB: Update given accrual with relevant status (e.g. fulfilled, error)
+            hnote over BankServer: Notify user of updated accrual\ne.g. Email, notification.
+            BankServer --> TransferConnect: HTTP 202 Accepted
+        else webhook doesn't exist or authentication unsuccessful
+            BankServer --> TransferConnect: HTTP 404 Not Found, ""{error: 'bad webhook'}""
+        end
+    end
+end
+
+
+group Bank Server polling for update (i.e. no webhook)
+    BankServer ->> BankDB: Query for all data with ""{status: 'pending'}"" and ""{sentToTC: true}""
+    BankServer <-- BankDB: Data
+    BankServer -> BankServer: Store reference numbers as an array ""{accrual_refs}""
+    group (for each accrual)
+      BankServer ->> TransferConnect: ""POST {transferconnect URL}/api/bank/accrual-update ""\n{\n\t""accrual_refs: {accrual_ref}""\n\t""partner_code: {partner_code},""\n\t""api_key: {tc_api_key}""\n""}""
+      TransferConnect ->> TCDB: Query for ""{partner_code: {partner_code}, api_key: {tc_api_key}}""
+      TCDB -> TCDB: Check if partner exists\nwith correct credentials
+      alt credentials valid
+          TransferConnect <-- TCDB: Partner exists
+          TransferConnect ->> TCDB: Query for all data with ""{partner_code: {partner_code}, ref: {accrual_ref}}""
+          TransferConnect <-- TCDB: Data
+          BankServer <<-- TransferConnect: HTTP 200 OK, Data
+          BankServer ->> BankDB: Update given accrual with relevant status (e.g. fulfilled, error)
+          hnote over BankServer: Notify user of updated accrual\ne.g. Email, notification.
+          
+      else credentials invalid
+          TransferConnect <-- TCDB: Partner doesn't exist
+          BankServer <<-- TransferConnect: HTTP 401 Unauthorised
+      end
+    end
+end
+
+@enduml
