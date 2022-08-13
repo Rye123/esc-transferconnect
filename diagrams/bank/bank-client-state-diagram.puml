@@ -1,0 +1,67 @@
+@startuml Bank Client State Diagram
+hide empty description
+
+state NotLoggedIn as "Not Logged In" {
+    state LoginPage as "Logging in\n(Login Page)"
+}
+NotLoggedIn: In this state, the user does not possess a session token.
+
+state LoggedIn as "Authenticated" {
+    state isLoggedIn <<choice>>
+
+    state LogoutPage as "Logging out"
+
+    state ProgramsState as "Program Pages" {
+        state ViewingPrograms as "Viewing available programs\n(Loyalty Programs Page)"
+        state ViewingSpecificProgram as "Viewing program details\n(Program Details Page)"
+    }
+
+    state MembershipsState as "Membership Pages" {
+        state hasMembership <<choice>>
+        state CreatingMembership as "Creating membership\n(Create Program Membership Page)"
+        state EditingMembership as "Modifying membership details\n(Edit Program Membership Page)"
+        state membershipValid <<choice>>
+    }
+
+    state TransfersState as "Transfer Pages" {
+        state hasMembershipT <<choice>>
+        state MakingTransfer as "Making accrual request\n(Transfer Creation Page)"
+        state ViewingTransfers as "Viewing all transfers\n(Transfer History Page)"
+        state ViewingSpecificTransfer as "Viewing transfer details\n(Transfer Details Page)"
+    }
+    TransfersState: Note: "transfers" and "accrual request" are used interchangeably.
+
+    state ModifySettings as "Modifying user settings\n(Settings Page)"
+}
+LoggedIn: In this state, the user possesses a valid session token.
+
+[*] -[#red]-> LoginPage: No session
+[*] -[#green]-> isLoggedIn: Session exists
+
+LoginPage -[#green]-> isLoggedIn: Auth success
+LoginPage -[#red]-> LoginPage: Auth failure
+
+isLoggedIn --> LogoutPage: User clicks on 'Logout'
+    LogoutPage --> LoginPage
+
+isLoggedIn --> ModifySettings: User clicks on 'Settings'
+
+isLoggedIn --> ViewingPrograms: User clicks on 'Programs'
+    ViewingPrograms --> ViewingSpecificProgram: User clicks on a program
+        ViewingSpecificProgram ----> hasMembership : User clicks 'Membership'
+            hasMembership --> CreatingMembership: User has no membership
+            hasMembership --> EditingMembership: User has membership
+        ViewingSpecificProgram --> hasMembershipT: User clicks 'Make Transfer'
+            hasMembershipT ----> CreatingMembership: User has no membership
+            hasMembershipT --> MakingTransfer: User has membership
+        EditingMembership -[dotted]-> EditingMembership: Membership ID invalid.
+        EditingMembership --> membershipValid: Membership ID valid.
+        CreatingMembership -[dotted]-> CreatingMembership: Membership ID invalid.
+        CreatingMembership --> membershipValid : Membership ID valid.
+            membershipValid --> MakingTransfer
+
+    MakingTransfer -[dotted]-> MakingTransfer: Invalid details (e.g. negative points)
+    MakingTransfer --> ViewingSpecificTransfer: Transfer successfully created
+
+isLoggedIn --> ViewingTransfers: User clicks on 'Transfers'
+    ViewingTransfers --> ViewingSpecificTransfer: User clicks on a transfer
