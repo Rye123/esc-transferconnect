@@ -1,5 +1,4 @@
-@startuml Class Diagram for TC
-
+@startuml
 class TC {
     - Array<String> pointsIDValidationFormat
     - Array<String> loyaltyPrograms    
@@ -26,7 +25,7 @@ class Transfer {
     - String sentToSFTP
 }
 
-class Loyalties {
+class Loyalty_Program {
     - String _id
     - String programId
     - String programName
