@@ -1,0 +1,92 @@
+@startuml Bank Use Case Diagram
+left to right direction
+
+actor User as u
+actor Bank as b
+actor TransferConnect as tc
+actor Hacker as h #pink;line:red;line.bold;text:red
+
+
+package "Bank Authentication" {
+    usecase "Login" as UCBA1
+    usecase "Check Authentication" as UCBA2
+}
+
+package "Loyalty Programs System" {
+    usecase "View list of supported loyalty programs" as UCLP1
+    usecase "View information on specific loyalty program" as UCLP2
+    usecase "Create/Update membership for specific loyalty program" as UCLP3
+}
+
+package "Accrual Request System (Points Transfer System)" {
+    usecase "Submit Accrual Request" as UCAR1
+    usecase "View all submitted requests" as UCAR2
+    usecase "View status on specific accrual request" as UCAR3
+    usecase "Receive update upon status change of accrual request" as UCAR4
+}
+
+package "TransferConnect Interaction System" {
+    usecase "Update list of supported loyalty programs" as UCTC1
+    usecase "Verify user's membership ID" as UCTC2
+    usecase "Submit user's accrual request" as UCTC3
+    usecase "Poll for accrual request status update" as UCTC4
+    usecase "Receive update on accrual request status" as UCTC5
+}
+
+package "Attacks" #pink;line:red;line.bold{
+    usecase "Falsify membership" as MUCUCLP3 #line:red;
+    usecase "Submit falsified accrual request" as MUCUCAR1 #line:red;
+    usecase "Steal user records" as MUCUCAR2n3
+}
+
+u ----> UCBA1
+UCBA1 ---> b
+u ----> UCBA2
+UCBA2 ---> b
+
+u ---> UCLP1
+UCLP1 ---> b
+u ---> UCLP2
+UCLP2 ---> b
+u ---> UCLP3
+UCLP3 ---> b
+UCLP3 ...> UCBA2: <<include>>
+
+u --> UCAR1
+UCAR1 --> b
+UCAR1 ...> UCBA2: <<include>>
+u --> UCAR2
+UCAR2 --> b
+UCAR2 ...> UCBA2: <<include>>
+u --> UCAR3
+UCAR3 --> b
+UCAR3 ...> UCBA2: <<include>>
+u <--- UCAR4
+UCAR4 <--- b
+
+b --> UCTC1
+UCTC1 --> tc
+b --> UCTC2
+UCTC2 --> tc
+b --> UCTC3
+UCTC3 --> tc
+b --> UCTC4
+UCTC4 --> tc
+b <-- UCTC5
+UCTC5 <-- tc
+
+UCLP3 ...> UCTC2: <<include>>
+UCAR1 ...> UCTC3: <<include>>
+
+h --> MUCUCLP3
+h --> MUCUCAR1
+h --> MUCUCAR2n3
+MUCUCLP3 ------> UCLP3 #red;text:red : <<threaten>>
+MUCUCAR1 ------> UCAR1 #red;text:red : <<threaten>>
+MUCUCAR2n3 ------> UCAR2 #red;text:red : <<threaten>>
+MUCUCAR2n3 ------> UCAR3 #red;text:red : <<threaten>>
+
+UCBA2 ------> MUCUCLP3 #blue;text:blue : <<prevents>>
+UCBA2 ------> MUCUCAR1 #blue;text:blue : <<prevents>>
+UCBA2 ------> MUCUCAR2n3 #blue;text:blue : <<prevents>>
+@enduml
