@@ -1,9 +1,7 @@
 @startuml Bank Class Diagram
 
-title "Bank Models"
-
 class Bank {
-    This represents the bank's database.
+    This represents the bank.
     ---
     + ""partner-code"": ""String""
     + ""users"": ""Array<User>""
@@ -21,15 +19,22 @@ class User {
     + ""lastName"": ""String""
     + {field} ""password"": ""String"" (hashed)
     + ""points"": ""Number""
-    + {field} ""loyaltyProgramMembershipIds"": ""Array<Number>"" \nIDs of memberships registered to this user
-    + {field} ""transferIds"": ""Array<Number>"" \nIDs of transfers made by this user
+    + {field} ""userSettings"": User's notification settings\n""{"" \n\t""email: String,"" \n\t""phoneNumber: String,"" \n\t""pushNotif: Boolean""\n ""}""
 }
 
 class LoyaltyProgram {
     This represents a single loyalty program.
     ---
     + ""loyaltyProgramId"": ""String""
-    + {field} ""exchange-rate"": ""Number"" (ratio TC points/Program points)
+    + ""loyaltyProgramName"": ""String""
+    + {field} ""exchange-rate"": ""Number"" (ratio of TC points/Program points)
+    + ""currencyName"": ""String""
+    + ""minTransfer"": ""Number""
+    + ""processingTime"": ""String""
+    + ""description"": ""String""
+    + ""enrolmentLink"": ""String"" of URL to program enrolment
+    + ""tncLink"": ""String"" of URL to program's terms and conditions
+    + {field} ""imgSrc"": ""String"" of URL to program's logo
 }
 
 class LoyaltyProgramMembership {
@@ -44,8 +49,13 @@ class Transfer {
     This represents a single accrual transfer made by a specific bank user\nunder a specific program membership.
     ---
     + ""transferId"": ""String""
-    + ""loyaltyProgramMemberId"": ""String""
-    + ""status"": ""String""
+    + ""loyaltyProgramMembershipId"": ""String""
+    + {field} ""status"": ""String""
+    + ""statusMessage"": ""String""
+    + ""submissionDate"": ""Date""
+    + ""points"": ""Number""
+    + ""userId"": ""String""
+    + {field} ""sentToTC"": ""Boolean"" representing whether or not\nthis transfer was successfully sent to TransferConnect.
 }
 
 Bank "1" *-- "0..*" User : ""users"" contains >
@@ -53,7 +63,7 @@ Bank "1" *---- "0..*" LoyaltyProgramMembership : ""loyaltyProgramMemberships"" c
 Bank "1" *-- "0..*" Transfer : ""transfers"" contains >
 Bank "1" *-- "0..*" LoyaltyProgram : ""loyaltyPrograms"" contains >
 
-User "1"*---"0..*" LoyaltyProgramMembership : ""loyaltyProgramMembershipIds"" contains\n""loyaltyProgramMembershipId"" of... \n >
+User "1"*---"0..*" LoyaltyProgramMembership : < ""userId"" associated with...
 User "1"*---"0..*" Transfer : ""transferIds"" contains ""transferId"" of...\n >
 
 LoyaltyProgram --- LoyaltyProgramMembership : has ""loyaltyProgramId"" <
