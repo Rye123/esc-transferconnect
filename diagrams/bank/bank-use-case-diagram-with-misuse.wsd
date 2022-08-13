@@ -14,14 +14,14 @@ package "Bank Authentication" {
 
 package "Loyalty Programs System" {
     usecase "View list of supported loyalty programs" as UCLP1
-    usecase "View information on specific loyalty program" as UCLP2
+    usecase "View information of specific loyalty program" as UCLP2
     usecase "Create/Update membership for specific loyalty program" as UCLP3
 }
 
 package "Accrual Request System (Points Transfer System)" {
     usecase "Submit Accrual Request" as UCAR1
     usecase "View all submitted requests" as UCAR2
-    usecase "View status on specific accrual request" as UCAR3
+    usecase "View status of specific accrual request" as UCAR3
     usecase "Receive update upon status change of accrual request" as UCAR4
 }
 
@@ -43,6 +43,7 @@ u ----> UCBA1
 UCBA1 ---> b
 u ----> UCBA2
 UCBA2 ---> b
+UCBA1 .> UCBA2 : <<include>>
 
 u ---> UCLP1
 UCLP1 ---> b
