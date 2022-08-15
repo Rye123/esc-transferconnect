@@ -15,13 +15,14 @@ In two separate terminals, run `npm start` in `bank-server` and in `bank-client`
 
 ## Current Functionality
 - JWT Authentication, with users from a MongoDB Atlas database.
-- Basic design for Banking Client.
+- User Notification through email, push notifications and phone number SMSes.
+- Security
+  - SHA256 hashing of passwords
+- Views
+  - Routing to allow the views as described in the [Bank Client State Diagram](https://github.com/Rye123/esc-transferconnect/blob/main/diagrams/bank/Bank%20Client%20State%20Diagram.png).
+  - Functionality to support the above views.
+- Communication with TransferConnect
 
 ## Future Functionality
 - Security
   - HTTPS to prevent MITM attacks on authentication
-  - SHA256 hashing of passwords
-- Views
-  - Routing to allow the views as described in the [Bank Client State Diagram](https://github.com/Rye123/esc-transferconnect/blob/main/diagrams/bank/Bank%20Client%20State%20Diagram.png).
-- Communication with TransferConnect
-  - Functionality for the above views, which likely involve sending and receiving requests from the [TransferConnect](https://github.com/Rye123/esc-transferconnect/tree/main/transfer-connect) side.
